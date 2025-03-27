@@ -1,27 +1,7 @@
 <script lang="ts">
-	let players = [
-		// Takım 1 oyuncuları
-		{ id: 1, x: 200, y: 50, color: 'blue' },
-		{ id: 2, x: 100, y: 100, color: 'blue' },
-		{ id: 3, x: 100, y: 150, color: 'blue' },
-		{ id: 4, x: 100, y: 200, color: 'blue' },
-		{ id: 5, x: 150, y: 75, color: 'blue' },
-		{ id: 6, x: 150, y: 175, color: 'blue' },
-		// Takım 2 oyuncuları
-		{ id: 7, x: 400, y: 50, color: 'red' },
-		{ id: 8, x: 400, y: 100, color: 'red' },
-		{ id: 9, x: 400, y: 150, color: 'red' },
-		{ id: 10, x: 400, y: 200, color: 'red' },
-		{ id: 11, x: 450, y: 75, color: 'red' },
-		{ id: 12, x: 350, y: 175, color: 'red' }
-	];
+	import type { Player } from '$lib/types';
 
-	type Player = {
-		id: number;
-		x: number;
-		y: number;
-		color: string;
-	};
+	export let players: Player[] = [];
 
 	let draggingPlayer: Player | null = null;
 
@@ -37,7 +17,7 @@
 	function drag(event: MouseEvent | TouchEvent) {
 		event.preventDefault();
 		if (draggingPlayer) {
-			const svg = document.querySelector('svg');
+			const svg = document.querySelector('svg'); // birden fazla saha varsa id'den yakala
 			if (!svg) {
 				console.error('SVG element not found');
 				return;
@@ -81,7 +61,7 @@
 	}
 </script>
 
-<div class="mt-8 flex items-center justify-center">
+<div class="flex items-center justify-center gap-4">
 	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 300" class="w-full max-w-4xl">
 		<!-- Çim Alanı -->
 		<rect x="0" y="0" width="500" height="300" fill="green" />
@@ -102,18 +82,68 @@
 
 		<!-- Oyuncular -->
 		{#each players as player}
-			<circle
-				class="cursor-move"
-				cx={player.x}
-				cy={player.y}
-				r="10"
-				fill={player.color}
-				aria-label="Oyuncu"
-				role="button"
-				tabindex="0"
-				on:pointerdown={(event) => startDrag(event, player)}
-				on:touchstart={(event) => startDrag(event, player)}
-			/>
+			<g>
+				<!-- Circle representing the player -->
+				<circle
+					class="cursor-move"
+					cx={player.x}
+					cy={player.y}
+					r="10"
+					fill={player.color}
+					aria-label="Oyuncu"
+					role="button"
+					tabindex="0"
+					on:pointerdown={(event) => startDrag(event, player)}
+					on:touchstart={(event) => startDrag(event, player)}
+					style="filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));"
+				/>
+
+				<!-- Player's name above the circle -->
+				<text
+					class="pointer-events-none font-bold"
+					x={player.x}
+					y={player.y - 15}
+					fill="white"
+					font-size="6"
+					text-anchor="middle"
+					dominant-baseline="middle"
+				>
+					{player.name || ''}
+				</text>
+
+				<!-- Player's number inside the circle -->
+				<text
+					class="pointer-events-none font-stretch-semi-expanded"
+					x={player.x}
+					y={player.y + 1}
+					fill="white"
+					font-size="8"
+					text-anchor="middle"
+					dominant-baseline="middle"
+				>
+					{player.number}
+				</text>
+			</g>
 		{/each}
 	</svg>
+
+	<fieldset class="fieldset bg-base-300 border-base-300 rounded-box w-64 border p-4">
+		<legend class="fieldset-legend">Görünüm Ayarları</legend>
+		<label class="fieldset-label flex items-center justify-between">
+			<span class="text-sm font-medium">Oyuncu adları</span>
+			<input type="checkbox" class="toggle toggle-primary" checked />
+		</label>
+		<label class="fieldset-label flex items-center justify-between">
+			<span class="text-sm font-medium">Oyuncu numarası</span>
+			<input type="checkbox" class="toggle toggle-primary" checked />
+		</label>
+		<label class="fieldset-label flex items-center justify-between">
+			<span class="text-sm font-medium">Rakip takımı göster</span>
+			<input type="checkbox" class="toggle toggle-primary" checked />
+		</label>
+		<label class="fieldset-label flex items-center justify-between">
+			<span class="text-sm font-medium">Ev sahibi takımı göster</span>
+			<input type="checkbox" class="toggle toggle-primary" checked />
+		</label>
+	</fieldset>
 </div>
