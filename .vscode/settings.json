@@ -1,10 +1,9 @@
 {
-  "github.copilot.chat.codeGeneration.instructions": [
-    {
-      "file": "./.vscode/daisyui.md"
-    }
-  ],
-  "cSpell.words": [
-    "daisyui"
-  ]
+	"github.copilot.chat.codeGeneration.instructions": [
+		{
+			"file": "./.vscode/daisyui.md"
+		}
+	],
+	"cSpell.words": ["daisyui"],
+	"editor.formatOnSave": true
 }
