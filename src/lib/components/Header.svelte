@@ -14,7 +14,7 @@
 		</ul>
 	</div>
 	<div class="navbar-end">
-		<button class="btn btn-primary hidden lg:block" on:click={() => goto('/kadro')}
+		<button on:click={() => goto('/kadro')} class="btn btn-primary hidden lg:block"
 			>Kadro yap</button
 		>
 		<div class="dropdown dropdown-end lg:hidden">
@@ -40,7 +40,9 @@
 				<li><a href="/games">Maçlar</a></li>
 				<li><a href="/teams">Takımlar</a></li>
 				<li><a href="/players">Oyuncular</a></li>
-				<li><button class="btn btn-primary w-full">Kadro yap</button></li>
+				<li>
+					<button on:click={() => goto('/kadro')} class="btn btn-primary w-full">Kadro yap</button>
+				</li>
 			</ul>
 		</div>
 	</div>

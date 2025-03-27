@@ -29,7 +29,7 @@
 	{:else}
 		<div class="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 			{#each players as player}
-				<div class="card bg-base-300 shadow-md">
+				<div class="card bg-base-300 cursor-pointer shadow-md">
 					<div class="card-body flex flex-row items-center gap-4">
 						<!-- Avatar on the left -->
 						<div class="avatar">
