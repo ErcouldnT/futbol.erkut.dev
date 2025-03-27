@@ -1,3 +1,7 @@
+<script lang="ts">
+	import { goto } from '$app/navigation';
+</script>
+
 <div class="navbar bg-base-100">
 	<div class="navbar-start">
 		<a href="/" class="btn btn-ghost text-xl normal-case">Akkuyu Futbol</a>
@@ -10,7 +14,9 @@
 		</ul>
 	</div>
 	<div class="navbar-end">
-		<button class="btn btn-primary hidden lg:block">Kadro yap</button>
+		<button class="btn btn-primary hidden lg:block" on:click={() => goto('/kadro')}
+			>Kadro yap</button
+		>
 		<div class="dropdown dropdown-end lg:hidden">
 			<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 			<!-- svelte-ignore a11y_label_has_associated_control -->

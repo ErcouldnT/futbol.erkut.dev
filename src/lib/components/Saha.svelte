@@ -1,9 +1,17 @@
 <script lang="ts">
 	import type { Player } from '$lib/types';
 
-	export let players: Player[] = [];
+	export let playersHome: Player[] = [];
+	export let playersAway: Player[] = [];
+
+	let players = [...playersHome, ...playersAway];
 
 	let draggingPlayer: Player | null = null;
+
+	let showPlayerNames = true;
+	let showPlayerNumbers = true;
+	let showOpponentTeam = true;
+	let showHomeTeam = true;
 
 	function startDrag(event: MouseEvent | TouchEvent, player: Player) {
 		event.preventDefault();
@@ -99,53 +107,57 @@
 				/>
 
 				<!-- Player's name above the circle -->
-				<text
-					class="pointer-events-none font-bold"
-					x={player.x}
-					y={player.y - 15}
-					fill="white"
-					font-size="6"
-					text-anchor="middle"
-					dominant-baseline="middle"
-				>
-					{player.name || ''}
-				</text>
+				{#if showPlayerNames}
+					<text
+						class="pointer-events-none font-bold"
+						x={player.x}
+						y={player.y - 15}
+						fill="white"
+						font-size="6"
+						text-anchor="middle"
+						dominant-baseline="middle"
+					>
+						{player.name}
+					</text>
+				{/if}
 
 				<!-- Player's number inside the circle -->
-				<text
-					class="pointer-events-none font-stretch-semi-expanded"
-					x={player.x}
-					y={player.y + 1}
-					fill="white"
-					font-size="8"
-					text-anchor="middle"
-					dominant-baseline="middle"
-				>
-					{player.number}
-				</text>
+				{#if showPlayerNumbers}
+					<text
+						class="pointer-events-none font-stretch-semi-expanded"
+						x={player.x}
+						y={player.y + 1}
+						fill="white"
+						font-size="8"
+						text-anchor="middle"
+						dominant-baseline="middle"
+					>
+						{player.number}
+					</text>
+				{/if}
 			</g>
 		{/each}
 	</svg>
 </div>
 
-<div class="mt-4 flex items-center justify-center gap-4">
+<!-- <div class="mt-4 flex items-center justify-center gap-4">
 	<fieldset class="fieldset bg-base-300 border-base-300 rounded-box w-64 border p-4">
 		<legend class="fieldset-legend">Görünüm Ayarları</legend>
 		<label class="fieldset-label flex items-center justify-between">
 			<span class="text-sm font-medium">Oyuncu adları</span>
-			<input type="checkbox" class="toggle toggle-primary" checked />
+			<input type="checkbox" class="toggle toggle-primary" checked={showPlayerNames} />
 		</label>
 		<label class="fieldset-label flex items-center justify-between">
 			<span class="text-sm font-medium">Oyuncu numarası</span>
-			<input type="checkbox" class="toggle toggle-primary" checked />
+			<input type="checkbox" class="toggle toggle-primary" checked={showPlayerNumbers} />
 		</label>
 		<label class="fieldset-label flex items-center justify-between">
 			<span class="text-sm font-medium">Rakip takımı göster</span>
-			<input type="checkbox" class="toggle toggle-primary" checked />
+			<input type="checkbox" class="toggle toggle-primary" checked={showOpponentTeam} />
 		</label>
 		<label class="fieldset-label flex items-center justify-between">
 			<span class="text-sm font-medium">Ev sahibi takımı göster</span>
-			<input type="checkbox" class="toggle toggle-primary" checked />
+			<input type="checkbox" class="toggle toggle-primary" checked={showHomeTeam} />
 		</label>
 	</fieldset>
-</div>
+</div> -->

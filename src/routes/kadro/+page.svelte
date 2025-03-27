@@ -20,8 +20,8 @@
 		{ id: 12, name: 'Cemre', number: 1, x: 350, y: 175, color: 'red' }
 	];
 
-	let playersTogether = [...playersHome, ...playersAway];
+	// let playersTogether = [...playersHome, ...playersAway];
 </script>
 
 <p class="m-8 text-center"></p>
-<Saha players={playersTogether} />
+<Saha {playersHome} {playersAway} />
