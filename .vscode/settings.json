@@ -4,6 +4,6 @@
 			"file": "./.vscode/daisyui.md"
 		}
 	],
-	"cSpell.words": ["Akkuyu", "daisyui"],
+	"cSpell.words": ["Akkuyu", "daisyui", "supabase"],
 	"editor.formatOnSave": true
 }

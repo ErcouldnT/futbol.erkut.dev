@@ -17,7 +17,7 @@
 	function drag(event: MouseEvent | TouchEvent) {
 		event.preventDefault();
 		if (draggingPlayer) {
-			const svg = document.querySelector('svg'); // birden fazla saha varsa id'den yakala
+			const svg = document.querySelectorAll('svg')[1]; // birden fazla saha varsa id'den yakala
 			if (!svg) {
 				console.error('SVG element not found');
 				return;
@@ -126,7 +126,9 @@
 			</g>
 		{/each}
 	</svg>
+</div>
 
+<div class="mt-4 flex items-center justify-center gap-4">
 	<fieldset class="fieldset bg-base-300 border-base-300 rounded-box w-64 border p-4">
 		<legend class="fieldset-legend">Görünüm Ayarları</legend>
 		<label class="fieldset-label flex items-center justify-between">
