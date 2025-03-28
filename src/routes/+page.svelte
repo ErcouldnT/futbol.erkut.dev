@@ -5,6 +5,7 @@
 			awayTeam: 'Erkutun Takımı',
 			score: '8-9',
 			date: '28 Mart 2025 Cuma',
+			hour: '21:00-22:00',
 			goalsHome: [
 				{ player: 'Baki', goalNumber: 2 },
 				{ player: 'Çağrı', goalNumber: 2 },
@@ -27,6 +28,7 @@
 		<div class="card bg-base-300 w-96 cursor-pointer shadow-xl">
 			<div class="card-body">
 				<h2 class="card-title text-primary">{match.date}</h2>
+				<p class="text-success text-xs">{match.hour}</p>
 				<div class="flex items-center justify-between">
 					<span class="badge badge-primary">{match.homeTeam}</span>
 					<span class="text-lg font-thin">vs</span>
@@ -37,7 +39,7 @@
 				</p>
 				<div class="collapse-arrow collapse mt-4">
 					<input type="checkbox" class="peer" />
-					<div class="text-primary collapse-title text-center text-xl font-medium">Goller</div>
+					<div class="text-error collapse-title text-center text-xl font-medium">Goller</div>
 					<div class="collapse-content">
 						<div class="mt-4 flex justify-between">
 							<div class="w-1/2">
