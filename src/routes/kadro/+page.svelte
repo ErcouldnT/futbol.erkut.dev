@@ -23,5 +23,9 @@
 	// let playersTogether = [...playersHome, ...playersAway];
 </script>
 
+<svelte:head>
+	<title>Akkuyu Futbol - Takım Kadrosu</title>
+</svelte:head>
+
 <p class="m-8 text-center"></p>
 <Saha />

@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 
 	const makeKadro = () => {
-		goto('/lineups');
+		goto('/kadro');
 	};
 </script>
 
