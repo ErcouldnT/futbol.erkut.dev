@@ -146,7 +146,7 @@
 	};
 </script>
 
-<div class="flex items-center justify-center gap-4">
+<div class="flex flex-col items-center justify-center gap-4 lg:flex-row">
 	<div class="flex flex-col gap-1 p-4">
 		<p class="text-primary text-center text-sm">Takım 1</p>
 		<!-- <input
