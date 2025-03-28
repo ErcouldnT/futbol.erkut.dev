@@ -161,3 +161,31 @@
 		</label>
 	</fieldset>
 </div> -->
+
+<div class="mt-4 flex items-center justify-center gap-4">
+	<div class="p-4">
+		<ul class="menu menu-vertical bg-base-200 rounded-box w-56">
+			{#each playersHome as player}
+				<li>
+					<div>
+						<span class="font-bold">{player.name}</span>
+						<span class="text-secondary text-sm">({player.number})</span>
+					</div>
+				</li>
+			{/each}
+		</ul>
+	</div>
+
+	<div class="p-4">
+		<ul class="menu menu-vertical bg-base-200 rounded-box w-56">
+			{#each playersAway as player}
+				<li>
+					<div>
+						<span class="font-bold">{player.name}</span>
+						<span class="text-secondary text-sm">({player.number})</span>
+					</div>
+				</li>
+			{/each}
+		</ul>
+	</div>
+</div>

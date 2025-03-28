@@ -10,7 +10,7 @@
 		<ul class="menu menu-horizontal px-1">
 			<li><a href="/games">Maçlar</a></li>
 			<li><a href="/teams">Takımlar</a></li>
-			<li><a href="/players">Oyuncular</a></li>
+			<!-- <li><a href="/players">Oyuncular</a></li> -->
 		</ul>
 	</div>
 	<div class="navbar-end">
@@ -39,7 +39,7 @@
 			<ul class="menu menu-compact dropdown-content bg-base-100 rounded-box mt-3 w-52 p-2 shadow">
 				<li><a href="/games">Maçlar</a></li>
 				<li><a href="/teams">Takımlar</a></li>
-				<li><a href="/players">Oyuncular</a></li>
+				<!-- <li><a href="/players">Oyuncular</a></li> -->
 				<li>
 					<button on:click={() => goto('/kadro')} class="btn btn-primary w-full">Kadro yap</button>
 				</li>

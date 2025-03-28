@@ -11,7 +11,7 @@
 
 <div class="flex flex-col items-center gap-6">
 	{#each matches as match}
-		<div class="card bg-base-300 w-96 shadow-xl">
+		<div class="card bg-base-300 w-96 cursor-pointer shadow-xl">
 			<div class="card-body">
 				<h2 class="card-title text-primary">{match.date}</h2>
 				<div class="flex items-center justify-between">
