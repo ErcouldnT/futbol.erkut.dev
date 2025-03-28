@@ -41,6 +41,7 @@
 	},
 	"dependencies": {
 		"@supabase/supabase-js": "^2.49.3",
-		"daisyui": "^5.0.9"
+		"daisyui": "^5.0.9",
+		"svelte-persisted-store": "^0.12.0"
 	}
 }

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { playersHomeStore, playersAwayStore } from '$lib/stores';
 	import { supabase } from '$lib/supabase';
 	import type { Player } from '$lib/types';
 
@@ -20,8 +21,8 @@
 	let homeColor = 'blue';
 	let awayColor = 'red';
 
-	export let playersHome: Player[] = [];
-	export let playersAway: Player[] = [];
+	export let playersHome: Player[] = $playersHomeStore;
+	export let playersAway: Player[] = $playersAwayStore;
 
 	// let players = [...playersHome, ...playersAway];
 
@@ -76,6 +77,8 @@
 			// Reassign the players array to trigger reactivity
 			playersHome = [...playersHome];
 			playersAway = [...playersAway];
+			playersHomeStore.set(playersHome);
+			playersAwayStore.set(playersAway);
 		}
 	}
 
@@ -104,6 +107,7 @@
 			player.x = x;
 			player.y = y;
 			playersHome = [...playersHome, player];
+			playersHomeStore.set(playersHome);
 		}
 	};
 
@@ -114,15 +118,18 @@
 			player.x = x;
 			player.y = y;
 			playersAway = [...playersAway, player];
+			playersAwayStore.set(playersAway);
 		}
 	};
 
 	const removeHomePlayer = (player: Player) => {
 		playersHome = playersHome.filter((p) => p.id !== player.id);
+		playersHomeStore.set(playersHome);
 	};
 
 	const removeAwayPlayer = (player: Player) => {
 		playersAway = playersAway.filter((p) => p.id !== player.id);
+		playersAwayStore.set(playersAway);
 	};
 
 	const clearHomePlayers = () => {
@@ -141,7 +148,7 @@
 
 <div class="flex items-center justify-center gap-4">
 	<div class="flex flex-col gap-1 p-4">
-		<p class="text-center text-sm">Takım 1</p>
+		<p class="text-primary text-center text-sm">Takım 1</p>
 		<!-- <input
 			list="ice-cream-flavors"
 			id="home-players-choice"
@@ -305,7 +312,7 @@
 	</svg>
 
 	<div class="flex flex-col gap-1 p-4">
-		<p class="text-center text-sm">Takım 2</p>
+		<p class="text-secondary text-center text-sm">Takım 2</p>
 		<ul class="menu menu-vertical bg-base-200 rounded-box w-56">
 			{#each players as player}
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
