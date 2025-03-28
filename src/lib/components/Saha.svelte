@@ -46,7 +46,7 @@
 			const transformedPoint = point.matrixTransform(screenCTM.inverse());
 
 			// Saha sınırlarını kontrol et
-			const fieldBounds = { xMin: 10, xMax: 490, yMin: 10, yMax: 290 }; // Saha sınırları
+			const fieldBounds = { xMin: 10, xMax: 290, yMin: 10, yMax: 490 }; // Saha sınırları
 			const newX = Math.max(fieldBounds.xMin, Math.min(fieldBounds.xMax, transformedPoint.x));
 			const newY = Math.max(fieldBounds.yMin, Math.min(fieldBounds.yMax, transformedPoint.y));
 
@@ -70,23 +70,40 @@
 </script>
 
 <div class="flex items-center justify-center gap-4">
-	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 300" class="w-full max-w-4xl">
+	<div class="p-4">
+		<ul class="menu menu-vertical bg-base-200 rounded-box w-56">
+			{#each playersHome as player}
+				<li>
+					<div>
+						<span class="font-bold">{player.name}</span>
+						<span class="text-secondary text-sm">({player.number})</span>
+					</div>
+				</li>
+			{/each}
+		</ul>
+	</div>
+
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 300 500"
+		class="h-full max-h-screen w-full max-w-md"
+	>
 		<!-- Çim Alanı -->
-		<rect x="0" y="0" width="500" height="300" fill="green" />
+		<rect x="0" y="0" width="300" height="500" fill="green" />
 
 		<!-- Saha Dış Çizgisi -->
-		<rect x="10" y="10" width="480" height="280" fill="none" stroke="white" stroke-width="2" />
+		<rect x="10" y="10" width="280" height="480" fill="none" stroke="white" stroke-width="2" />
 
 		<!-- Orta Çizgi -->
-		<line x1="250" y1="10" x2="250" y2="290" stroke="white" stroke-width="2" />
+		<line x1="10" y1="250" x2="290" y2="250" stroke="white" stroke-width="2" />
 
 		<!-- Orta Daire -->
-		<circle cx="250" cy="150" r="70" fill="none" stroke="white" stroke-width="2" />
-		<circle cx="250" cy="150" r="2" fill="white" />
+		<circle cx="150" cy="250" r="70" fill="none" stroke="white" stroke-width="2" />
+		<circle cx="150" cy="250" r="2" fill="white" />
 
 		<!-- Kale Alanları -->
-		<rect x="10" y="70" width="70" height="160" fill="none" stroke="white" stroke-width="2" />
-		<rect x="420" y="70" width="70" height="160" fill="none" stroke="white" stroke-width="2" />
+		<rect x="70" y="10" width="160" height="70" fill="none" stroke="white" stroke-width="2" />
+		<rect x="70" y="420" width="160" height="70" fill="none" stroke="white" stroke-width="2" />
 
 		<!-- Oyuncular -->
 		{#each players as player}
@@ -138,6 +155,19 @@
 			</g>
 		{/each}
 	</svg>
+
+	<div class="p-4">
+		<ul class="menu menu-vertical bg-base-200 rounded-box w-56">
+			{#each playersAway as player}
+				<li>
+					<div>
+						<span class="font-bold">{player.name}</span>
+						<span class="text-secondary text-sm">({player.number})</span>
+					</div>
+				</li>
+			{/each}
+		</ul>
+	</div>
 </div>
 
 <!-- <div class="mt-4 flex items-center justify-center gap-4">
@@ -162,30 +192,4 @@
 	</fieldset>
 </div> -->
 
-<div class="mt-4 flex items-center justify-center gap-4">
-	<div class="p-4">
-		<ul class="menu menu-vertical bg-base-200 rounded-box w-56">
-			{#each playersHome as player}
-				<li>
-					<div>
-						<span class="font-bold">{player.name}</span>
-						<span class="text-secondary text-sm">({player.number})</span>
-					</div>
-				</li>
-			{/each}
-		</ul>
-	</div>
-
-	<div class="p-4">
-		<ul class="menu menu-vertical bg-base-200 rounded-box w-56">
-			{#each playersAway as player}
-				<li>
-					<div>
-						<span class="font-bold">{player.name}</span>
-						<span class="text-secondary text-sm">({player.number})</span>
-					</div>
-				</li>
-			{/each}
-		</ul>
-	</div>
-</div>
+<!-- <div class="mt-4 flex items-center justify-center gap-4"></div> -->
