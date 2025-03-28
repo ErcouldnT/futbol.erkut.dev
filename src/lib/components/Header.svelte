@@ -1,5 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+
+	const makeKadro = () => {
+		goto('/lineups');
+	};
 </script>
 
 <div class="navbar bg-base-100">
@@ -8,15 +12,13 @@
 	</div>
 	<div class="navbar-center hidden lg:flex">
 		<ul class="menu menu-horizontal px-1">
-			<li><a href="/games">Maçlar</a></li>
+			<li><a href="/matches">Maçlar</a></li>
 			<li><a href="/teams">Takımlar</a></li>
 			<!-- <li><a href="/players">Oyuncular</a></li> -->
 		</ul>
 	</div>
 	<div class="navbar-end">
-		<button on:click={() => goto('/kadro')} class="btn btn-primary hidden lg:block"
-			>Kadro yap</button
-		>
+		<button on:click={makeKadro} class="btn btn-primary hidden lg:block">Kadro yap</button>
 		<div class="dropdown dropdown-end lg:hidden">
 			<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 			<!-- svelte-ignore a11y_label_has_associated_control -->
@@ -37,11 +39,11 @@
 				</svg>
 			</label>
 			<ul class="menu menu-compact dropdown-content bg-base-100 rounded-box mt-3 w-52 p-2 shadow">
-				<li><a href="/games">Maçlar</a></li>
+				<li><a href="/matches">Maçlar</a></li>
 				<li><a href="/teams">Takımlar</a></li>
 				<!-- <li><a href="/players">Oyuncular</a></li> -->
 				<li>
-					<button on:click={() => goto('/kadro')} class="btn btn-primary w-full">Kadro yap</button>
+					<button on:click={makeKadro} class="btn btn-primary w-full">Kadro yap</button>
 				</li>
 			</ul>
 		</div>
