@@ -12,7 +12,7 @@
 	</div>
 	<div class="navbar-center hidden lg:flex">
 		<ul class="menu menu-horizontal px-1">
-			<li><a href="/matches">Maçlar</a></li>
+			<!-- <li><a href="/matches">Maçlar</a></li> -->
 			<li><a href="/teams">Takımlar</a></li>
 			<!-- <li><a href="/players">Oyuncular</a></li> -->
 		</ul>
@@ -39,7 +39,7 @@
 				</svg>
 			</label>
 			<ul class="menu menu-compact dropdown-content bg-base-100 rounded-box mt-3 w-52 p-2 shadow">
-				<li><a href="/matches">Maçlar</a></li>
+				<!-- <li><a href="/matches">Maçlar</a></li> -->
 				<li><a href="/teams">Takımlar</a></li>
 				<!-- <li><a href="/players">Oyuncular</a></li> -->
 				<li>
