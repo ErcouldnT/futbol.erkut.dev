@@ -89,6 +89,54 @@
 	}
 
 	// let selectedHomePlayer = '';
+
+	const randomXandY = () => {
+		return {
+			x: Math.floor(Math.random() * 300),
+			y: Math.floor(Math.random() * 500)
+		};
+	};
+
+	const addHomePlayer = (player: Player) => {
+		if (!playersHome.some((p) => p.id === player.id)) {
+			player.color = homeColor;
+			const { x, y } = randomXandY();
+			player.x = x;
+			player.y = y;
+			playersHome = [...playersHome, player];
+		}
+	};
+
+	const addAwayPlayer = (player: Player) => {
+		if (!playersAway.some((p) => p.id === player.id)) {
+			player.color = awayColor;
+			const { x, y } = randomXandY();
+			player.x = x;
+			player.y = y;
+			playersAway = [...playersAway, player];
+		}
+	};
+
+	const removeHomePlayer = (player: Player) => {
+		playersHome = playersHome.filter((p) => p.id !== player.id);
+	};
+
+	const removeAwayPlayer = (player: Player) => {
+		playersAway = playersAway.filter((p) => p.id !== player.id);
+	};
+
+	const clearHomePlayers = () => {
+		playersHome = [];
+	};
+
+	const clearAwayPlayers = () => {
+		playersAway = [];
+	};
+
+	const resetPlayers = () => {
+		playersHome = [];
+		playersAway = [];
+	};
 </script>
 
 <div class="flex items-center justify-center gap-4">
@@ -109,7 +157,21 @@
 
 		<ul class="menu menu-vertical bg-base-200 rounded-box w-56">
 			{#each players as player}
-				<li>
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+				<li
+					on:click={() => {
+						if (playersHome.some((p) => p.id === player.id)) {
+							removeHomePlayer(player);
+						} else {
+							if (!playersAway.some((p) => p.id === player.id)) {
+								addHomePlayer(player);
+							}
+						}
+					}}
+					class="opacity-30"
+					class:opacity-100={playersHome.some((p) => p.id === player.id)}
+				>
 					<div>
 						<span class="font-bold">{player.name}</span>
 						<span class="text-warning badge text-xs">{player.number}</span>
@@ -246,7 +308,21 @@
 		<p class="text-center text-sm">Takım 2</p>
 		<ul class="menu menu-vertical bg-base-200 rounded-box w-56">
 			{#each players as player}
-				<li>
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+				<li
+					on:click={() => {
+						if (playersAway.some((p) => p.id === player.id)) {
+							removeAwayPlayer(player);
+						} else {
+							if (!playersHome.some((p) => p.id === player.id)) {
+								addAwayPlayer(player);
+							}
+						}
+					}}
+					class="opacity-30"
+					class:opacity-100={playersAway.some((p) => p.id === player.id)}
+				>
 					<div>
 						<span class="font-bold">{player.name}</span>
 						<span class="text-warning badge text-xs">{player.number}</span>
