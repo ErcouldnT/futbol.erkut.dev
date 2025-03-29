@@ -19,10 +19,7 @@
 		property="og:description"
 		content="Akkuyu Futbol dünyasından en güncel haberler, skorlar ve takım oluşturma araçları."
 	/>
-	<meta
-		property="og:image"
-		content="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26bd.png"
-	/>
+	<meta property="og:image" content="/favicon.png" />
 	<meta property="og:url" content="https://futbol.erkut.dev" />
 	<meta property="og:type" content="website" />
 	<meta name="twitter:card" content="summary_large_image" />
@@ -31,10 +28,7 @@
 		name="twitter:description"
 		content="Akkuyu Futbol dünyasından en güncel haberler, skorlar ve takım oluşturma araçları."
 	/>
-	<meta
-		name="twitter:image"
-		content="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/26bd.png"
-	/>
+	<meta name="twitter:image" content="/favicon.png" />
 </svelte:head>
 
 <div class="mx-auto max-w-7xl">
