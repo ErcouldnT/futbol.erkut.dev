@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto } from "$app/navigation";
 
 	const makeKadro = () => {
-		goto('/kadro');
+		goto("/kadro");
 	};
 </script>
 

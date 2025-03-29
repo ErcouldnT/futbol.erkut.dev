@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Saha from '$lib/components/Saha.svelte';
+	import Saha from "$lib/components/Saha.svelte";
 	// import type { Player } from '$lib/types';
 
 	// let playersHome: Player[] = [

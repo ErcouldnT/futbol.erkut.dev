@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { playersHomeStore, playersAwayStore } from '$lib/stores';
-	import { supabase } from '$lib/supabase';
-	import type { Player } from '$lib/types';
+	import { playersHomeStore, playersAwayStore } from "$lib/stores";
+	import { supabase } from "$lib/supabase";
+	import type { Player } from "$lib/types";
 
 	let players = [];
 
 	// Fetch players from Supabase
 	const fetchPlayers = async () => {
-		const { data, error } = await supabase.from('players').select('*');
+		const { data, error } = await supabase.from("players").select("*");
 		if (error) {
-			console.error('Error fetching players:', error);
+			console.error("Error fetching players:", error);
 		} else {
 			players = data;
 		}
@@ -18,8 +18,8 @@
 
 	fetchPlayers();
 
-	let homeColor = 'blue';
-	let awayColor = 'red';
+	let homeColor = "blue";
+	let awayColor = "red";
 
 	export let playersHome: Player[] = $playersHomeStore;
 	export let playersAway: Player[] = $playersAwayStore;
@@ -36,18 +36,18 @@
 	function startDrag(event: MouseEvent | TouchEvent, player: Player) {
 		event.preventDefault();
 		draggingPlayer = player;
-		window.addEventListener('pointermove', drag, { passive: false });
-		window.addEventListener('pointerup', endDrag, { passive: false });
-		window.addEventListener('touchmove', drag, { passive: false });
-		window.addEventListener('touchend', endDrag, { passive: false });
+		window.addEventListener("pointermove", drag, { passive: false });
+		window.addEventListener("pointerup", endDrag, { passive: false });
+		window.addEventListener("touchmove", drag, { passive: false });
+		window.addEventListener("touchend", endDrag, { passive: false });
 	}
 
 	function drag(event: MouseEvent | TouchEvent) {
 		event.preventDefault();
 		if (draggingPlayer) {
-			const svg = document.querySelectorAll('svg')[1]; // birden fazla saha varsa id'den yakala
+			const svg = document.querySelectorAll("svg")[1]; // birden fazla saha varsa id'den yakala
 			if (!svg) {
-				console.error('SVG element not found');
+				console.error("SVG element not found");
 				return;
 			}
 			const point = svg.createSVGPoint();
@@ -60,7 +60,7 @@
 			}
 			const screenCTM = svg.getScreenCTM();
 			if (!screenCTM) {
-				console.error('Cannot get screenCTM');
+				console.error("Cannot get screenCTM");
 				return;
 			}
 			const transformedPoint = point.matrixTransform(screenCTM.inverse());
@@ -85,10 +85,10 @@
 	function endDrag(event: MouseEvent | TouchEvent) {
 		event.preventDefault();
 		draggingPlayer = null;
-		window.removeEventListener('pointermove', drag);
-		window.removeEventListener('pointerup', endDrag);
-		window.removeEventListener('touchmove', drag);
-		window.removeEventListener('touchend', endDrag);
+		window.removeEventListener("pointermove", drag);
+		window.removeEventListener("pointerup", endDrag);
+		window.removeEventListener("touchmove", drag);
+		window.removeEventListener("touchend", endDrag);
 	}
 
 	// let selectedHomePlayer = '';

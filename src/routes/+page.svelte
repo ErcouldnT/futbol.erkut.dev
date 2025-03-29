@@ -1,25 +1,25 @@
 <script lang="ts">
 	let matches = [
 		{
-			homeTeam: 'Erayın Takımı',
-			homeTeamPlayers: ['Eray', 'Baki', 'Çağrı', 'Eyüp', 'İbrahim', 'Batuhan'],
-			awayTeam: 'Erkutun Takımı',
-			awayTeamPlayers: ['Erkut', 'Yasin', 'Faruk', 'Cansın', 'Velid', 'Semih'],
-			score: '8-9',
-			date: '28 Mart 2025 Cuma',
-			hour: '21:00-22:00',
+			homeTeam: "Eray'ın Takımı",
+			homeTeamPlayers: ["Eray", "Baki", "Çağrı", "Eyüp", "İbrahim", "Batuhan"],
+			awayTeam: "Erkut'un Takımı",
+			awayTeamPlayers: ["Erkut", "Yasin", "Faruk", "Cansın", "Velid", "Semih"],
+			score: "8 - 9",
+			date: "28 Mart 2025 Cuma",
+			hour: "21:00-22:00",
 			goalsHome: [
-				{ player: 'Baki', goalNumber: 2 },
-				{ player: 'Çağrı', goalNumber: 2 },
-				{ player: 'Eyüp', goalNumber: 1 },
-				{ player: 'İbrahim', goalNumber: 3 }
+				{ player: "Baki", goalNumber: 2 },
+				{ player: "Çağrı", goalNumber: 2 },
+				{ player: "Eyüp", goalNumber: 1 },
+				{ player: "İbrahim", goalNumber: 3 }
 			],
 			goalsAway: [
-				{ player: 'Velid', goalNumber: 3 },
-				{ player: 'Cansın', goalNumber: 2 },
-				{ player: 'Erkut', goalNumber: 1 },
-				{ player: 'Yasin', goalNumber: 2 },
-				{ player: 'Faruk', goalNumber: 1 }
+				{ player: "Velid", goalNumber: 3 },
+				{ player: "Cansın", goalNumber: 2 },
+				{ player: "Erkut", goalNumber: 1 },
+				{ player: "Yasin", goalNumber: 2 },
+				{ player: "Faruk", goalNumber: 1 }
 			]
 		}
 	];
@@ -60,13 +60,16 @@
 										<li class="flex items-center gap-2">
 											<span class="text-primary">{player}</span>
 											{#if match.goalsHome.find((goal) => goal.player === player)}
-												{#each Array(match.goalsHome.find((goal) => goal.player === player)?.goalNumber ?? 0).fill(null) as _}
-													<img
+												<div class="flex w-full justify-end text-right">
+													{#each Array(match.goalsHome.find((goal) => goal.player === player)?.goalNumber ?? 0).fill(null) as _}
+														<!-- <img
 														src="/soccer_ball.svg"
 														alt="Goal Ball"
 														class="text-primary h-4 w-4"
-													/>
-												{/each}
+													/> -->
+														⚽
+													{/each}
+												</div>
 											{/if}
 										</li>
 									{/each}
@@ -93,13 +96,16 @@
 										<li class="flex items-center gap-2">
 											<span class="text-secondary">{player}</span>
 											{#if match.goalsAway.find((goal) => goal.player === player)}
-												{#each Array(match.goalsAway.find((goal) => goal.player === player)?.goalNumber || 0).fill(null) as _}
-													<img
+												<div class="flex w-full justify-end text-right">
+													{#each Array(match.goalsAway.find((goal) => goal.player === player)?.goalNumber || 0).fill(null) as _}
+														<!-- <img
 														src="/soccer_ball.svg"
 														alt="Goal Ball"
 														class="text-secondary h-4 w-4"
-													/>
-												{/each}
+													/> -->
+														⚽
+													{/each}
+												</div>
 											{/if}
 										</li>
 									{/each}
