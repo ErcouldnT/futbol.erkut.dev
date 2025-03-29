@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { supabase } from '$lib/supabase';
+	import { supabase } from "$lib/supabase";
 
 	let players = [];
 	let loading = true;
 
 	// Fetch players from Supabase
 	const fetchPlayers = async () => {
-		const { data, error } = await supabase.from('players').select('name, number');
+		const { data, error } = await supabase.from("players").select("name, number");
 		if (error) {
-			console.error('Error fetching players:', error);
+			console.error("Error fetching players:", error);
 		} else {
 			players = data;
 		}
