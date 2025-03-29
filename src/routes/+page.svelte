@@ -24,10 +24,19 @@
 		}
 	];
 
-	// Sort goals for each match
+	// Sort players by goals scored (from most to least) for each match
 	matches.forEach((match) => {
-		match.goalsHome.sort((a, b) => b.goalNumber - a.goalNumber);
-		match.goalsAway.sort((a, b) => b.goalNumber - a.goalNumber);
+		match.homeTeamPlayers = match.homeTeamPlayers.sort((a, b) => {
+			const goalsA = match.goalsHome.find((goal) => goal.player === a)?.goalNumber || 0;
+			const goalsB = match.goalsHome.find((goal) => goal.player === b)?.goalNumber || 0;
+			return goalsB - goalsA;
+		});
+
+		match.awayTeamPlayers = match.awayTeamPlayers.sort((a, b) => {
+			const goalsA = match.goalsAway.find((goal) => goal.player === a)?.goalNumber || 0;
+			const goalsB = match.goalsAway.find((goal) => goal.player === b)?.goalNumber || 0;
+			return goalsB - goalsA;
+		});
 	});
 </script>
 
@@ -48,38 +57,27 @@
 							<div class="collapse-content p-2">
 								<ul class="list-none text-center text-sm leading-tight">
 									{#each match.homeTeamPlayers as player}
-										<li class="text-primary">{player}</li>
+										<li class="flex items-center gap-2">
+											<span class="text-primary">{player}</span>
+											{#if match.goalsHome.find((goal) => goal.player === player)}
+												{#each Array(match.goalsHome.find((goal) => goal.player === player)?.goalNumber ?? 0).fill(null) as _}
+													<img
+														src="/soccer_ball.svg"
+														alt="Goal Ball"
+														class="text-primary h-4 w-4"
+													/>
+												{/each}
+											{/if}
+										</li>
 									{/each}
 								</ul>
 							</div>
 						</div>
 					</div>
 
-					<!-- Match Score and Goals Section -->
+					<!-- Match Score Section -->
 					<div class="mt-2 flex w-full flex-col items-center text-center sm:w-1/2 lg:w-1/4">
 						<p class="text-4xl font-bold">{match.score}</p>
-						<div class="mt-2 flex flex-col items-center gap-1">
-							<div class="collapse-arrow collapse w-full">
-								<input type="checkbox" class="peer" />
-								<div class="collapse-title text-base-content p-4.5 text-sm font-semibold">
-									Goller
-								</div>
-								<div class="collapse-content p-1">
-									<div class="flex justify-between gap-1 text-xs">
-										<ul class="text-primary list-none text-left text-[0.75rem] leading-tight">
-											{#each match.goalsHome as goal}
-												<li class="truncate">{goal.player} ({goal.goalNumber})</li>
-											{/each}
-										</ul>
-										<ul class="text-secondary list-none text-right text-[0.75rem] leading-tight">
-											{#each match.goalsAway as goal}
-												<li class="truncate">{goal.player} ({goal.goalNumber})</li>
-											{/each}
-										</ul>
-									</div>
-								</div>
-							</div>
-						</div>
 					</div>
 
 					<!-- Away Team Section -->
@@ -92,7 +90,18 @@
 							<div class="collapse-content p-2">
 								<ul class="list-none text-center text-sm leading-tight">
 									{#each match.awayTeamPlayers as player}
-										<li class="text-secondary">{player}</li>
+										<li class="flex items-center gap-2">
+											<span class="text-secondary">{player}</span>
+											{#if match.goalsAway.find((goal) => goal.player === player)}
+												{#each Array(match.goalsAway.find((goal) => goal.player === player)?.goalNumber || 0).fill(null) as _}
+													<img
+														src="/soccer_ball.svg"
+														alt="Goal Ball"
+														class="text-secondary h-4 w-4"
+													/>
+												{/each}
+											{/if}
+										</li>
 									{/each}
 								</ul>
 							</div>
