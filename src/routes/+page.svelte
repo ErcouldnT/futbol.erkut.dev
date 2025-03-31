@@ -67,13 +67,13 @@
 									{#each match.homeTeamPlayers as player}
 										<li class="flex items-center gap-2">
 											<span class="text-primary">{player}</span>
+											{#if match.motm === player}
+												<span>👑</span>
+											{/if}
 											{#if match.goalsHome.find((goal) => goal.player === player)}
 												<div class="flex w-full justify-end text-right">
 													{#if match.goalJersey === player}
 														<span>🎽</span>
-													{/if}
-													{#if match.motm === player}
-														<span>👑</span>
 													{/if}
 													{#each Array(match.goalsHome.find((goal) => goal.player === player)?.goalNumber ?? 0).fill(null) as _}
 														⚽
@@ -82,6 +82,8 @@
 											{/if}
 										</li>
 									{/each}
+									<!-- Boşluk için eklenen boş li -->
+									<li class="min-h-[20px]"></li>
 								</ul>
 							</div>
 						</div>
@@ -107,21 +109,23 @@
 									{#each match.awayTeamPlayers as player}
 										<li class="flex items-center gap-2">
 											<span class="text-secondary">{player}</span>
-											{#if match.goalsAway.find((goal) => goal.player === player)}
-												<div class="flex w-full justify-end text-right">
+											{#if match.motm === player}
+												<span>👑</span>
+											{/if}
+											<div class="flex w-full justify-end text-right">
+												{#if match.goalsAway.find((goal) => goal.player === player)}
 													{#if match.goalJersey === player}
 														<span>🎽</span>
-													{/if}
-													{#if match.motm === player}
-														<span>👑</span>
 													{/if}
 													{#each Array(match.goalsAway.find((goal) => goal.player === player)?.goalNumber || 0).fill(null) as _}
 														⚽
 													{/each}
-												</div>
-											{/if}
+												{/if}
+											</div>
 										</li>
 									{/each}
+									<!-- Boşluk için eklenen boş li -->
+									<li class="min-h-[20px]"></li>
 								</ul>
 								{#if match.isOpen}
 									<div class="absolute right-0.5 bottom-0.5 text-[11px]">
