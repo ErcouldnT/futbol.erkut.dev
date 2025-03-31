@@ -21,7 +21,8 @@
 				{ player: "Yasin", goalNumber: 2 },
 				{ player: "Faruk", goalNumber: 1 }
 			],
-			goalJersey: "Cansın",
+			goalJersey: "Velid",
+			motm: "Velid",
 			isOpen: false
 		}
 	];
@@ -71,6 +72,9 @@
 													{#if match.goalJersey === player}
 														<span>🎽</span>
 													{/if}
+													{#if match.motm === player}
+														<span>👑</span>
+													{/if}
 													{#each Array(match.goalsHome.find((goal) => goal.player === player)?.goalNumber ?? 0).fill(null) as _}
 														⚽
 													{/each}
@@ -108,6 +112,9 @@
 													{#if match.goalJersey === player}
 														<span>🎽</span>
 													{/if}
+													{#if match.motm === player}
+														<span>👑</span>
+													{/if}
 													{#each Array(match.goalsAway.find((goal) => goal.player === player)?.goalNumber || 0).fill(null) as _}
 														⚽
 													{/each}
@@ -117,7 +124,10 @@
 									{/each}
 								</ul>
 								{#if match.isOpen}
-									<div class="absolute right-0.5 bottom-0.5 text-[11px]">🎽: Forma golü</div>
+									<div class="absolute right-0.5 bottom-0.5 text-[11px]">
+										🎽: Forma golü<br />
+										👑: Maçın Adamı
+									</div>
 								{/if}
 							</div>
 						</div>
