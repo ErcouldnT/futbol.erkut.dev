@@ -21,6 +21,7 @@
 				{ player: "Yasin", goalNumber: 2 },
 				{ player: "Faruk", goalNumber: 1 }
 			],
+			goalJersey: "Cansın",
 			isOpen: false
 		}
 	];
@@ -67,6 +68,9 @@
 											<span class="text-primary">{player}</span>
 											{#if match.goalsHome.find((goal) => goal.player === player)}
 												<div class="flex w-full justify-end text-right">
+													{#if match.goalJersey === player}
+														<span>🎽</span>
+													{/if}
 													{#each Array(match.goalsHome.find((goal) => goal.player === player)?.goalNumber ?? 0).fill(null) as _}
 														⚽
 													{/each}
@@ -94,13 +98,16 @@
 							<div class="collapse-title p-3.5 text-center text-sm font-semibold">
 								<span class="badge badge-secondary mt-1">{match.awayTeam}</span>
 							</div>
-							<div class="collapse-content p-2">
+							<div class="collapse-content relative p-2">
 								<ul class="list-none text-center text-sm leading-tight">
 									{#each match.awayTeamPlayers as player}
 										<li class="flex items-center gap-2">
 											<span class="text-secondary">{player}</span>
 											{#if match.goalsAway.find((goal) => goal.player === player)}
 												<div class="flex w-full justify-end text-right">
+													{#if match.goalJersey === player}
+														<span>🎽</span>
+													{/if}
 													{#each Array(match.goalsAway.find((goal) => goal.player === player)?.goalNumber || 0).fill(null) as _}
 														⚽
 													{/each}
@@ -109,6 +116,9 @@
 										</li>
 									{/each}
 								</ul>
+								{#if match.isOpen}
+									<div class="absolute right-0.5 bottom-0.5 text-[11px]">🎽: Forma golü</div>
+								{/if}
 							</div>
 						</div>
 					</div>
