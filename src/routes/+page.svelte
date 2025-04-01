@@ -40,7 +40,8 @@
 			],
 			goalJersey: "-",
 			motm: "Baki",
-			isOpen: false
+			isOpen: false,
+			activeTab: "goals"
 		},
 
 		{
@@ -82,7 +83,8 @@
 			],
 			goalJersey: "Velid",
 			motm: "Velid",
-			isOpen: false
+			isOpen: false,
+			activeTab: "goals"
 		}
 	];
 
@@ -105,7 +107,8 @@
 	function toggleAccordion(index: number) {
 		matches = matches.map((match, i) => ({
 			...match,
-			isOpen: i === index ? !match.isOpen : false // Close others, toggle the clicked one
+			isOpen: i === index ? !match.isOpen : false, // Close others, toggle the clicked one
+			activeTab: i === index && !match.isOpen ? "goals" : match.activeTab // Reset tab if closing
 		}));
 	}
 </script>
@@ -122,7 +125,25 @@
 				<h2 class="card-title text-primary">{match.date}</h2>
 				<p class="text-success text-xs">{match.hour}</p>
 
-				<div class="flex flex-wrap items-center justify-between">
+				{#if match.isOpen}
+					<!-- Tab Menu -->
+					<div class="tabs tabs-boxed mt-4 flex justify-center">
+						<div
+							class="tab {match.activeTab === 'goals' ? 'tab-active' : ''}"
+							on:click|stopPropagation={() => (match.activeTab = "goals")}
+						>
+							Goller
+						</div>
+						<div
+							class="tab {match.activeTab === 'ratings' ? 'tab-active' : ''}"
+							on:click|stopPropagation={() => (match.activeTab = "ratings")}
+						>
+							Ratingler
+						</div>
+					</div>
+				{/if}
+
+				<div class="mt-4 flex flex-wrap items-center justify-between">
 					<!-- Home Team Section -->
 					<div class="flex min-h-[20px] w-full flex-col items-center sm:w-1/3">
 						<div class="collapse w-full" class:collapse-open={match.isOpen}>
@@ -204,6 +225,24 @@
 						</div>
 					</div>
 				</div>
+
+				{#if match.isOpen}
+					<div class="mt-4">
+						<!-- Goller Tabı -->
+						{#if match.activeTab === "goals"}
+							<div>
+								<!-- Mevcut goller ekranı burada kalıyor -->
+							</div>
+						{/if}
+
+						<!-- Ratingler Tabı -->
+						{#if match.activeTab === "ratings"}
+							<div>
+								<p>Ratingler burada görünecek.</p>
+							</div>
+						{/if}
+					</div>
+				{/if}
 			</div>
 		</div>
 	{/each}
