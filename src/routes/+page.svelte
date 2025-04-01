@@ -151,30 +151,6 @@
 							<div class="collapse-title p-3.5 text-center text-sm font-semibold">
 								<span class="badge badge-primary mt-1">{match.homeTeam}</span>
 							</div>
-							<div class="collapse-content p-2">
-								<ul class="list-none text-center text-sm leading-tight">
-									{#each match.homeTeamPlayers as player}
-										<li class="flex items-center gap-2">
-											<span class="text-primary">{player}</span>
-											{#if match.motm === player}
-												<span>👑</span>
-											{/if}
-											{#if match.goalsHome.find((goal) => goal.player === player)}
-												<div class="flex w-full justify-end text-right">
-													{#if match.goalJersey === player}
-														<span>🎽</span>
-													{/if}
-													{#each Array(match.goalsHome.find((goal) => goal.player === player)?.goalNumber ?? 0).fill(null) as _}
-														⚽
-													{/each}
-												</div>
-											{/if}
-										</li>
-									{/each}
-									<!-- Boşluk için eklenen boş li -->
-									<li class="min-h-[20px]"></li>
-								</ul>
-							</div>
 						</div>
 					</div>
 
@@ -193,46 +169,83 @@
 							<div class="collapse-title p-3.5 text-center text-sm font-semibold">
 								<span class="badge badge-secondary mt-1">{match.awayTeam}</span>
 							</div>
-							<div class="collapse-content relative p-2">
-								<ul class="list-none text-center text-sm leading-tight">
-									{#each match.awayTeamPlayers as player}
-										<li class="flex items-center gap-2">
-											<span class="text-secondary">{player}</span>
-											{#if match.motm === player}
-												<span>👑</span>
-											{/if}
-											<div class="flex w-full justify-end text-right">
-												{#if match.goalsAway.find((goal) => goal.player === player)}
-													{#if match.goalJersey === player}
-														<span>🎽</span>
-													{/if}
-													{#each Array(match.goalsAway.find((goal) => goal.player === player)?.goalNumber || 0).fill(null) as _}
-														⚽
-													{/each}
-												{/if}
-											</div>
-										</li>
-									{/each}
-									<!-- Boşluk için eklenen boş li -->
-									<li class="min-h-[20px]"></li>
-								</ul>
-								{#if match.isOpen}
-									<div class="absolute right-0.5 bottom-0.5 text-[11px]">
-										🎽: Forma golü<br />
-										👑: Maçın Adamı
-									</div>
-								{/if}
-							</div>
 						</div>
 					</div>
 				</div>
 
 				{#if match.isOpen}
-					<div class="mt-4">
+					<div>
 						<!-- Goller Tabı -->
 						{#if match.activeTab === "goals"}
 							<div>
 								<!-- Mevcut goller ekranı burada kalıyor -->
+								<div class="flex flex-wrap items-center justify-between">
+									<!-- Home Team Section -->
+									<div class="flex min-h-[20px] w-full flex-col items-center sm:w-1/3">
+										<div class="collapse w-full" class:collapse-open={match.isOpen}>
+											<div class="collapse-content p-2">
+												<ul class="list-none text-center text-sm leading-tight">
+													{#each match.homeTeamPlayers as player}
+														<li class="flex items-center gap-2">
+															<span class="text-primary">{player}</span>
+															{#if match.motm === player}
+																<span>👑</span>
+															{/if}
+															{#if match.goalsHome.find((goal) => goal.player === player)}
+																<div class="flex w-full justify-end text-right">
+																	{#if match.goalJersey === player}
+																		<span>🎽</span>
+																	{/if}
+																	{#each Array(match.goalsHome.find((goal) => goal.player === player)?.goalNumber ?? 0).fill(null) as _}
+																		⚽
+																	{/each}
+																</div>
+															{/if}
+														</li>
+													{/each}
+													<!-- Boşluk için eklenen boş li -->
+													<li class="min-h-[20px]"></li>
+												</ul>
+											</div>
+										</div>
+									</div>
+
+									<!-- Away Team Section -->
+									<div class="flex min-h-[20px] w-full flex-col items-center sm:w-1/3">
+										<div class="collapse w-full" class:collapse-open={match.isOpen}>
+											<div class="collapse-content relative p-2">
+												<ul class="list-none text-center text-sm leading-tight">
+													{#each match.awayTeamPlayers as player}
+														<li class="flex items-center gap-2">
+															<span class="text-secondary">{player}</span>
+															{#if match.motm === player}
+																<span>👑</span>
+															{/if}
+															<div class="flex w-full justify-end text-right">
+																{#if match.goalsAway.find((goal) => goal.player === player)}
+																	{#if match.goalJersey === player}
+																		<span>🎽</span>
+																	{/if}
+																	{#each Array(match.goalsAway.find((goal) => goal.player === player)?.goalNumber || 0).fill(null) as _}
+																		⚽
+																	{/each}
+																{/if}
+															</div>
+														</li>
+													{/each}
+													<!-- Boşluk için eklenen boş li -->
+													<li class="min-h-[20px]"></li>
+												</ul>
+												{#if match.isOpen}
+													<div class="absolute right-0.5 bottom-0.5 text-[11px]">
+														🎽: Forma golü<br />
+														👑: Maçın Adamı
+													</div>
+												{/if}
+											</div>
+										</div>
+									</div>
+								</div>
 							</div>
 						{/if}
 
