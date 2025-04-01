@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Saha from "$lib/components/SahaSvg.svelte";
 	let matches = [
 		{
 			homeTeam: "Akkuyu-2023",
@@ -237,8 +238,9 @@
 
 						<!-- Ratingler Tabı -->
 						{#if match.activeTab === "ratings"}
-							<div>
-								<p>Ratingler burada görünecek.</p>
+							<div class="flex h-96 items-center justify-center">
+								<!-- Centered Saha component -->
+								<Saha />
 							</div>
 						{/if}
 					</div>
