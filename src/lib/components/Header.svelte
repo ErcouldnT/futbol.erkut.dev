@@ -7,9 +7,9 @@
 </script>
 
 <div class="navbar bg-base-100">
-	<div class="navbar-start">
+	<h1 class="navbar-start">
 		<a href="/" class="btn btn-ghost text-xl normal-case">Akkuyu Futbol</a>
-	</div>
+	</h1>
 	<div class="navbar-center hidden lg:flex">
 		<ul class="menu menu-horizontal px-1">
 			<!-- <li><a href="/matches">Maçlar</a></li> -->
