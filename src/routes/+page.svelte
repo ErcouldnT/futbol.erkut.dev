@@ -1,6 +1,49 @@
 <script lang="ts">
 	let matches = [
 		{
+			homeTeam: "Akkuyu-2023",
+			homeTeamPlayers: ["Eray", "Cansın", "Baki", "Eyüp", "İbrahim", "Hakan"],
+			awayTeam: "Akkuyu-2024",
+			awayTeamPlayers: ["Mete", "Yasin", "Faruk", "Abdullah", "Murat", "Semih"],
+			score: "10 - 10",
+			date: "30 Mart 2025 Pazar",
+			hour: "20:00-21:00",
+			ratingHome: [
+				{ player: "Eray", rating: 5 },
+				{ player: "Cansın", rating: 7 },
+				{ player: "Baki", rating: 8.5 },
+				{ player: "Eyüp", rating: 8 },
+				{ player: "İbrahim", rating: 5.5 },
+				{ player: "Hakan", rating: 7.5 }
+			],
+			goalsHome: [
+				{ player: "Baki", goalNumber: 3 },
+				{ player: "Eyüp", goalNumber: 2 },
+				{ player: "Hakan", goalNumber: 3 },
+				{ player: "İbrahim", goalNumber: 1 }
+			],
+			ratingAway: [
+				{ player: "Mete", rating: 7.5 },
+				{ player: "Yasin", rating: 7.5 },
+				{ player: "Faruk", rating: 8 },
+				{ player: "Abdullah", rating: 7 },
+				{ player: "Murat", rating: 6 },
+				{ player: "Semih", rating: 7 }
+			],
+			goalsAway: [
+				{ player: "Mete", goalNumber: 2 },
+				{ player: "Semih", goalNumber: 2 },
+				{ player: "Abdullah", goalNumber: 1 },
+				{ player: "Yasin", goalNumber: 2 },
+				{ player: "Faruk", goalNumber: 2 },
+				{ player: "Murat", goalNumber: 1 }
+			],
+			goalJersey: "-",
+			motm: "Baki",
+			isOpen: false
+		},
+
+		{
 			homeTeam: "Eray'ın Takımı",
 			homeTeamPlayers: ["Eray", "Baki", "Çağrı", "Eyüp", "İbrahim", "Batuhan"],
 			awayTeam: "Erkut'un Takımı",
@@ -8,11 +51,27 @@
 			score: "8 - 9",
 			date: "28 Mart 2025 Cuma",
 			hour: "21:00-22:00",
+			ratingHome: [
+				{ player: "Eray", rating: 6 },
+				{ player: "Baki", rating: 7 },
+				{ player: "Çağrı", rating: 7 },
+				{ player: "Eyüp", rating: 6.5 },
+				{ player: "İbrahim", rating: 7.5 },
+				{ player: "Batuhan", rating: 5.5 }
+			],
 			goalsHome: [
 				{ player: "Baki", goalNumber: 2 },
 				{ player: "Çağrı", goalNumber: 2 },
 				{ player: "Eyüp", goalNumber: 1 },
 				{ player: "İbrahim", goalNumber: 3 }
+			],
+			ratingAway: [
+				{ player: "Erkut", rating: 6.5 },
+				{ player: "Yasin", rating: 8.5 },
+				{ player: "Faruk", rating: 8 },
+				{ player: "Cansın", rating: 7 },
+				{ player: "Velid", rating: 9.5 },
+				{ player: "Semih", rating: 6 }
 			],
 			goalsAway: [
 				{ player: "Velid", goalNumber: 3 },
