@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { HOME_COLOR, AWAY_COLOR } from "$lib/constants";
+	import PlayerSvg from "./PlayerSvg.svelte";
+
 	// export let players = [];
 	export let playersHome = [];
 	export let playersAway = [];
@@ -33,19 +36,7 @@
 	{#each playersHome as player}
 		<g>
 			<!-- Circle representing the player -->
-			<circle
-				class="cursor-move"
-				cx={player.x}
-				cy={player.y}
-				r="10"
-				fill={player.color}
-				aria-label="Oyuncu"
-				role="button"
-				tabindex="0"
-				on:pointerdown={(event) => startDrag(event, player)}
-				on:touchstart={(event) => startDrag(event, player)}
-				style="filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));"
-			/>
+			<PlayerSvg {player} color={HOME_COLOR} {startDrag} />
 
 			<!-- Player's name above the circle -->
 			{#if showPlayerNames}
@@ -83,19 +74,7 @@
 	{#each playersAway as player}
 		<g>
 			<!-- Circle representing the player -->
-			<circle
-				class="cursor-move"
-				cx={player.x}
-				cy={player.y}
-				r="10"
-				fill={player.color}
-				aria-label="Oyuncu"
-				role="button"
-				tabindex="0"
-				on:pointerdown={(event) => startDrag(event, player)}
-				on:touchstart={(event) => startDrag(event, player)}
-				style="filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));"
-			/>
+			<PlayerSvg {player} color={AWAY_COLOR} {startDrag} />
 
 			<!-- Player's name above the circle -->
 			{#if showPlayerNames}
