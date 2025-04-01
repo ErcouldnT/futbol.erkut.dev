@@ -19,9 +19,6 @@
 
 	fetchPlayers();
 
-	let homeColor = "blue";
-	let awayColor = "red";
-
 	export let playersHome: Player[] = $playersHomeStore;
 	export let playersAway: Player[] = $playersAwayStore;
 
@@ -103,7 +100,6 @@
 
 	const addHomePlayer = (player: Player) => {
 		if (!playersHome.some((p) => p.id === player.id)) {
-			player.color = homeColor;
 			const { x, y } = randomXandY();
 			player.x = x;
 			player.y = y;
@@ -114,7 +110,6 @@
 
 	const addAwayPlayer = (player: Player) => {
 		if (!playersAway.some((p) => p.id === player.id)) {
-			player.color = awayColor;
 			const { x, y } = randomXandY();
 			player.x = x;
 			player.y = y;
