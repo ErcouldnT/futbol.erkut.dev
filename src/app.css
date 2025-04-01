@@ -3,5 +3,10 @@
 @plugin "daisyui" {
 	themes: dark --default;
 }
+
 /* @plugin '@tailwindcss/forms'; */
 @plugin '@tailwindcss/typography';
+
+html {
+	scrollbar-gutter: stable;
+}
