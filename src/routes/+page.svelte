@@ -100,15 +100,23 @@
 			return goalsB - goalsA;
 		});
 	});
+
+	// Function to toggle the accordion state
+	function toggleAccordion(index: number) {
+		matches = matches.map((match, i) => ({
+			...match,
+			isOpen: i === index ? !match.isOpen : false // Close others, toggle the clicked one
+		}));
+	}
 </script>
 
 <div class="flex flex-col items-center gap-6 px-4 sm:px-8 lg:px-31">
-	{#each matches as match}
+	{#each matches as match, index}
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
 			class="card bg-base-300 w-full max-w-4xl cursor-pointer shadow-xl"
-			on:click={() => (match.isOpen = !match.isOpen)}
+			on:click={() => toggleAccordion(index)}
 		>
 			<div class="card-body">
 				<h2 class="card-title text-primary">{match.date}</h2>
