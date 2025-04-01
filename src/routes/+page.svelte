@@ -18,7 +18,7 @@
 			],
 			goalsHome: [
 				{ player: "Baki", goalNumber: 3 },
-				{ player: "Eyüp", goalNumber: 2 },
+				{ player: "Eyüp", goalNumber: 3 },
 				{ player: "Hakan", goalNumber: 3 },
 				{ player: "İbrahim", goalNumber: 1 }
 			],
@@ -27,7 +27,7 @@
 				{ player: "Yasin", rating: 7.5 },
 				{ player: "Faruk", rating: 8 },
 				{ player: "Abdullah", rating: 7 },
-				{ player: "Murat", rating: 6 },
+				{ player: "Murat", rating: 6.5 },
 				{ player: "Semih", rating: 7 }
 			],
 			goalsAway: [
