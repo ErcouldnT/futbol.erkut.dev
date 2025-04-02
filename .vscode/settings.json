@@ -2,8 +2,11 @@
 	"github.copilot.chat.codeGeneration.instructions": [
 		{
 			"file": "./.vscode/daisyui.md"
+		},
+		{
+			"file": "./src/lib/supabase-types.ts"
 		}
 	],
-	"cSpell.words": ["Akkuyu", "daisyui", "supabase"],
+	"cSpell.words": ["akkuyu", "daisyui", "supabase"],
 	"editor.formatOnSave": true
 }
