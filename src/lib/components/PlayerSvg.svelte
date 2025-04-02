@@ -28,9 +28,23 @@
 	</foreignObject>
 
 	<!-- Player's name below the avatar -->
-	{#if showPlayerNames}
+	<!-- {#if showPlayerNames}
 		<text
-			class="pointer-events-none font-bold"
+			class="pointer-events-none font-extrabold"
+			x={player.x - 13}
+			y={player.y + 25}
+			fill={color}
+			font-size="10"
+			dominant-baseline="middle"
+		>
+			{player.name}
+		</text>
+	{/if} -->
+
+	<!-- Player's number above the avatar -->
+	{#if showPlayerNumbers}
+		<text
+			class="pointer-events-none font-extrabold font-stretch-semi-expanded"
 			x={player.x}
 			y={player.y + 25}
 			fill={color}
@@ -38,22 +52,8 @@
 			text-anchor="middle"
 			dominant-baseline="middle"
 		>
-			{player.name}
-		</text>
-	{/if}
-
-	<!-- Player's number above the avatar -->
-	{#if showPlayerNumbers}
-		<text
-			class="pointer-events-none font-bold font-stretch-semi-expanded"
-			x={player.x}
-			y={player.y - 25}
-			fill={color}
-			font-size="10"
-			text-anchor="middle"
-			dominant-baseline="middle"
-		>
-			{player.number}
+			<tspan class="font-bold opacity-85">{player.number}</tspan>
+			<tspan>{player.name}</tspan>
 		</text>
 	{/if}
 </g>
