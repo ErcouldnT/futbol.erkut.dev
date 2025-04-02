@@ -3,27 +3,158 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
 	public: {
 		Tables: {
+			"line-ups": {
+				Row: {
+					created_at: string;
+					goals: number;
+					id: number;
+					player_id: number | null;
+					pos_x: number;
+					pos_y: number;
+					rating: number;
+					team_id: number | null;
+				};
+				Insert: {
+					created_at?: string;
+					goals?: number;
+					id?: number;
+					player_id?: number | null;
+					pos_x?: number;
+					pos_y?: number;
+					rating?: number;
+					team_id?: number | null;
+				};
+				Update: {
+					created_at?: string;
+					goals?: number;
+					id?: number;
+					player_id?: number | null;
+					pos_x?: number;
+					pos_y?: number;
+					rating?: number;
+					team_id?: number | null;
+				};
+				Relationships: [
+					{
+						foreignKeyName: "line-ups_player_id_fkey";
+						columns: ["player_id"];
+						isOneToOne: false;
+						referencedRelation: "players";
+						referencedColumns: ["id"];
+					},
+					{
+						foreignKeyName: "line-ups_team_id_fkey";
+						columns: ["team_id"];
+						isOneToOne: false;
+						referencedRelation: "teams";
+						referencedColumns: ["id"];
+					}
+				];
+			};
+			matches: {
+				Row: {
+					away_score: number;
+					created_at: string;
+					home_score: number;
+					id: number;
+					jersey_goal: number | null;
+					match_time: string | null;
+					mvp: number | null;
+					team_1: number;
+					team_2: number;
+				};
+				Insert: {
+					away_score?: number;
+					created_at?: string;
+					home_score?: number;
+					id?: number;
+					jersey_goal?: number | null;
+					match_time?: string | null;
+					mvp?: number | null;
+					team_1: number;
+					team_2: number;
+				};
+				Update: {
+					away_score?: number;
+					created_at?: string;
+					home_score?: number;
+					id?: number;
+					jersey_goal?: number | null;
+					match_time?: string | null;
+					mvp?: number | null;
+					team_1?: number;
+					team_2?: number;
+				};
+				Relationships: [
+					{
+						foreignKeyName: "matches_jersey_goal_fkey";
+						columns: ["jersey_goal"];
+						isOneToOne: false;
+						referencedRelation: "players";
+						referencedColumns: ["id"];
+					},
+					{
+						foreignKeyName: "matches_mvp_fkey";
+						columns: ["mvp"];
+						isOneToOne: false;
+						referencedRelation: "players";
+						referencedColumns: ["id"];
+					},
+					{
+						foreignKeyName: "matches_team_1_fkey";
+						columns: ["team_1"];
+						isOneToOne: false;
+						referencedRelation: "teams";
+						referencedColumns: ["id"];
+					},
+					{
+						foreignKeyName: "matches_team_2_fkey";
+						columns: ["team_2"];
+						isOneToOne: false;
+						referencedRelation: "teams";
+						referencedColumns: ["id"];
+					}
+				];
+			};
 			players: {
 				Row: {
 					created_at: string;
 					id: number;
 					name: string;
 					number: number;
-					profile_pic: string | null;
+					profile_pic: string;
 				};
 				Insert: {
 					created_at?: string;
 					id?: number;
 					name: string;
 					number: number;
-					profile_pic?: string | null;
+					profile_pic?: string;
 				};
 				Update: {
 					created_at?: string;
 					id?: number;
 					name?: string;
 					number?: number;
-					profile_pic?: string | null;
+					profile_pic?: string;
+				};
+				Relationships: [];
+			};
+			teams: {
+				Row: {
+					created_at: string;
+					id: number;
+					name: string;
+				};
+				Insert: {
+					created_at?: string;
+					id?: number;
+					name: string;
+				};
+				Update: {
+					created_at?: string;
+					id?: number;
+					name?: string;
 				};
 				Relationships: [];
 			};

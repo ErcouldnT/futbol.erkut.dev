@@ -1,12 +1,23 @@
 <script lang="ts">
 	import { playersHomeStore, playersAwayStore } from "$lib/stores";
 	import { supabase } from "$lib/supabase";
-	import type { Player } from "$lib/types";
 	import SahaSvg from "./SahaSvg.svelte";
+	import type { Player, PlayerWithXAndY } from "$lib/types";
 
-	let players = [];
+	// Persisted stores
+	let playersHome: PlayerWithXAndY[] = $playersHomeStore;
+	let playersAway: PlayerWithXAndY[] = $playersAwayStore;
 
-	// Fetch players from Supabase
+	// Display settings
+	let showPlayerNames = true;
+	let showPlayerNumbers = true;
+	// let showOpponentTeam = true;
+	// let showHomeTeam = true;
+
+	// todo: queries.ts den çekilecek, loading dahil!
+	let isLoading = true;
+	let players: Player[] = [];
+
 	const fetchPlayers = async () => {
 		const { data, error } = await supabase.from("players").select("*");
 		if (error) {
@@ -14,24 +25,16 @@
 		} else {
 			players = data;
 		}
-		// loading = false;
+		isLoading = false;
 	};
 
 	fetchPlayers();
 
-	export let playersHome: Player[] = $playersHomeStore;
-	export let playersAway: Player[] = $playersAwayStore;
+	// todo: utils e gönder...
+	// Drag and drop functionality
+	let draggingPlayer: PlayerWithXAndY | null = null;
 
-	// let players = [...playersHome, ...playersAway];
-
-	let draggingPlayer: Player | null = null;
-
-	let showPlayerNames = true;
-	let showPlayerNumbers = true;
-	// let showOpponentTeam = true;
-	// let showHomeTeam = true;
-
-	function startDrag(event: MouseEvent | TouchEvent, player: Player) {
+	function startDrag(event: MouseEvent | TouchEvent, player: PlayerWithXAndY) {
 		event.preventDefault();
 		draggingPlayer = player;
 		window.addEventListener("pointermove", drag, { passive: false });
@@ -43,7 +46,8 @@
 	function drag(event: MouseEvent | TouchEvent) {
 		event.preventDefault();
 		if (draggingPlayer) {
-			const svg = document.querySelectorAll("svg")[1]; // birden fazla saha varsa id'den yakala
+			// todo: hiyerarşideki 2. svg yi seçmek yerine daha spesifik bir çözüm bul!
+			const svg = document.querySelectorAll("svg")[1];
 			if (!svg) {
 				console.error("SVG element not found");
 				return;
@@ -58,13 +62,13 @@
 			}
 			const screenCTM = svg.getScreenCTM();
 			if (!screenCTM) {
-				console.error("Cannot get screenCTM");
+				console.error("Cannot get screenCTM. Wrong SVG element?");
 				return;
 			}
 			const transformedPoint = point.matrixTransform(screenCTM.inverse());
 
 			// Saha sınırlarını kontrol et
-			const fieldBounds = { xMin: 10, xMax: 290, yMin: 10, yMax: 490 }; // Saha sınırları
+			const fieldBounds = { xMin: 10, xMax: 290, yMin: 10, yMax: 490 };
 			const newX = Math.max(fieldBounds.xMin, Math.min(fieldBounds.xMax, transformedPoint.x));
 			const newY = Math.max(fieldBounds.yMin, Math.min(fieldBounds.yMax, transformedPoint.y));
 
@@ -89,74 +93,59 @@
 		window.removeEventListener("touchend", endDrag);
 	}
 
-	// let selectedHomePlayer = '';
-
-	const randomXandY = () => {
+	// Randomly generate x and y coordinates for players
+	const randomXAndY = () => {
 		return {
 			x: Math.floor(Math.random() * 300),
 			y: Math.floor(Math.random() * 500)
 		};
 	};
 
-	const addHomePlayer = (player: Player) => {
-		if (!playersHome.some((p) => p.id === player.id)) {
-			const { x, y } = randomXandY();
-			player.x = x;
-			player.y = y;
-			playersHome = [...playersHome, player];
-			playersHomeStore.set(playersHome);
+	// Add and remove players from teams
+	const addPlayer = (player: Player, team: "HOME" | "AWAY") => {
+		const teamPlayers = team === "HOME" ? playersHome : playersAway;
+		const teamStore = team === "HOME" ? playersHomeStore : playersAwayStore;
+
+		if (!teamPlayers.some((p) => p.id === player.id)) {
+			const { x, y } = randomXAndY();
+			const playerWithXAndY: PlayerWithXAndY = { ...player, x, y };
+			if (team === "HOME") {
+				playersHome = [...playersHome, playerWithXAndY];
+				playersHomeStore.set(playersHome);
+			} else {
+				playersAway = [...playersAway, playerWithXAndY];
+				playersAwayStore.set(playersAway);
+			}
 		}
 	};
 
-	const addAwayPlayer = (player: Player) => {
-		if (!playersAway.some((p) => p.id === player.id)) {
-			const { x, y } = randomXandY();
-			player.x = x;
-			player.y = y;
-			playersAway = [...playersAway, player];
+	const removePlayer = (player: Player, team: "HOME" | "AWAY") => {
+		if (team === "HOME") {
+			playersHome = playersHome.filter((p) => p.id !== player.id);
+			playersHomeStore.set(playersHome);
+		} else {
+			playersAway = playersAway.filter((p) => p.id !== player.id);
 			playersAwayStore.set(playersAway);
 		}
 	};
 
-	const removeHomePlayer = (player: Player) => {
-		playersHome = playersHome.filter((p) => p.id !== player.id);
-		playersHomeStore.set(playersHome);
-	};
+	// const clearHomePlayers = () => {
+	// 	playersHome = [];
+	// };
 
-	const removeAwayPlayer = (player: Player) => {
-		playersAway = playersAway.filter((p) => p.id !== player.id);
-		playersAwayStore.set(playersAway);
-	};
+	// const clearAwayPlayers = () => {
+	// 	playersAway = [];
+	// };
 
-	const clearHomePlayers = () => {
-		playersHome = [];
-	};
-
-	const clearAwayPlayers = () => {
-		playersAway = [];
-	};
-
-	const resetPlayers = () => {
-		playersHome = [];
-		playersAway = [];
-	};
+	// const resetPlayers = () => {
+	// 	playersHome = [];
+	// 	playersAway = [];
+	// };
 </script>
 
 <div class="flex flex-col items-center justify-center gap-4 lg:flex-row">
 	<div class="flex flex-col gap-1 p-4">
 		<p class="text-primary text-center text-sm">Takım 1</p>
-		<!-- <input
-			list="ice-cream-flavors"
-			id="home-players-choice"
-			bind:value={selectedHomePlayer}
-			class="input input-bordered w-full max-w-xs"
-		/>
-
-		<datalist id="ice-cream-flavors">
-			{#each players as player}
-				<option value={player.name}></option>
-			{/each}
-		</datalist> -->
 
 		<ul class="menu menu-vertical bg-base-200 rounded-box w-56">
 			{#each players as player}
@@ -165,10 +154,10 @@
 				<li
 					on:click={() => {
 						if (playersHome.some((p) => p.id === player.id)) {
-							removeHomePlayer(player);
+							removePlayer(player, "HOME");
 						} else {
 							if (!playersAway.some((p) => p.id === player.id)) {
-								addHomePlayer(player);
+								addPlayer(player, "HOME");
 							}
 						}
 					}}
@@ -195,10 +184,10 @@
 				<li
 					on:click={() => {
 						if (playersAway.some((p) => p.id === player.id)) {
-							removeAwayPlayer(player);
+							removePlayer(player, "AWAY");
 						} else {
 							if (!playersHome.some((p) => p.id === player.id)) {
-								addAwayPlayer(player);
+								addPlayer(player, "AWAY");
 							}
 						}
 					}}
@@ -214,27 +203,3 @@
 		</ul>
 	</div>
 </div>
-
-<!-- <div class="mt-4 flex items-center justify-center gap-4">
-	<fieldset class="fieldset bg-base-300 border-base-300 rounded-box w-64 border p-4">
-		<legend class="fieldset-legend">Görünüm Ayarları</legend>
-		<label class="fieldset-label flex items-center justify-between">
-			<span class="text-sm font-medium">Oyuncu adları</span>
-			<input type="checkbox" class="toggle toggle-primary" checked={showPlayerNames} />
-		</label>
-		<label class="fieldset-label flex items-center justify-between">
-			<span class="text-sm font-medium">Oyuncu numarası</span>
-			<input type="checkbox" class="toggle toggle-primary" checked={showPlayerNumbers} />
-		</label>
-		<label class="fieldset-label flex items-center justify-between">
-			<span class="text-sm font-medium">Rakip takımı göster</span>
-			<input type="checkbox" class="toggle toggle-primary" checked={showOpponentTeam} />
-		</label>
-		<label class="fieldset-label flex items-center justify-between">
-			<span class="text-sm font-medium">Ev sahibi takımı göster</span>
-			<input type="checkbox" class="toggle toggle-primary" checked={showHomeTeam} />
-		</label>
-	</fieldset>
-</div> -->
-
-<!-- <div class="mt-4 flex items-center justify-center gap-4"></div> -->

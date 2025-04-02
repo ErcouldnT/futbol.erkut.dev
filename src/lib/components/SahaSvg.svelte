@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { HOME_COLOR, AWAY_COLOR } from "$lib/constants";
 	import PlayerSvg from "./PlayerSvg.svelte";
+	import type { PlayerWithXAndY } from "$lib/types";
 
-	// export let players = [];
-	export let playersHome = [];
-	export let playersAway = [];
+	export let playersHome: PlayerWithXAndY[] = [];
+	export let playersAway: PlayerWithXAndY[] = [];
 	export let showPlayerNames = true;
 	export let showPlayerNumbers = true;
 	export let startDrag: (event: PointerEvent | TouchEvent, player: any) => void = () => null;
