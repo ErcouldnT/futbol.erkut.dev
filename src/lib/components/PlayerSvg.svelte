@@ -5,7 +5,8 @@
 	export let color: string;
 	export let showPlayerNames = true;
 	export let showPlayerNumbers = true;
-	export let startDrag: (event: PointerEvent | TouchEvent, player: any) => void = () => null;
+	export let startDrag: (event: PointerEvent | TouchEvent, player: PlayerWithXAndY) => void = () =>
+		null;
 </script>
 
 <!-- Circle representing the player -->

@@ -15,7 +15,7 @@
 	// let showHomeTeam = true;
 
 	// todo: queries.ts den çekilecek, loading dahil!
-	let isLoading = true;
+	// let isLoading = true;
 	let players: Player[] = [];
 
 	const fetchPlayers = async () => {
@@ -25,7 +25,7 @@
 		} else {
 			players = data;
 		}
-		isLoading = false;
+		// isLoading = false;
 	};
 
 	fetchPlayers();
@@ -104,7 +104,7 @@
 	// Add and remove players from teams
 	const addPlayer = (player: Player, team: "HOME" | "AWAY") => {
 		const teamPlayers = team === "HOME" ? playersHome : playersAway;
-		const teamStore = team === "HOME" ? playersHomeStore : playersAwayStore;
+		// const teamStore = team === "HOME" ? playersHomeStore : playersAwayStore;
 
 		if (!teamPlayers.some((p) => p.id === player.id)) {
 			const { x, y } = randomXAndY();
@@ -145,10 +145,10 @@
 
 <div class="flex flex-col items-center justify-center gap-4 lg:flex-row">
 	<div class="flex flex-col gap-1 p-4">
-		<p class="text-primary text-center text-sm">Ev sahibi</p>
+		<h1 class="text-primary text-center text-sm">Ev sahibi</h1>
 
 		<ul class="menu menu-vertical bg-base-200 rounded-box w-56">
-			{#each players as player}
+			{#each players as player (player.id)}
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 				<li
@@ -183,9 +183,9 @@
 	<SahaSvg {playersHome} {playersAway} {showPlayerNames} {showPlayerNumbers} {startDrag} />
 
 	<div class="flex flex-col gap-1 p-4">
-		<p class="text-secondary text-center text-sm">Deplasman</p>
+		<h1 class="text-secondary text-center text-sm">Deplasman</h1>
 		<ul class="menu menu-vertical bg-base-200 rounded-box w-56">
-			{#each players as player}
+			{#each players as player (player.id)}
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 				<li
