@@ -34,77 +34,12 @@
 
 	<!-- Oyuncular Home -->
 	{#each playersHome as player}
-		<g>
-			<!-- Circle representing the player -->
-			<PlayerSvg {player} color={HOME_COLOR} {startDrag} />
-
-			<!-- Player's name above the circle -->
-			{#if showPlayerNames}
-				<text
-					class="pointer-events-none font-bold"
-					x={player.x}
-					y={player.y - 15}
-					fill="white"
-					font-size="6"
-					text-anchor="middle"
-					dominant-baseline="middle"
-				>
-					{player.name}
-				</text>
-			{/if}
-
-			<!-- Player's number inside the circle -->
-			{#if showPlayerNumbers}
-				<text
-					class="pointer-events-none font-stretch-semi-expanded"
-					x={player.x}
-					y={player.y + 1}
-					fill="white"
-					font-size="8"
-					text-anchor="middle"
-					dominant-baseline="middle"
-				>
-					{player.number}
-				</text>
-			{/if}
-		</g>
+		<PlayerSvg {player} color={HOME_COLOR} {startDrag} {showPlayerNames} {showPlayerNumbers} />
 	{/each}
 
 	<!-- Oyuncular Away -->
 	{#each playersAway as player}
-		<g>
-			<!-- Circle representing the player -->
-			<PlayerSvg {player} color={AWAY_COLOR} {startDrag} />
-
-			<!-- Player's name above the circle -->
-			{#if showPlayerNames}
-				<text
-					class="pointer-events-none font-bold"
-					x={player.x}
-					y={player.y - 15}
-					fill="white"
-					font-size="6"
-					text-anchor="middle"
-					dominant-baseline="middle"
-				>
-					{player.name}
-				</text>
-			{/if}
-
-			<!-- Player's number inside the circle -->
-			{#if showPlayerNumbers}
-				<text
-					class="pointer-events-none font-stretch-semi-expanded"
-					x={player.x}
-					y={player.y + 1}
-					fill="white"
-					font-size="8"
-					text-anchor="middle"
-					dominant-baseline="middle"
-				>
-					{player.number}
-				</text>
-			{/if}
-		</g>
+		<!-- Circle representing the player -->
+		<PlayerSvg {player} color={AWAY_COLOR} {startDrag} {showPlayerNames} {showPlayerNumbers} />
 	{/each}
 </svg>
