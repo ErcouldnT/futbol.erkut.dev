@@ -60,8 +60,8 @@ export type Database = {
 					jersey_goal: number | null;
 					match_time: string | null;
 					mvp: number | null;
-					team_1: number | null;
-					team_2: number | null;
+					team_1: number;
+					team_2: number;
 				};
 				Insert: {
 					away_score?: number;
@@ -71,8 +71,8 @@ export type Database = {
 					jersey_goal?: number | null;
 					match_time?: string | null;
 					mvp?: number | null;
-					team_1?: number | null;
-					team_2?: number | null;
+					team_1: number;
+					team_2: number;
 				};
 				Update: {
 					away_score?: number;
@@ -82,8 +82,8 @@ export type Database = {
 					jersey_goal?: number | null;
 					match_time?: string | null;
 					mvp?: number | null;
-					team_1?: number | null;
-					team_2?: number | null;
+					team_1?: number;
+					team_2?: number;
 				};
 				Relationships: [
 					{
