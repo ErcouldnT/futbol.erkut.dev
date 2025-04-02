@@ -1,6 +1,7 @@
 <script lang="ts">
-	import Header from "$lib/components/Header.svelte";
 	import "../app.css";
+	import Header from "$lib/components/Header.svelte";
+	import Footer from "$lib/components/Footer.svelte";
 
 	let { children } = $props();
 </script>
@@ -34,4 +35,5 @@
 <div class="mx-auto max-w-7xl">
 	<Header />
 	{@render children()}
+	<Footer />
 </div>

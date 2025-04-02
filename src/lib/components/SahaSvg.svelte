@@ -1,7 +1,10 @@
 <script lang="ts">
-	// export let players = [];
-	export let playersHome = [];
-	export let playersAway = [];
+	import { HOME_COLOR, AWAY_COLOR } from "$lib/constants";
+	import PlayerSvg from "./PlayerSvg.svelte";
+	import type { PlayerWithXAndY } from "$lib/types";
+
+	export let playersHome: PlayerWithXAndY[] = [];
+	export let playersAway: PlayerWithXAndY[] = [];
 	export let showPlayerNames = true;
 	export let showPlayerNumbers = true;
 	export let startDrag: (event: PointerEvent | TouchEvent, player: any) => void = () => null;
@@ -31,101 +34,12 @@
 
 	<!-- Oyuncular Home -->
 	{#each playersHome as player}
-		<g>
-			<!-- Circle representing the player -->
-			<circle
-				class="cursor-move"
-				cx={player.x}
-				cy={player.y}
-				r="10"
-				fill={player.color}
-				aria-label="Oyuncu"
-				role="button"
-				tabindex="0"
-				on:pointerdown={(event) => startDrag(event, player)}
-				on:touchstart={(event) => startDrag(event, player)}
-				style="filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));"
-			/>
-
-			<!-- Player's name above the circle -->
-			{#if showPlayerNames}
-				<text
-					class="pointer-events-none font-bold"
-					x={player.x}
-					y={player.y - 15}
-					fill="white"
-					font-size="6"
-					text-anchor="middle"
-					dominant-baseline="middle"
-				>
-					{player.name}
-				</text>
-			{/if}
-
-			<!-- Player's number inside the circle -->
-			{#if showPlayerNumbers}
-				<text
-					class="pointer-events-none font-stretch-semi-expanded"
-					x={player.x}
-					y={player.y + 1}
-					fill="white"
-					font-size="8"
-					text-anchor="middle"
-					dominant-baseline="middle"
-				>
-					{player.number}
-				</text>
-			{/if}
-		</g>
+		<PlayerSvg {player} color={HOME_COLOR} {startDrag} {showPlayerNames} {showPlayerNumbers} />
 	{/each}
 
 	<!-- Oyuncular Away -->
 	{#each playersAway as player}
-		<g>
-			<!-- Circle representing the player -->
-			<circle
-				class="cursor-move"
-				cx={player.x}
-				cy={player.y}
-				r="10"
-				fill={player.color}
-				aria-label="Oyuncu"
-				role="button"
-				tabindex="0"
-				on:pointerdown={(event) => startDrag(event, player)}
-				on:touchstart={(event) => startDrag(event, player)}
-				style="filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));"
-			/>
-
-			<!-- Player's name above the circle -->
-			{#if showPlayerNames}
-				<text
-					class="pointer-events-none font-bold"
-					x={player.x}
-					y={player.y - 15}
-					fill="white"
-					font-size="6"
-					text-anchor="middle"
-					dominant-baseline="middle"
-				>
-					{player.name}
-				</text>
-			{/if}
-
-			<!-- Player's number inside the circle -->
-			{#if showPlayerNumbers}
-				<text
-					class="pointer-events-none font-stretch-semi-expanded"
-					x={player.x}
-					y={player.y + 1}
-					fill="white"
-					font-size="8"
-					text-anchor="middle"
-					dominant-baseline="middle"
-				>
-					{player.number}
-				</text>
-			{/if}
-		</g>
+		<!-- Circle representing the player -->
+		<PlayerSvg {player} color={AWAY_COLOR} {startDrag} {showPlayerNames} {showPlayerNumbers} />
 	{/each}
 </svg>
