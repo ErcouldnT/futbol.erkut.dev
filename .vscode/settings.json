@@ -7,6 +7,6 @@
 			"file": "./src/lib/supabase-types.ts"
 		}
 	],
-	"cSpell.words": ["akkuyu", "daisyui", "supabase"],
+	"cSpell.words": ["akkuyu", "daisyui", "fkey", "supabase"],
 	"editor.formatOnSave": true
 }

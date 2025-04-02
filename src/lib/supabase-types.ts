@@ -3,36 +3,36 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
 	public: {
 		Tables: {
-			"line-ups": {
+			lineups: {
 				Row: {
 					created_at: string;
 					goals: number;
 					id: number;
-					player_id: number | null;
+					player_id: number;
 					pos_x: number;
 					pos_y: number;
 					rating: number;
-					team_id: number | null;
+					team_id: number;
 				};
 				Insert: {
 					created_at?: string;
 					goals?: number;
 					id?: number;
-					player_id?: number | null;
+					player_id: number;
 					pos_x?: number;
 					pos_y?: number;
 					rating?: number;
-					team_id?: number | null;
+					team_id: number;
 				};
 				Update: {
 					created_at?: string;
 					goals?: number;
 					id?: number;
-					player_id?: number | null;
+					player_id?: number;
 					pos_x?: number;
 					pos_y?: number;
 					rating?: number;
-					team_id?: number | null;
+					team_id?: number;
 				};
 				Relationships: [
 					{

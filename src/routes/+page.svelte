@@ -1,5 +1,27 @@
 <script lang="ts">
+	import { supabase } from "$lib/supabase";
 	import Saha from "$lib/components/SahaSvg.svelte";
+
+	// let isLoading = true;
+	let allMatches = [];
+
+	const getMatches = async () => {
+		const { data, error } = await supabase.from("matches").select(`*,
+				mvp: players!matches_mvp_fkey(*),
+				jersey_goal: players!matches_jersey_goal_fkey(*),
+				team_1: teams!matches_team_1_fkey(*),
+				team_2: teams!matches_team_2_fkey(*)
+			`);
+		if (error) {
+			console.error("Veri çekme hatası:", error);
+		}
+
+		allMatches = data || [];
+		// isLoading = false;
+		console.log(allMatches);
+	};
+
+	getMatches();
 
 	let matches = [
 		{
@@ -242,7 +264,7 @@
 												{#if match.isOpen}
 													<div class="absolute right-0.5 bottom-0.5 text-[11px]">
 														🎽: Forma golü<br />
-														👑: Maçın Adamı
+														👑: Maçın adamı
 													</div>
 												{/if}
 											</div>
