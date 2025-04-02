@@ -2,6 +2,7 @@
 	import { playersHomeStore, playersAwayStore } from "$lib/stores";
 	import { supabase } from "$lib/supabase";
 	import SahaSvg from "./SahaSvg.svelte";
+	import LoadingSpinner from "./LoadingSpinner.svelte";
 	import type { Player, PlayerWithXAndY } from "$lib/types";
 
 	// Persisted stores
@@ -15,7 +16,7 @@
 	// let showHomeTeam = true;
 
 	// todo: queries.ts den çekilecek, loading dahil!
-	// let isLoading = true;
+	let isLoading = true;
 	let players: Player[] = [];
 
 	const fetchPlayers = async () => {
@@ -25,7 +26,7 @@
 		} else {
 			players = data;
 		}
-		// isLoading = false;
+		isLoading = false;
 	};
 
 	fetchPlayers();
@@ -147,73 +148,82 @@
 	<div class="flex flex-col gap-1 p-4">
 		<h1 class="text-primary text-center text-sm">Ev sahibi</h1>
 
-		<ul class="menu menu-vertical bg-base-200 rounded-box w-56">
-			{#each players as player (player.id)}
-				<!-- svelte-ignore a11y_click_events_have_key_events -->
-				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-				<li
-					on:click={() => {
-						if (playersHome.some((p) => p.id === player.id)) {
-							removePlayer(player, "HOME");
-						} else {
-							if (!playersAway.some((p) => p.id === player.id)) {
-								addPlayer(player, "HOME");
+		{#if isLoading}
+			<LoadingSpinner />
+		{:else}
+			<ul class="menu menu-vertical bg-base-200 rounded-box w-56">
+				{#each players as player (player.id)}
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+					<li
+						on:click={() => {
+							if (playersHome.some((p) => p.id === player.id)) {
+								removePlayer(player, "HOME");
+							} else {
+								if (!playersAway.some((p) => p.id === player.id)) {
+									addPlayer(player, "HOME");
+								}
 							}
-						}
-					}}
-					class="opacity-30"
-					class:opacity-100={playersHome.some((p) => p.id === player.id)}
-				>
-					<div class="flex items-center justify-between gap-2">
-						<div class="avatar">
-							<div class="h-8 w-8 rounded-full">
-								<img src={player.profile_pic} alt={player.name} />
+						}}
+						class="opacity-30"
+						class:opacity-100={playersHome.some((p) => p.id === player.id)}
+					>
+						<div class="flex items-center justify-between gap-2">
+							<div class="avatar">
+								<div class="h-8 w-8 rounded-full">
+									<img src={player.profile_pic} alt={player.name} />
+								</div>
 							</div>
+							<div class="flex-1">
+								<span class="font-bold">{player.name}</span>
+							</div>
+							<span class="text-warning badge text-xs">{player.number}</span>
 						</div>
-						<div class="flex-1">
-							<span class="font-bold">{player.name}</span>
-						</div>
-						<span class="text-warning badge text-xs">{player.number}</span>
-					</div>
-				</li>
-			{/each}
-		</ul>
+					</li>
+				{/each}
+			</ul>
+		{/if}
 	</div>
 
 	<SahaSvg {playersHome} {playersAway} {showPlayerNames} {showPlayerNumbers} {startDrag} />
 
 	<div class="flex flex-col gap-1 p-4">
 		<h1 class="text-secondary text-center text-sm">Deplasman</h1>
-		<ul class="menu menu-vertical bg-base-200 rounded-box w-56">
-			{#each players as player (player.id)}
-				<!-- svelte-ignore a11y_click_events_have_key_events -->
-				<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-				<li
-					on:click={() => {
-						if (playersAway.some((p) => p.id === player.id)) {
-							removePlayer(player, "AWAY");
-						} else {
-							if (!playersHome.some((p) => p.id === player.id)) {
-								addPlayer(player, "AWAY");
+
+		{#if isLoading}
+			<LoadingSpinner />
+		{:else}
+			<ul class="menu menu-vertical bg-base-200 rounded-box w-56">
+				{#each players as player (player.id)}
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+					<li
+						on:click={() => {
+							if (playersAway.some((p) => p.id === player.id)) {
+								removePlayer(player, "AWAY");
+							} else {
+								if (!playersHome.some((p) => p.id === player.id)) {
+									addPlayer(player, "AWAY");
+								}
 							}
-						}
-					}}
-					class="opacity-30"
-					class:opacity-100={playersAway.some((p) => p.id === player.id)}
-				>
-					<div class="flex items-center gap-2">
-						<div class="avatar">
-							<div class="h-8 w-8 rounded-full">
-								<img src={player.profile_pic} alt={player.name} />
+						}}
+						class="opacity-30"
+						class:opacity-100={playersAway.some((p) => p.id === player.id)}
+					>
+						<div class="flex items-center gap-2">
+							<div class="avatar">
+								<div class="h-8 w-8 rounded-full">
+									<img src={player.profile_pic} alt={player.name} />
+								</div>
 							</div>
+							<div class="flex-1">
+								<span class="font-bold">{player.name}</span>
+							</div>
+							<span class="text-warning badge text-xs">{player.number}</span>
 						</div>
-						<div class="flex-1">
-							<span class="font-bold">{player.name}</span>
-						</div>
-						<span class="text-warning badge text-xs">{player.number}</span>
-					</div>
-				</li>
-			{/each}
-		</ul>
+					</li>
+				{/each}
+			</ul>
+		{/if}
 	</div>
 </div>
