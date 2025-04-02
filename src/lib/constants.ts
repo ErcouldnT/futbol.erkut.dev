@@ -1,5 +1,5 @@
-export const HOME_COLOR = "blue";
-export const AWAY_COLOR = "red";
+export const HOME_COLOR = "var(--color-primary)";
+export const AWAY_COLOR = "var(--color-secondary)";
 
 // todo:
 export const SAHA_WIDTH = 300;

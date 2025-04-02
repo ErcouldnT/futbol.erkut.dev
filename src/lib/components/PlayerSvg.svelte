@@ -2,7 +2,7 @@
 	import type { PlayerWithXAndY } from "$lib/types";
 
 	export let player: PlayerWithXAndY;
-	export let color: string; // This will be used for text color
+	export let color: string;
 	export let showPlayerNames = true;
 	export let showPlayerNumbers = true;
 	export let startDrag: (event: PointerEvent | TouchEvent, player: any) => void = () => null;
