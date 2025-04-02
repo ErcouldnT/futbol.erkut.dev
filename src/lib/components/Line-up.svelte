@@ -145,7 +145,7 @@
 
 <div class="flex flex-col items-center justify-center gap-4 lg:flex-row">
 	<div class="flex flex-col gap-1 p-4">
-		<p class="text-primary text-center text-sm">Takım 1</p>
+		<p class="text-primary text-center text-sm">Ev sahibi</p>
 
 		<ul class="menu menu-vertical bg-base-200 rounded-box w-56">
 			{#each players as player}
@@ -164,8 +164,15 @@
 					class="opacity-30"
 					class:opacity-100={playersHome.some((p) => p.id === player.id)}
 				>
-					<div>
-						<span class="font-bold">{player.name}</span>
+					<div class="flex items-center justify-between gap-2">
+						<div class="avatar">
+							<div class="h-8 w-8 rounded-full">
+								<img src={player.profile_pic} alt={player.name} />
+							</div>
+						</div>
+						<div class="flex-1">
+							<span class="font-bold">{player.name}</span>
+						</div>
 						<span class="text-warning badge text-xs">{player.number}</span>
 					</div>
 				</li>
@@ -176,7 +183,7 @@
 	<SahaSvg {playersHome} {playersAway} {showPlayerNames} {showPlayerNumbers} {startDrag} />
 
 	<div class="flex flex-col gap-1 p-4">
-		<p class="text-secondary text-center text-sm">Takım 2</p>
+		<p class="text-secondary text-center text-sm">Deplasman</p>
 		<ul class="menu menu-vertical bg-base-200 rounded-box w-56">
 			{#each players as player}
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -194,8 +201,15 @@
 					class="opacity-30"
 					class:opacity-100={playersAway.some((p) => p.id === player.id)}
 				>
-					<div>
-						<span class="font-bold">{player.name}</span>
+					<div class="flex items-center gap-2">
+						<div class="avatar">
+							<div class="h-8 w-8 rounded-full">
+								<img src={player.profile_pic} alt={player.name} />
+							</div>
+						</div>
+						<div class="flex-1">
+							<span class="font-bold">{player.name}</span>
+						</div>
 						<span class="text-warning badge text-xs">{player.number}</span>
 					</div>
 				</li>
