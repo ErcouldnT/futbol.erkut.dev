@@ -1,7 +1,9 @@
 <script lang="ts">
 	import Saha from "$lib/components/SahaSvg.svelte";
+
 	let matches = [
 		{
+			id: 1,
 			homeTeam: "Akkuyu-2023",
 			homeTeamPlayers: ["Eray", "Cansın", "Baki", "Eyüp", "İbrahim", "Hakan"],
 			awayTeam: "Akkuyu-2024",
@@ -46,6 +48,7 @@
 		},
 
 		{
+			id: 2,
 			homeTeam: "Eray'ın Takımı",
 			homeTeamPlayers: ["Eray", "Baki", "Çağrı", "Eyüp", "İbrahim", "Batuhan"],
 			awayTeam: "Erkut'un Takımı",
@@ -115,7 +118,7 @@
 </script>
 
 <div class="flex flex-col items-center gap-6 px-4 sm:px-8 lg:px-31">
-	{#each matches as match, index}
+	{#each matches as match, index (match.id)}
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
@@ -185,7 +188,7 @@
 										<div class="collapse w-full" class:collapse-open={match.isOpen}>
 											<div class="collapse-content p-2">
 												<ul class="list-none text-center text-sm leading-tight">
-													{#each match.homeTeamPlayers as player}
+													{#each match.homeTeamPlayers as player, index (player + index)}
 														<li class="flex items-center gap-2">
 															<span class="text-primary">{player}</span>
 															{#if match.motm === player}
@@ -196,7 +199,7 @@
 																	{#if match.goalJersey === player}
 																		<span>🎽</span>
 																	{/if}
-																	{#each Array(match.goalsHome.find((goal) => goal.player === player)?.goalNumber ?? 0).fill(null) as _}
+																	{#each Array(match.goalsHome.find((goal) => goal.player === player)?.goalNumber ?? 0).fill(null)}
 																		⚽
 																	{/each}
 																</div>
@@ -215,7 +218,7 @@
 										<div class="collapse w-full" class:collapse-open={match.isOpen}>
 											<div class="collapse-content relative p-2">
 												<ul class="list-none text-center text-sm leading-tight">
-													{#each match.awayTeamPlayers as player}
+													{#each match.awayTeamPlayers as player, index (player + index)}
 														<li class="flex items-center gap-2">
 															<span class="text-secondary">{player}</span>
 															{#if match.motm === player}
@@ -226,7 +229,7 @@
 																	{#if match.goalJersey === player}
 																		<span>🎽</span>
 																	{/if}
-																	{#each Array(match.goalsAway.find((goal) => goal.player === player)?.goalNumber || 0).fill(null) as _}
+																	{#each Array(match.goalsAway.find((goal) => goal.player === player)?.goalNumber || 0).fill(null)}
 																		⚽
 																	{/each}
 																{/if}

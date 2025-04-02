@@ -7,7 +7,8 @@
 	export let playersAway: PlayerWithXAndY[] = [];
 	export let showPlayerNames = true;
 	export let showPlayerNumbers = true;
-	export let startDrag: (event: PointerEvent | TouchEvent, player: any) => void = () => null;
+	export let startDrag: (event: PointerEvent | TouchEvent, player: PlayerWithXAndY) => void = () =>
+		null;
 </script>
 
 <svg
@@ -33,12 +34,12 @@
 	<rect x="70" y="420" width="160" height="70" fill="none" stroke="white" stroke-width="2" />
 
 	<!-- Oyuncular Home -->
-	{#each playersHome as player}
+	{#each playersHome as player (player.id)}
 		<PlayerSvg {player} color={HOME_COLOR} {startDrag} {showPlayerNames} {showPlayerNumbers} />
 	{/each}
 
 	<!-- Oyuncular Away -->
-	{#each playersAway as player}
+	{#each playersAway as player (player.id)}
 		<!-- Circle representing the player -->
 		<PlayerSvg {player} color={AWAY_COLOR} {startDrag} {showPlayerNames} {showPlayerNumbers} />
 	{/each}

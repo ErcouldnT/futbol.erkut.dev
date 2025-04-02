@@ -1,5 +1,5 @@
 <script>
-	import { page } from "$app/stores";
+	// import { page } from "$app/stores";
 </script>
 
 <div class="hero bg-base-100 min-h-screen">
