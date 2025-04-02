@@ -6,8 +6,10 @@
 	import type { Player, PlayerWithXAndY } from "$lib/types";
 
 	// Persisted stores
-	let playersHome: PlayerWithXAndY[] = $playersHomeStore;
-	let playersAway: PlayerWithXAndY[] = $playersAwayStore;
+	// let playersHome: PlayerWithXAndY[] = $playersHomeStore;
+	let playersHome: PlayerWithXAndY[] = [];
+	// let playersAway: PlayerWithXAndY[] = $playersAwayStore;
+	let playersAway: PlayerWithXAndY[] = [];
 
 	// Display settings
 	let showPlayerNames = true;
