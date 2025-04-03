@@ -15,27 +15,27 @@
 <main class="grid grid-cols-1 gap-5 p-2 sm:grid-cols-2 sm:gap-5">
 	<div class="grid grid-cols-2">
 		{#each lineupHomeTeam as playerData (playerData.id)}
-			<p class="text-primary">
+			<div class="text-primary">
 				{playerData.player.name}
 				<span>{playerData.player.name === match.mvp?.name ? "👑" : ""}</span>
-			</p>
-			<p>
-				<span>{playerData.player.name === match.jersey_goal?.name ? "👕" : ""} </span>
-				{"⚽".repeat(playerData.goals)}
-			</p>
+			</div>
+			<div class="flex flex-row">
+				<p>{playerData.player.name === match.jersey_goal?.name ? "👕" : ""}</p>
+				<p>{"⚽".repeat(playerData.goals)}</p>
+			</div>
 		{/each}
 	</div>
 	<!-- <div class="divider divider-horizontal"></div> -->
 	<div class="grid grid-cols-2">
 		{#each lineupAwayTeam as playerData (playerData.id)}
-			<p class="text-secondary">
+			<div class="text-secondary">
 				{playerData.player.name}
-				<span>{playerData.player.name === match.mvp?.name ? "👑" : ""}</span>
-			</p>
-			<p>
-				<span>{playerData.player.name === match.jersey_goal?.name ? "👕" : ""}</span>
-				{"⚽".repeat(playerData.goals)}
-			</p>
+				<p>{playerData.player.name === match.mvp?.name ? "👑" : ""}</p>
+			</div>
+			<div class="flex flex-row">
+				<p>{playerData.player.name === match.jersey_goal?.name ? "👕" : ""}</p>
+				<p>{"⚽".repeat(playerData.goals)}</p>
+			</div>
 		{/each}
 	</div>
 </main>
