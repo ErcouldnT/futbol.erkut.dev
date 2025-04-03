@@ -22,4 +22,6 @@ export type Match = Database["public"]["Tables"]["matches"]["Row"];
 export type MatchWithTeams = Match & {
 	team_1: TeamWithPlayers;
 	team_2: TeamWithPlayers;
+	jersey_goal: Player | null;
+	mvp: Player | null;
 };

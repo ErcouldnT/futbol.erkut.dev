@@ -5,8 +5,11 @@
 
 	export let playersHome: PlayerWithXAndY[] = [];
 	export let playersAway: PlayerWithXAndY[] = [];
+
+	export let showRatings = false;
 	export let showPlayerNames = true;
 	export let showPlayerNumbers = true;
+
 	export let startDrag: (event: PointerEvent | TouchEvent, player: PlayerWithXAndY) => void = () =>
 		null;
 </script>
@@ -88,6 +91,13 @@
 	<!-- Oyuncular Away -->
 	{#each playersAway as playerData (playerData.player.id)}
 		<!-- Circle representing the player -->
-		<PlayerSvg {playerData} color={AWAY_COLOR} {startDrag} {showPlayerNames} {showPlayerNumbers} />
+		<PlayerSvg
+			{playerData}
+			color={AWAY_COLOR}
+			{startDrag}
+			{showPlayerNames}
+			{showPlayerNumbers}
+			{showRatings}
+		/>
 	{/each}
 </svg>

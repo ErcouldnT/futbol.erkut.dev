@@ -3,8 +3,11 @@
 
 	export let playerData: PlayerWithXAndY;
 	export let color: string;
+
+	export let showRatings = false;
 	export let showPlayerNames = true;
 	export let showPlayerNumbers = true;
+
 	export let startDrag: (event: PointerEvent | TouchEvent, player: PlayerWithXAndY) => void = () =>
 		null;
 </script>
@@ -27,19 +30,20 @@
 		</div>
 	</foreignObject>
 
-	<!-- Player's name below the avatar -->
-	<!-- {#if showPlayerNames}
+	<!-- Player's rating above the avatar -->
+	{#if showRatings}
 		<text
 			class="pointer-events-none font-extrabold"
-			x={player.x - 13}
-			y={player.y + 25}
+			x={playerData.pos_x}
+			y={playerData.pos_y - 25}
 			fill={color}
 			font-size="10"
+			text-anchor="middle"
 			dominant-baseline="middle"
 		>
-			{player.name}
+			{playerData.rating} ⭐
 		</text>
-	{/if} -->
+	{/if}
 
 	<!-- Player's number above the avatar -->
 	{#if showPlayerNumbers}

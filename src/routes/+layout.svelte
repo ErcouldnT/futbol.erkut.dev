@@ -32,7 +32,7 @@
 	<meta name="twitter:image" content="/favicon.png" />
 </svelte:head>
 
-<div class="mx-auto max-w-7xl">
+<div class="mx-auto mb-5 max-w-7xl">
 	<Header />
 	{@render children()}
 	<Footer />
