@@ -23,12 +23,13 @@
 
 	{#if activeTab === "PLAYERS"}
 		<TeamInfo {match} />
-
-		<div
-			class="absolute right-0 bottom-0 m-5 grid max-w-3xs grid-cols-1 items-center justify-items-end text-xs font-thin opacity-50"
-		>
-			<p>Forma golü: 👕</p>
-			<p>Maçın adamı: 👑</p>
+		<div class="flex justify-end">
+			<div
+				class="grid max-w-3xs grid-cols-1 items-center justify-items-end text-xs font-thin opacity-50"
+			>
+				<p>Forma golü: 👕</p>
+				<p>Maçın adamı: 👑</p>
+			</div>
 		</div>
 	{/if}
 

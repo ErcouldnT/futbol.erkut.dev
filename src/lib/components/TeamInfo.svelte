@@ -12,21 +12,29 @@
 	}
 </script>
 
-<main class="grid grid-cols-2 p-2">
+<main class="grid grid-cols-1 gap-5 p-2 sm:grid-cols-2 sm:gap-5">
 	<div class="grid grid-cols-2">
 		{#each lineupHomeTeam as playerData (playerData.id)}
 			<p class="text-primary">
 				{playerData.player.name}
 				<span>{playerData.player.name === match.mvp?.name ? "👑" : ""}</span>
-				<span>{playerData.player.name === match.jersey_goal?.name ? "👕" : ""}</span>
 			</p>
-			<p>{"⚽".repeat(playerData.goals)}</p>
+			<p>
+				<span>{playerData.player.name === match.jersey_goal?.name ? "👕" : ""} </span>
+				{"⚽".repeat(playerData.goals)}
+			</p>
 		{/each}
 	</div>
 	<div class="grid grid-cols-2">
 		{#each lineupAwayTeam as playerData (playerData.id)}
-			<p class="text-secondary">{playerData.player.name}</p>
-			<p>{"⚽".repeat(playerData.goals)}</p>
+			<p class="text-secondary">
+				{playerData.player.name}
+				<span>{playerData.player.name === match.mvp?.name ? "👑" : ""}</span>
+			</p>
+			<p>
+				<span>{playerData.player.name === match.jersey_goal?.name ? "👕" : ""}</span>
+				{"⚽".repeat(playerData.goals)}
+			</p>
 		{/each}
 	</div>
 </main>
