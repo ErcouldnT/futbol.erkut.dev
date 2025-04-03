@@ -4,8 +4,7 @@
 	themes: dark --default;
 }
 
-/* @plugin '@tailwindcss/forms'; */
-@plugin '@tailwindcss/typography';
+@plugin "@tailwindcss/typography";
 
 html {
 	scrollbar-gutter: stable;
