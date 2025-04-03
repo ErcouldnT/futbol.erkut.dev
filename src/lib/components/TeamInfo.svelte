@@ -14,7 +14,7 @@
 
 <main class="grid grid-cols-2 p-2">
 	<div class="grid grid-cols-2">
-		{#each lineupHomeTeam as playerData}
+		{#each lineupHomeTeam as playerData (playerData.id)}
 			<p class="text-primary">
 				{playerData.player.name}
 				<span>{playerData.player.name === match.mvp?.name ? "👑" : ""}</span>
@@ -24,7 +24,7 @@
 		{/each}
 	</div>
 	<div class="grid grid-cols-2">
-		{#each lineupAwayTeam as playerData}
+		{#each lineupAwayTeam as playerData (playerData.id)}
 			<p class="text-secondary">{playerData.player.name}</p>
 			<p>{"⚽".repeat(playerData.goals)}</p>
 		{/each}
