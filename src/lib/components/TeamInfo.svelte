@@ -25,6 +25,7 @@
 			</p>
 		{/each}
 	</div>
+	<!-- <div class="divider divider-horizontal"></div> -->
 	<div class="grid grid-cols-2">
 		{#each lineupAwayTeam as playerData (playerData.id)}
 			<p class="text-secondary">

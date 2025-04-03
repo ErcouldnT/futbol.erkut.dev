@@ -163,14 +163,14 @@
 	// };
 </script>
 
-<div class="flex flex-col items-center justify-center gap-4 lg:flex-row">
-	<div class="flex flex-col gap-1 p-4">
-		<h1 class="text-primary text-center text-sm">Ev sahibi</h1>
+<main class="mt-5 flex flex-col items-center justify-center gap-16 lg:flex-row">
+	<div class="flex flex-col items-center gap-2">
+		<h1 class="text-primary mb-2 text-center text-sm font-bold">Ev sahibi</h1>
 
 		{#if isLoading}
 			<LoadingSpinner />
 		{:else}
-			<ul class="menu menu-vertical bg-base-200 rounded-box w-56">
+			<ul class="menu menu-vertical bg-base-200 rounded-box w-56 gap-1">
 				{#each players as player (player.id)}
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
@@ -184,17 +184,18 @@
 								}
 							}
 						}}
-						class="opacity-30"
+						class="card opacity-30"
 						class:opacity-100={playersHome.some((p) => p.id === player.id)}
+						class:bg-primary={playersHome.some((p) => p.id === player.id)}
 					>
 						<div class="flex items-center justify-between gap-2">
 							<div class="avatar">
-								<div class="h-8 w-8 rounded-full">
+								<div class="h-4 w-4 rounded-full">
 									<img src={player.profile_pic} alt={player.name} />
 								</div>
 							</div>
 							<div class="flex-1">
-								<span class="font-bold">{player.name}</span>
+								<span class="text-xs font-bold">{player.name}</span>
 							</div>
 							<span class="text-warning badge text-xs">{player.number}</span>
 						</div>
@@ -206,13 +207,13 @@
 
 	<SahaSvg {playersHome} {playersAway} {showPlayerNames} {showPlayerNumbers} {startDrag} />
 
-	<div class="flex flex-col gap-1 p-4">
-		<h1 class="text-secondary text-center text-sm">Deplasman</h1>
+	<div class="flex flex-col items-center gap-2">
+		<h1 class="text-secondary mb-2 text-center text-sm font-bold">Deplasman</h1>
 
 		{#if isLoading}
 			<LoadingSpinner />
 		{:else}
-			<ul class="menu menu-vertical bg-base-200 rounded-box w-56">
+			<ul class="menu menu-vertical bg-base-200 rounded-box w-56 gap-1">
 				{#each players as player (player.id)}
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
@@ -226,17 +227,18 @@
 								}
 							}
 						}}
-						class="opacity-30"
+						class="card opacity-30"
 						class:opacity-100={playersAway.some((p) => p.id === player.id)}
+						class:bg-secondary={playersAway.some((p) => p.id === player.id)}
 					>
 						<div class="flex items-center gap-2">
 							<div class="avatar">
-								<div class="h-8 w-8 rounded-full">
+								<div class="h-4 w-4 rounded-full">
 									<img src={player.profile_pic} alt={player.name} />
 								</div>
 							</div>
 							<div class="flex-1">
-								<span class="font-bold">{player.name}</span>
+								<span class="text-xs font-bold">{player.name}</span>
 							</div>
 							<span class="text-warning badge text-xs">{player.number}</span>
 						</div>
@@ -245,4 +247,4 @@
 			</ul>
 		{/if}
 	</div>
-</div>
+</main>

@@ -29,7 +29,11 @@
 	// todo: aşağıdaki if block yerine async await kullanarak veri çekme işlemini gerçekleştir
 </script>
 
-<div class="flex flex-col items-center gap-6 px-4 sm:px-8 lg:px-31">
+<svelte:head>
+	<title>Akkuyu Futbol</title>
+</svelte:head>
+
+<div class="flex flex-col items-center gap-5">
 	{#if isLoading}
 		<LoadingSpinner />
 	{:else}

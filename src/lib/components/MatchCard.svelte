@@ -38,7 +38,7 @@
 	}
 </script>
 
-<main class="card bg-base-300 w-full p-5">
+<main class="card bg-base-200 w-full p-5">
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div on:click={toggleAccordion} class="cursor-pointer">
