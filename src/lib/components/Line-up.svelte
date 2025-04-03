@@ -49,8 +49,8 @@
 	function drag(event: MouseEvent | TouchEvent) {
 		event.preventDefault();
 		if (draggingPlayer) {
-			// todo: hiyerarşideki 2. svg yi seçmek yerine daha spesifik bir çözüm bul!
-			const svg = document.querySelectorAll("svg")[1];
+			// todo: hiyerarşideki 1. svg yi seçmek yerine daha spesifik bir çözüm bul!
+			const svg = document.querySelectorAll("svg")[0];
 			if (!svg) {
 				console.error("SVG element not found");
 				return;

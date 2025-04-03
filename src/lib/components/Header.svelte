@@ -1,62 +1,17 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
+	// import { goto } from "$app/navigation";
 </script>
 
 <main class="navbar bg-base-100 p-0">
 	<h1 class="navbar-start place-self-end">
-		<a href="/admin" class="btn btn-soft btn-sm mx-0.5">Maç kaydet</a>
+		<a href="/admin" class="btn btn-sm btn-soft mx-0.5">Giriş yap</a>
 	</h1>
-	<div class="navbar-center hidden lg:flex">
-		<ul class="menu menu-horizontal px-1">
-			<!-- <li><a href="/matches">Maçlar</a></li> -->
-			<!-- <li><a href="/teams">Takımlar</a></li> -->
-			<!-- <li><a href="/players">Oyuncular</a></li> -->
-		</ul>
-	</div>
 	<div class="navbar-center">
 		<a class="mt-1.5 -mb-3" href="/">
 			<img class="w-36" src="/favicon.png" alt="Akkuyu FC Logo" />
 		</a>
 	</div>
 	<div class="navbar-end place-self-end">
-		<button
-			on:click={() => {
-				goto("/kadro");
-			}}
-			class="btn btn-sm btn-soft mx-0.5 hidden sm:block">Kadro yap</button
-		>
-		<div class="dropdown dropdown-end sm:hidden">
-			<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-			<!-- svelte-ignore a11y_label_has_associated_control -->
-			<label tabindex="0" class="btn btn-ghost mx-0.5 mb-4 lg:hidden">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					class="h-5 w-5"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M4 6h16M4 12h16m-7 6h7"
-					/>
-				</svg>
-			</label>
-			<ul class="menu menu-compact dropdown-content bg-base-100 rounded-box mt-3 w-52 p-2 shadow">
-				<!-- <li><a href="/matches">Maçlar</a></li> -->
-				<!-- <li><a href="/teams">Takımlar</a></li> -->
-				<!-- <li><a href="/players">Oyuncular</a></li> -->
-				<li>
-					<button
-						on:click={() => {
-							goto("/kadro");
-						}}
-						class="btn btn-primary w-full">Kadro yap</button
-					>
-				</li>
-			</ul>
-		</div>
+		<a href="/kadro" class="btn btn-soft btn-sm mx-0.5">Kadro yap</a>
 	</div>
 </main>
