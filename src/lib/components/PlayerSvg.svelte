@@ -37,7 +37,7 @@
 		<text
 			class="pointer-events-none font-extrabold"
 			x={playerData.pos_x}
-			y={playerData.pos_y - 25}
+			y={playerData.pos_y - 22}
 			fill={color}
 			font-size="10"
 			text-anchor="middle"
