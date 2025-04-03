@@ -4,7 +4,7 @@
 
 <main class="navbar bg-base-100 p-0">
 	<h1 class="navbar-start place-self-end">
-		<a href="/admin" class="btn btn-soft btn-sm mx-0.5 mb-4">Maç kaydet</a>
+		<a href="/admin" class="btn btn-soft btn-sm mx-0.5">Maç kaydet</a>
 	</h1>
 	<div class="navbar-center hidden lg:flex">
 		<ul class="menu menu-horizontal px-1">
@@ -14,7 +14,7 @@
 		</ul>
 	</div>
 	<div class="navbar-center">
-		<a href="/">
+		<a class="mt-1.5 -mb-3" href="/">
 			<img class="w-36" src="/favicon.png" alt="Akkuyu FC Logo" />
 		</a>
 	</div>
@@ -23,7 +23,7 @@
 			on:click={() => {
 				goto("/kadro");
 			}}
-			class="btn btn-sm btn-soft mx-0.5 mb-4 hidden sm:block">Kadro yap</button
+			class="btn btn-sm btn-soft mx-0.5 hidden sm:block">Kadro yap</button
 		>
 		<div class="dropdown dropdown-end sm:hidden">
 			<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
