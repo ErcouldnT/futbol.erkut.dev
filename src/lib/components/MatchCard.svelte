@@ -1,10 +1,13 @@
 <script lang="ts">
 	import type { MatchWithTeams } from "$lib/types";
+	import { ArrowDownNarrowWide } from "@lucide/svelte";
 	import TabMenu from "./TabMenu.svelte";
 
 	export let match: MatchWithTeams;
 	export let index: number;
 	export let lastMatch = false;
+
+	console.log(index + 1); // for future
 
 	let isExpanded = false;
 
