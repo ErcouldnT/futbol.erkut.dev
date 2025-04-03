@@ -279,7 +279,70 @@
 						{#if match.activeTab === "ratings"}
 							<div class="flex h-96 items-center justify-center">
 								<!-- Centered Saha component -->
-								<Saha />
+								<Saha
+									playersHome={match.ratingHome.map((player, index) => {
+										let x, y;
+										if (index === 0) {
+											// Goalkeeper
+											x = 150;
+											y = 40;
+										} else if (index === 1 || index === 2) {
+											// Defenders
+											x = 100 + (index - 1) * 100;
+											y = 120;
+										} else if (index === 3 || index === 4) {
+											// Wingers
+											x = 60 + (index - 3) * 180;
+											y = 200;
+										} else if (index === 5) {
+											// Forward
+											x = 150;
+											y = 200;
+										}
+										return {
+											...player,
+											created_at: "favicon.png",
+											id: index,
+											name: player.player,
+											number: player.rating,
+											profile_pic:
+												"https://exlqqlsrzdgsrhjefdgq.supabase.co/storage/v1/object/public/profile-pics//baki.png",
+											x: x,
+											y: y
+										};
+									})}
+									playersAway={match.ratingAway.map((player, index) => {
+										let x, y;
+										if (index === 0) {
+											// Goalkeeper
+											x = 150;
+											y = 445;
+										} else if (index === 1 || index === 2) {
+											// Defenders
+											x = 100 + (index - 1) * 100;
+											y = 365;
+										} else if (index === 3 || index === 4) {
+											// Wingers
+											x = 60 + (index - 3) * 180;
+											y = 285;
+										} else if (index === 5) {
+											// Forward
+											x = 150;
+											y = 285;
+										}
+										return {
+											...player,
+											created_at: "favicon.png",
+											id: index + match.ratingHome.length,
+											name: player.player,
+											number: player.rating,
+											profile_pic:
+												"https://exlqqlsrzdgsrhjefdgq.supabase.co/storage/v1/object/public/profile-pics//baki.png",
+											x: x,
+											y: y
+										};
+									})}
+								/>
 							</div>
 						{/if}
 					</div>

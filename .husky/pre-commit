@@ -1,5 +1,0 @@
-npm run types
-npm run check
-npm run format
-npm run lint
-npm test
