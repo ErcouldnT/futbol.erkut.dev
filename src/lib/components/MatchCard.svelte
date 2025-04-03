@@ -59,6 +59,11 @@
 		<p class="badge badge-secondary font-bold">{match.team_2.name}</p>
 	</div>
 
+	<!-- <div class="flex items-center justify-center gap-5 opacity-50">
+		<button on:click={() => setActiveTab("PLAYERS")} class="btn btn-sm">Oyuncular</button>
+		<button on:click={() => setActiveTab("RATINGS")} class="btn btn-sm">Rating'ler</button>
+	</div> -->
+
 	{#if isExpanded}
 		<TabMenu {match} />
 	{/if}

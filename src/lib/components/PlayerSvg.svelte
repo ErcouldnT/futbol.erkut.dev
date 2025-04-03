@@ -4,6 +4,8 @@
 	export let playerData: PlayerWithXAndY;
 	export let color: string;
 
+	export let index;
+	export let rotate = false;
 	export let showRatings = false;
 	export let showPlayerNames = true;
 	export let showPlayerNumbers = true;
@@ -14,8 +16,8 @@
 
 <!-- Circle representing the player -->
 <g
-	class="cursor-move"
-	tabindex="0"
+	class={rotate ? "origin-center cursor-pointer transform-fill lg:rotate-90" : "cursor-move"}
+	tabindex={index}
 	aria-label={`Drag ${playerData.player.name}`}
 	role="button"
 	on:pointerdown={(event) => startDrag(event, playerData)}

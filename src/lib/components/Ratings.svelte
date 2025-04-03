@@ -9,5 +9,5 @@
 </script>
 
 <main class="flex items-center justify-center p-5">
-	<SahaSvg {playersHome} {playersAway} showRatings={true} />
+	<SahaSvg {playersHome} {playersAway} showRatings={true} saha="HORIZONTAL" />
 </main>
