@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { supabase } from "$lib/supabase";
-	import Saha from "$lib/components/SahaSvg.svelte";
+	import LoadingSpinner from "$lib/components/LoadingSpinner.svelte";
+	import MatchCard from "$lib/components/MatchCard.svelte";
+	import type { MatchWithTeams } from "$lib/types";
 
-	// let isLoading = true;
-	let allMatches = [];
+	let isLoading = true;
+	let allMatches: MatchWithTeams[] = [];
 
 	const getMatches = async () => {
 		const { data, error } = await supabase.from("matches").select(`
@@ -14,340 +16,25 @@
     team_2: teams!matches_team_2_fkey(*, lineup:lineups(*, player:players(*)))
   `);
 		if (error) {
-			console.error("Veri çekme hatası:", error);
+			console.error("Database error:", error);
 		}
 
-		allMatches = data || [];
-		// isLoading = false;
-		console.log(allMatches);
+		// listeyi tersine çevir, son oynanan maç en üstte olacak
+		allMatches = data?.reverse() || [];
+		isLoading = false;
 	};
 
 	getMatches();
 
-	let matches = [
-		{
-			id: 1,
-			homeTeam: "Akkuyu-2023",
-			homeTeamPlayers: ["Eray", "Cansın", "Baki", "Eyüp", "İbrahim", "Hakan"],
-			awayTeam: "Akkuyu-2024",
-			awayTeamPlayers: ["Mete", "Yasin", "Faruk", "Abdullah", "Murat", "Semih"],
-			score: "10 - 10",
-			date: "30 Mart 2025 Pazar",
-			hour: "20:00-21:00",
-			ratingHome: [
-				{ player: "Eray", rating: 5 },
-				{ player: "Cansın", rating: 7 },
-				{ player: "Baki", rating: 8.5 },
-				{ player: "Eyüp", rating: 8 },
-				{ player: "İbrahim", rating: 5.5 },
-				{ player: "Hakan", rating: 7.5 }
-			],
-			goalsHome: [
-				{ player: "Baki", goalNumber: 3 },
-				{ player: "Eyüp", goalNumber: 3 },
-				{ player: "Hakan", goalNumber: 3 },
-				{ player: "İbrahim", goalNumber: 1 }
-			],
-			ratingAway: [
-				{ player: "Mete", rating: 7.5 },
-				{ player: "Yasin", rating: 7.5 },
-				{ player: "Faruk", rating: 8 },
-				{ player: "Abdullah", rating: 7 },
-				{ player: "Murat", rating: 6.5 },
-				{ player: "Semih", rating: 7 }
-			],
-			goalsAway: [
-				{ player: "Mete", goalNumber: 2 },
-				{ player: "Semih", goalNumber: 2 },
-				{ player: "Abdullah", goalNumber: 1 },
-				{ player: "Yasin", goalNumber: 2 },
-				{ player: "Faruk", goalNumber: 2 },
-				{ player: "Murat", goalNumber: 1 }
-			],
-			goalJersey: "-",
-			motm: "Baki",
-			isOpen: false,
-			activeTab: "goals"
-		},
-
-		{
-			id: 2,
-			homeTeam: "Eray'ın Takımı",
-			homeTeamPlayers: ["Eray", "Baki", "Çağrı", "Eyüp", "İbrahim", "Batuhan"],
-			awayTeam: "Erkut'un Takımı",
-			awayTeamPlayers: ["Erkut", "Yasin", "Faruk", "Cansın", "Velid", "Semih"],
-			score: "8 - 9",
-			date: "28 Mart 2025 Cuma",
-			hour: "21:00-22:00",
-			ratingHome: [
-				{ player: "Eray", rating: 6 },
-				{ player: "Baki", rating: 7 },
-				{ player: "Çağrı", rating: 7 },
-				{ player: "Eyüp", rating: 6.5 },
-				{ player: "İbrahim", rating: 7.5 },
-				{ player: "Batuhan", rating: 5.5 }
-			],
-			goalsHome: [
-				{ player: "Baki", goalNumber: 2 },
-				{ player: "Çağrı", goalNumber: 2 },
-				{ player: "Eyüp", goalNumber: 1 },
-				{ player: "İbrahim", goalNumber: 3 }
-			],
-			ratingAway: [
-				{ player: "Erkut", rating: 6.5 },
-				{ player: "Yasin", rating: 8.5 },
-				{ player: "Faruk", rating: 8 },
-				{ player: "Cansın", rating: 7 },
-				{ player: "Velid", rating: 9.5 },
-				{ player: "Semih", rating: 6 }
-			],
-			goalsAway: [
-				{ player: "Velid", goalNumber: 3 },
-				{ player: "Cansın", goalNumber: 2 },
-				{ player: "Erkut", goalNumber: 1 },
-				{ player: "Yasin", goalNumber: 2 },
-				{ player: "Faruk", goalNumber: 1 }
-			],
-			goalJersey: "Velid",
-			motm: "Velid",
-			isOpen: false,
-			activeTab: "goals"
-		}
-	];
-
-	// Sort players by goals scored (from most to least) for each match
-	matches.forEach((match) => {
-		match.homeTeamPlayers = match.homeTeamPlayers.sort((a, b) => {
-			const goalsA = match.goalsHome.find((goal) => goal.player === a)?.goalNumber || 0;
-			const goalsB = match.goalsHome.find((goal) => goal.player === b)?.goalNumber || 0;
-			return goalsB - goalsA;
-		});
-
-		match.awayTeamPlayers = match.awayTeamPlayers.sort((a, b) => {
-			const goalsA = match.goalsAway.find((goal) => goal.player === a)?.goalNumber || 0;
-			const goalsB = match.goalsAway.find((goal) => goal.player === b)?.goalNumber || 0;
-			return goalsB - goalsA;
-		});
-	});
-
-	// Function to toggle the accordion state
-	function toggleAccordion(index: number) {
-		matches = matches.map((match, i) => ({
-			...match,
-			isOpen: i === index ? !match.isOpen : false, // Close others, toggle the clicked one
-			activeTab: i === index && !match.isOpen ? "goals" : match.activeTab // Reset tab if closing
-		}));
-	}
+	// todo: aşağıdaki if block yerine async await kullanarak veri çekme işlemini gerçekleştir
 </script>
 
 <div class="flex flex-col items-center gap-6 px-4 sm:px-8 lg:px-31">
-	{#each matches as match, index (match.id)}
-		<!-- svelte-ignore a11y_click_events_have_key_events -->
-		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<div
-			class="card bg-base-300 w-full max-w-4xl cursor-pointer shadow-xl"
-			on:click={() => toggleAccordion(index)}
-		>
-			<div class="card-body">
-				<h2 class="card-title text-primary">{match.date}</h2>
-				<p class="text-success text-xs">{match.hour}</p>
-
-				{#if match.isOpen}
-					<!-- Tab Menu -->
-					<div class="tabs tabs-boxed mt-4 flex justify-center">
-						<div
-							class="tab {match.activeTab === 'goals' ? 'tab-active' : ''}"
-							on:click|stopPropagation={() => (match.activeTab = "goals")}
-						>
-							Goller
-						</div>
-						<div
-							class="tab {match.activeTab === 'ratings' ? 'tab-active' : ''}"
-							on:click|stopPropagation={() => (match.activeTab = "ratings")}
-						>
-							Ratingler
-						</div>
-					</div>
-				{/if}
-
-				<div class="mt-4 flex flex-wrap items-center justify-between">
-					<!-- Home Team Section -->
-					<div class="flex min-h-[20px] w-full flex-col items-center sm:w-1/3">
-						<div class="collapse w-full" class:collapse-open={match.isOpen}>
-							<div class="collapse-title p-3.5 text-center text-sm font-semibold">
-								<span class="badge badge-primary mt-1">{match.homeTeam}</span>
-							</div>
-						</div>
-					</div>
-
-					<!-- Scoreboard Section -->
-					<div class="flex w-full flex-col items-center justify-center sm:w-1/4">
-						<p class="text-4xl font-bold">
-							<span class="text-primary">{match.score.split(" - ")[0]}</span>
-							<span> - </span>
-							<span class="text-secondary">{match.score.split(" - ")[1]}</span>
-						</p>
-					</div>
-
-					<!-- Away Team Section -->
-					<div class="flex min-h-[20px] w-full flex-col items-center sm:w-1/3">
-						<div class="collapse w-full" class:collapse-open={match.isOpen}>
-							<div class="collapse-title p-3.5 text-center text-sm font-semibold">
-								<span class="badge badge-secondary mt-1">{match.awayTeam}</span>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				{#if match.isOpen}
-					<div>
-						<!-- Goller Tabı -->
-						{#if match.activeTab === "goals"}
-							<div>
-								<!-- Mevcut goller ekranı burada kalıyor -->
-								<div class="flex flex-wrap items-center justify-between">
-									<!-- Home Team Section -->
-									<div class="flex min-h-[20px] w-full flex-col items-center sm:w-1/3">
-										<div class="collapse w-full" class:collapse-open={match.isOpen}>
-											<div class="collapse-content p-2">
-												<ul class="list-none text-center text-sm leading-tight">
-													{#each match.homeTeamPlayers as player, index (player + index)}
-														<li class="flex items-center gap-2">
-															<span class="text-primary">{player}</span>
-															{#if match.motm === player}
-																<span>👑</span>
-															{/if}
-															{#if match.goalsHome.find((goal) => goal.player === player)}
-																<div class="flex w-full justify-end text-right">
-																	{#if match.goalJersey === player}
-																		<span>🎽</span>
-																	{/if}
-																	{#each Array(match.goalsHome.find((goal) => goal.player === player)?.goalNumber ?? 0).fill(null)}
-																		⚽
-																	{/each}
-																</div>
-															{/if}
-														</li>
-													{/each}
-													<!-- Boşluk için eklenen boş li -->
-													<li class="min-h-[20px]"></li>
-												</ul>
-											</div>
-										</div>
-									</div>
-
-									<!-- Away Team Section -->
-									<div class="flex min-h-[20px] w-full flex-col items-center sm:w-1/3">
-										<div class="collapse w-full" class:collapse-open={match.isOpen}>
-											<div class="collapse-content relative p-2">
-												<ul class="list-none text-center text-sm leading-tight">
-													{#each match.awayTeamPlayers as player, index (player + index)}
-														<li class="flex items-center gap-2">
-															<span class="text-secondary">{player}</span>
-															{#if match.motm === player}
-																<span>👑</span>
-															{/if}
-															<div class="flex w-full justify-end text-right">
-																{#if match.goalsAway.find((goal) => goal.player === player)}
-																	{#if match.goalJersey === player}
-																		<span>🎽</span>
-																	{/if}
-																	{#each Array(match.goalsAway.find((goal) => goal.player === player)?.goalNumber || 0).fill(null)}
-																		⚽
-																	{/each}
-																{/if}
-															</div>
-														</li>
-													{/each}
-													<!-- Boşluk için eklenen boş li -->
-													<li class="min-h-[20px]"></li>
-												</ul>
-												{#if match.isOpen}
-													<div class="absolute right-0.5 bottom-0.5 text-[11px]">
-														🎽: Forma golü<br />
-														👑: Maçın adamı
-													</div>
-												{/if}
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						{/if}
-
-						<!-- Ratingler Tabı -->
-						{#if match.activeTab === "ratings"}
-							<div class="flex h-96 items-center justify-center">
-								<!-- Centered Saha component -->
-								<Saha
-									playersHome={match.ratingHome.map((player, index) => {
-										let x, y;
-										if (index === 0) {
-											// Goalkeeper
-											x = 150;
-											y = 40;
-										} else if (index === 1 || index === 2) {
-											// Defenders
-											x = 100 + (index - 1) * 100;
-											y = 120;
-										} else if (index === 3 || index === 4) {
-											// Wingers
-											x = 60 + (index - 3) * 180;
-											y = 200;
-										} else if (index === 5) {
-											// Forward
-											x = 150;
-											y = 200;
-										}
-										return {
-											...player,
-											created_at: "favicon.png",
-											id: index,
-											name: player.player,
-											number: player.rating,
-											profile_pic:
-												"https://exlqqlsrzdgsrhjefdgq.supabase.co/storage/v1/object/public/profile-pics//baki.png",
-											x: x,
-											y: y
-										};
-									})}
-									playersAway={match.ratingAway.map((player, index) => {
-										let x, y;
-										if (index === 0) {
-											// Goalkeeper
-											x = 150;
-											y = 445;
-										} else if (index === 1 || index === 2) {
-											// Defenders
-											x = 100 + (index - 1) * 100;
-											y = 365;
-										} else if (index === 3 || index === 4) {
-											// Wingers
-											x = 60 + (index - 3) * 180;
-											y = 285;
-										} else if (index === 5) {
-											// Forward
-											x = 150;
-											y = 285;
-										}
-										return {
-											...player,
-											created_at: "favicon.png",
-											id: index + match.ratingHome.length,
-											name: player.player,
-											number: player.rating,
-											profile_pic:
-												"https://exlqqlsrzdgsrhjefdgq.supabase.co/storage/v1/object/public/profile-pics//baki.png",
-											x: x,
-											y: y
-										};
-									})}
-								/>
-							</div>
-						{/if}
-					</div>
-				{/if}
-			</div>
-		</div>
-	{/each}
+	{#if isLoading}
+		<LoadingSpinner />
+	{:else}
+		{#each allMatches as match, index (match.id)}
+			<MatchCard {match} {index} />
+		{/each}
+	{/if}
 </div>
