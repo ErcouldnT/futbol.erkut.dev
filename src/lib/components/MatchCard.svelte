@@ -51,7 +51,7 @@
 						year: "numeric"
 					})}
 				</p>
-				<button on:click={toggleAccordion} class="btn btn-sm sm:btn-md font-thin opacity-50"
+				<button class="btn btn-sm sm:btn-md font-thin opacity-50"
 					>Maç Detayları <ArrowDownNarrowWide size={18} /></button
 				>
 			</div>

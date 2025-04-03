@@ -1,13 +1,14 @@
 <script lang="ts">
-	import TeamInfo from "./TeamInfo.svelte";
 	import type { MatchWithTeams } from "$lib/types";
+	import TeamInfo from "./TeamInfo.svelte";
 	import Ratings from "./Ratings.svelte";
+	import Comments from "./Comments.svelte";
 
 	export let match: MatchWithTeams;
 
-	let activeTab: "PLAYERS" | "RATINGS" = "PLAYERS";
+	let activeTab: "PLAYERS" | "RATINGS" | "COMMENTS" = "PLAYERS";
 
-	const setActiveTab = (tab: "PLAYERS" | "RATINGS") => {
+	const setActiveTab = (tab: "PLAYERS" | "RATINGS" | "COMMENTS") => {
 		activeTab = tab;
 	};
 </script>
@@ -19,6 +20,7 @@
 	<div class="flex items-center justify-center gap-5 opacity-50">
 		<button on:click={() => setActiveTab("PLAYERS")} class="btn btn-sm">Oyuncular</button>
 		<button on:click={() => setActiveTab("RATINGS")} class="btn btn-sm">Rating'ler</button>
+		<button on:click={() => setActiveTab("COMMENTS")} class="btn btn-sm">Maç Yorumları</button>
 	</div>
 
 	{#if activeTab === "PLAYERS"}
@@ -35,5 +37,9 @@
 
 	{#if activeTab === "RATINGS"}
 		<Ratings {match} />
+	{/if}
+
+	{#if activeTab === "COMMENTS"}
+		<Comments />
 	{/if}
 </main>
