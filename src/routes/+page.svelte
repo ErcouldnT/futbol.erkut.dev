@@ -34,7 +34,7 @@
 		<LoadingSpinner />
 	{:else}
 		{#each allMatches as match, index (match.id)}
-			<MatchCard {match} {index} />
+			<MatchCard {match} index={allMatches.length - index - 1} lastMatch={index === 0} />
 		{/each}
 	{/if}
 </div>

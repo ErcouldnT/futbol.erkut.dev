@@ -4,12 +4,13 @@
 
 	export let match: MatchWithTeams;
 	export let index: number;
+	export let lastMatch = false;
 
 	let isExpanded = false;
 
 	// it is not a bug, it is a feature:
 	// son maç istatistikleri otomatik olarak açık
-	if (index === 0) {
+	if (lastMatch) {
 		isExpanded = true;
 	}
 
