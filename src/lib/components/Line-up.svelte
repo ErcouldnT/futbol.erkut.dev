@@ -97,11 +97,18 @@
 	}
 
 	// Randomly generate x and y coordinates for players
-	const randomXAndY = () => {
-		return {
-			pos_x: Math.floor(Math.random() * 300),
-			pos_y: Math.floor(Math.random() * 500)
-		};
+	const randomXAndY = (home: boolean) => {
+		if (home) {
+			return {
+				pos_x: Math.floor(10 + Math.random() * 280),
+				pos_y: Math.floor(10 + Math.random() * 230)
+			};
+		} else {
+			return {
+				pos_x: Math.floor(10 + Math.random() * 280),
+				pos_y: Math.floor(260 + Math.random() * 230)
+			};
+		}
 	};
 
 	// Add and remove players from teams
@@ -110,7 +117,7 @@
 		// const teamStore = team === "HOME" ? playersHomeStore : playersAwayStore;
 
 		if (!teamPlayers.some((p) => p.id === player.id)) {
-			const { pos_x, pos_y } = randomXAndY();
+			const { pos_x, pos_y } = randomXAndY(team === "HOME");
 			const playerWithXAndY: PlayerWithXAndY = {
 				player,
 				pos_x,
