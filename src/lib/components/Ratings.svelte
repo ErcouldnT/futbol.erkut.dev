@@ -8,6 +8,6 @@
 	const playersAway = match.team_2.lineup;
 </script>
 
-<main class="flex items-center justify-center p-5">
+<main class="flex max-h-full items-center justify-center p-5 lg:max-h-120">
 	<SahaSvg {playersHome} {playersAway} showRatings={true} saha="HORIZONTAL" />
 </main>
