@@ -81,13 +81,13 @@
 	<!-- <line x1="112.5" y1="490" x2="187.5" y2="490" stroke="white" stroke-width="1.5" opacity="0.5" /> -->
 
 	<!-- Oyuncular Home -->
-	{#each playersHome as player (player.id)}
-		<PlayerSvg {player} color={HOME_COLOR} {startDrag} {showPlayerNames} {showPlayerNumbers} />
+	{#each playersHome as playerData (playerData.player.id)}
+		<PlayerSvg {playerData} color={HOME_COLOR} {startDrag} {showPlayerNames} {showPlayerNumbers} />
 	{/each}
 
 	<!-- Oyuncular Away -->
-	{#each playersAway as player (player.id)}
+	{#each playersAway as playerData (playerData.player.id)}
 		<!-- Circle representing the player -->
-		<PlayerSvg {player} color={AWAY_COLOR} {startDrag} {showPlayerNames} {showPlayerNumbers} />
+		<PlayerSvg {playerData} color={AWAY_COLOR} {startDrag} {showPlayerNames} {showPlayerNumbers} />
 	{/each}
 </svg>

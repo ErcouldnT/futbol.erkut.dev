@@ -76,8 +76,8 @@
 			const newY = Math.max(fieldBounds.yMin, Math.min(fieldBounds.yMax, transformedPoint.y));
 
 			// Oyuncunun pozisyonunu güncelle
-			draggingPlayer.x = newX;
-			draggingPlayer.y = newY;
+			draggingPlayer.pos_x = newX;
+			draggingPlayer.pos_y = newY;
 
 			// Reassign the players array to trigger reactivity
 			playersHome = [...playersHome];
@@ -99,8 +99,8 @@
 	// Randomly generate x and y coordinates for players
 	const randomXAndY = () => {
 		return {
-			x: Math.floor(Math.random() * 300),
-			y: Math.floor(Math.random() * 500)
+			pos_x: Math.floor(Math.random() * 300),
+			pos_y: Math.floor(Math.random() * 500)
 		};
 	};
 
@@ -110,8 +110,18 @@
 		// const teamStore = team === "HOME" ? playersHomeStore : playersAwayStore;
 
 		if (!teamPlayers.some((p) => p.id === player.id)) {
-			const { x, y } = randomXAndY();
-			const playerWithXAndY: PlayerWithXAndY = { ...player, x, y };
+			const { pos_x, pos_y } = randomXAndY();
+			const playerWithXAndY: PlayerWithXAndY = {
+				player,
+				pos_x,
+				pos_y,
+				id: player.id, // fix later
+				team_id: player.id, // fix later
+				player_id: player.id,
+				goals: 0, // fix later
+				rating: 0, // fix later
+				created_at: new Date().toISOString()
+			};
 			if (team === "HOME") {
 				playersHome = [...playersHome, playerWithXAndY];
 				playersHomeStore.set(playersHome);

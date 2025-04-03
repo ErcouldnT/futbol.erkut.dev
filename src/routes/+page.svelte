@@ -10,8 +10,8 @@
     *,
     mvp: players!matches_mvp_fkey(*),
     jersey_goal: players!matches_jersey_goal_fkey(*),
-    team_1: teams!matches_team_1_fkey(*, lineup:lineups(*)),
-    team_2: teams!matches_team_2_fkey(*, lineup:lineups(*))
+    team_1: teams!matches_team_1_fkey(*, lineup:lineups(*, player:players(*))),
+    team_2: teams!matches_team_2_fkey(*, lineup:lineups(*, player:players(*)))
   `);
 		if (error) {
 			console.error("Veri çekme hatası:", error);
