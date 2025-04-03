@@ -33,7 +33,7 @@
 
 	fetchPlayers();
 
-	// todo: utils e gönder...
+	// todo: SAHA nın içine gönder...
 	// Drag and drop functionality
 	let draggingPlayer: PlayerWithXAndY | null = null;
 

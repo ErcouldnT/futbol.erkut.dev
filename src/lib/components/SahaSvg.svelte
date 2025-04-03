@@ -5,8 +5,12 @@
 
 	export let playersHome: PlayerWithXAndY[] = [];
 	export let playersAway: PlayerWithXAndY[] = [];
+
+	export let showRatings = false;
 	export let showPlayerNames = true;
 	export let showPlayerNumbers = true;
+
+	export let saha: "VERTICAL" | "HORIZONTAL" = "VERTICAL";
 	export let startDrag: (event: PointerEvent | TouchEvent, player: PlayerWithXAndY) => void = () =>
 		null;
 </script>
@@ -14,7 +18,7 @@
 <svg
 	xmlns="http://www.w3.org/2000/svg"
 	viewBox="0 0 300 500"
-	class="h-full max-h-screen w-full max-w-md"
+	class="h-full max-h-screen w-full max-w-md {saha === 'HORIZONTAL' ? 'lg:-rotate-90' : ''}"
 >
 	<!-- Çim Alanı -->
 	<rect x="0" y="0" width="300" height="500" fill={SAHA_COLOR} />
@@ -81,13 +85,30 @@
 	<!-- <line x1="112.5" y1="490" x2="187.5" y2="490" stroke="white" stroke-width="1.5" opacity="0.5" /> -->
 
 	<!-- Oyuncular Home -->
-	{#each playersHome as playerData (playerData.player.id)}
-		<PlayerSvg {playerData} color={HOME_COLOR} {startDrag} {showPlayerNames} {showPlayerNumbers} />
+	{#each playersHome as playerData, index (playerData.player.id)}
+		<PlayerSvg
+			{index}
+			{playerData}
+			color={HOME_COLOR}
+			rotate={saha === "HORIZONTAL"}
+			{startDrag}
+			{showPlayerNames}
+			{showPlayerNumbers}
+			{showRatings}
+		/>
 	{/each}
 
 	<!-- Oyuncular Away -->
-	{#each playersAway as playerData (playerData.player.id)}
-		<!-- Circle representing the player -->
-		<PlayerSvg {playerData} color={AWAY_COLOR} {startDrag} {showPlayerNames} {showPlayerNumbers} />
+	{#each playersAway as playerData, index (playerData.player.id)}
+		<PlayerSvg
+			{index}
+			{playerData}
+			color={AWAY_COLOR}
+			rotate={saha === "HORIZONTAL"}
+			{startDrag}
+			{showPlayerNames}
+			{showPlayerNumbers}
+			{showRatings}
+		/>
 	{/each}
 </svg>
