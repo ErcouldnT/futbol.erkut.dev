@@ -30,7 +30,7 @@
 		{#each lineupAwayTeam as playerData (playerData.id)}
 			<div class="text-secondary">
 				{playerData.player.name}
-				<p>{playerData.player.name === match.mvp?.name ? "👑" : ""}</p>
+				<span>{playerData.player.name === match.mvp?.name ? "👑" : ""}</span>
 			</div>
 			<div class="flex flex-row">
 				<p>{playerData.player.name === match.jersey_goal?.name ? "👕" : ""}</p>

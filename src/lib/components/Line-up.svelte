@@ -82,6 +82,7 @@
 			// Reassign the players array to trigger reactivity
 			playersHome = [...playersHome];
 			playersAway = [...playersAway];
+
 			playersHomeStore.set(playersHome);
 			playersAwayStore.set(playersAway);
 		}
@@ -94,6 +95,9 @@
 		window.removeEventListener("pointerup", endDrag);
 		window.removeEventListener("touchmove", drag);
 		window.removeEventListener("touchend", endDrag);
+
+		console.log(playersHome);
+		console.log(playersAway);
 	}
 
 	// Randomly generate x and y coordinates for players
