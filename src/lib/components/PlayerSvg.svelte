@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type { PlayerWithXAndY } from "$lib/types";
+	import { onMount } from "svelte";
+	import { supabase } from "$lib/supabase";
 
 	export let playerData: PlayerWithXAndY;
 	export let color: string;
@@ -12,6 +14,26 @@
 
 	export let startDrag: (event: PointerEvent | TouchEvent, player: PlayerWithXAndY) => void = () =>
 		null;
+
+	let rating: number | null = null;
+
+	const fetchPlayerRating = async () => {
+		const { data, error } = await supabase
+			.from("votes")
+			.select("rating")
+			.eq("player_id", playerData.player.id)
+			.eq("team_id", playerData.team_id);
+
+		if (data && data.length > 0) {
+			const sum = data.reduce((acc, vote) => acc + vote.rating, 0);
+			rating = +(sum / data.length).toFixed(1);
+			// rating = Math.round((sum / data.length) * 10) / 10; // round to 1 decimal
+		} else {
+			rating = null;
+		}
+	};
+
+	onMount(fetchPlayerRating);
 </script>
 
 <!-- Circle representing the player -->
@@ -43,7 +65,7 @@
 			text-anchor="middle"
 			dominant-baseline="middle"
 		>
-			{playerData.rating} ⭐
+			{rating !== null ? `${rating}` : ""}
 		</text>
 	{/if}
 
