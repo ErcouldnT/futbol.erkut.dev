@@ -158,6 +158,58 @@ export type Database = {
 				};
 				Relationships: [];
 			};
+			votes: {
+				Row: {
+					created_at: string;
+					id: number;
+					match_id: number;
+					player_id: number;
+					rating: number;
+					team_id: number;
+					user_token: string;
+				};
+				Insert: {
+					created_at?: string;
+					id?: number;
+					match_id: number;
+					player_id: number;
+					rating: number;
+					team_id: number;
+					user_token: string;
+				};
+				Update: {
+					created_at?: string;
+					id?: number;
+					match_id?: number;
+					player_id?: number;
+					rating?: number;
+					team_id?: number;
+					user_token?: string;
+				};
+				Relationships: [
+					{
+						foreignKeyName: "votes_match_id_fkey";
+						columns: ["match_id"];
+						isOneToOne: false;
+						referencedRelation: "matches";
+						referencedColumns: ["id"];
+					},
+					{
+						foreignKeyName: "votes_player_id_fkey";
+						columns: ["player_id"];
+						isOneToOne: false;
+						referencedRelation: "players";
+						referencedColumns: ["id"];
+					},
+					{
+						foreignKeyName: "votes_team_id_fkey";
+						columns: ["team_id"];
+						isOneToOne: false;
+						referencedRelation: "teams";
+						referencedColumns: ["id"];
+					}
+				];
+			};
 		};
 		Views: {
 			[_ in never]: never;

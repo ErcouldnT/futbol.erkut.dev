@@ -25,3 +25,5 @@ export type MatchWithTeams = Match & {
 	jersey_goal: Player | null;
 	mvp: Player | null;
 };
+
+export type Vote = Database["public"]["Tables"]["votes"]["Row"];
