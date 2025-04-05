@@ -26,7 +26,7 @@
 
 		if (data && data.length > 0) {
 			const sum = data.reduce((acc, vote) => acc + vote.rating, 0);
-			rating = +(sum / data.length).toFixed(1);
+			rating = +(sum / data.length).toFixed(1) + 2;
 			// rating = Math.round((sum / data.length) * 10) / 10; // round to 1 decimal
 		} else {
 			rating = null;
