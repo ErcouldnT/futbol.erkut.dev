@@ -17,6 +17,18 @@
 		isExpanded = true;
 	}
 
+	const matchStartingTime = new Date(match.match_time || "");
+	const matchEndingTime = new Date(matchStartingTime.getTime() + 60 * 60 * 1000); // +1 hour
+	const votingEndTime = new Date(matchEndingTime.getTime() + 24 * 60 * 60 * 1000); // +24 hours
+	const now = new Date();
+
+	// match status
+	const notStarted = now < matchStartingTime;
+	const playing = now > matchStartingTime && now < matchEndingTime;
+	// const matchFinished = now > matchEndingTime;
+	const matchInVotingPeriod = now > matchEndingTime && now < votingEndTime;
+	// const votingEnded = now > votingEndTime;
+
 	const toggleAccordion = () => {
 		isExpanded = !isExpanded;
 	};
@@ -65,7 +77,20 @@
 				{match.team_1.name}
 			</p>
 			<div>
-				<p class="text-sm font-extrabold sm:text-4xl">{match.home_score} - {match.away_score}</p>
+				<p class="text-center text-sm font-extrabold sm:text-4xl">
+					{match.home_score} - {match.away_score}
+				</p>
+				<p class="text-center text-xs">
+					{#if notStarted}
+						<span class="opacity-50">Maç henüz başlamadı.</span>
+					{:else if playing}
+						<span class="text-success">Maç şu anda oynanıyor...</span>
+					{:else if matchInVotingPeriod}
+						<span class="text-warning">Rating oylaması yapılıyor...</span>
+					{:else}
+						<span class="opacity-50">Maç sonucu</span>
+					{/if}
+				</p>
 			</div>
 			<p class="bg-secondary rounded-xl p-1 px-2 text-xs font-bold sm:text-sm">
 				{match.team_2.name}

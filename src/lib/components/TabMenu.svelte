@@ -19,8 +19,8 @@
 <main>
 	<div class="flex items-center justify-center gap-5 opacity-50">
 		<button on:click={() => setActiveTab("PLAYERS")} class="btn btn-sm">Oyuncular</button>
-		<button on:click={() => setActiveTab("RATINGS")} class="btn btn-sm">Rating'ler</button>
-		<button on:click={() => setActiveTab("COMMENTS")} class="btn btn-sm">Maç Yorumları</button>
+		<button on:click={() => setActiveTab("RATINGS")} class="btn btn-sm">Kadrolar</button>
+		<button on:click={() => setActiveTab("COMMENTS")} class="btn btn-sm">Yorumlar</button>
 	</div>
 
 	{#if activeTab === "PLAYERS"}
