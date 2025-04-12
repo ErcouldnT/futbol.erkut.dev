@@ -18,7 +18,7 @@
 	}
 
 	const matchStartingTime = new Date(match.match_time || "");
-	const matchEndingTime = new Date(matchStartingTime.getTime() + 60 * 60 * 1000); // +1 hour
+	const matchEndingTime = new Date(matchStartingTime.getTime() + match.duration * 60 * 1000); // +1 hour
 	const votingEndTime = new Date(matchEndingTime.getTime() + 24 * 60 * 60 * 1000); // +24 hours
 	const now = new Date();
 
@@ -41,7 +41,7 @@
 		const startMinutes = pad(matchTime.getMinutes());
 
 		const endTime = new Date(matchTime);
-		endTime.setHours(endTime.getHours() + 1);
+		endTime.setMinutes(endTime.getMinutes() + match.duration);
 
 		const endHours = pad(endTime.getHours());
 		const endMinutes = pad(endTime.getMinutes());
@@ -88,7 +88,7 @@
 						<span class="opacity-50">Maç henüz başlamadı.</span>
 					{:else if playing}
 						<span class="text-success">Maç şu anda oynanıyor...</span>
-					{:else if matchInVotingPeriod}
+					{:else if matchInVotingPeriod && match.is_votable}
 						<span class="text-warning">Rating oylaması yapılıyor...</span>
 					{:else}
 						<span class="opacity-50">Maç sonucu</span>

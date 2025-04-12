@@ -1,3 +1,3 @@
-<main class="min-h-screen">
-	<p class="opacity-50">Admin giriş sayfası</p>
+<main class="min-h-screen text-center">
+	<p class="opacity-50">Yapım aşamasında.</p>
 </main>

@@ -90,6 +90,7 @@ export type Database = {
 					duration: number;
 					home_score: number;
 					id: number;
+					is_votable: boolean;
 					jersey_goal: number | null;
 					match_time: string | null;
 					mvp: number | null;
@@ -103,6 +104,7 @@ export type Database = {
 					duration?: number;
 					home_score?: number;
 					id?: number;
+					is_votable?: boolean;
 					jersey_goal?: number | null;
 					match_time?: string | null;
 					mvp?: number | null;
@@ -116,6 +118,7 @@ export type Database = {
 					duration?: number;
 					home_score?: number;
 					id?: number;
+					is_votable?: boolean;
 					jersey_goal?: number | null;
 					match_time?: string | null;
 					mvp?: number | null;
