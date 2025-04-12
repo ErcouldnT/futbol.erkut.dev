@@ -1,8 +1,9 @@
 <script lang="ts">
+	import type { MatchWithTeams } from "$lib/types";
+	import { onMount } from "svelte";
 	import { supabase } from "$lib/supabase";
 	import LoadingSpinner from "$lib/components/LoadingSpinner.svelte";
 	import MatchCard from "$lib/components/MatchCard.svelte";
-	import type { MatchWithTeams } from "$lib/types";
 
 	let isLoading = true;
 	let allMatches: MatchWithTeams[] = [];
@@ -24,7 +25,28 @@
 		isLoading = false;
 	};
 
-	getMatches();
+	onMount(() => {
+		getMatches();
+
+		const channel = supabase
+			.channel("custom:matches-realtime")
+			.on(
+				"postgres_changes",
+				{
+					event: "*",
+					schema: "public",
+					table: "matches"
+				},
+				() => {
+					getMatches();
+				}
+			)
+			.subscribe();
+
+		return () => {
+			supabase.removeChannel(channel);
+		};
+	});
 
 	// todo: aşağıdaki if block yerine async await kullanarak veri çekme işlemini gerçekleştir
 </script>
