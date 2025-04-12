@@ -57,6 +57,12 @@
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div on:click={toggleAccordion} class="cursor-pointer">
+		{#if match.title}
+			<p class="text-warning text-center text-sm font-medium opacity-100 sm:text-xl">
+				{match.title}
+			</p>
+		{/if}
+
 		{#if match.match_time}
 			<div class="flex items-center justify-between">
 				<p class="text-sm font-medium opacity-50 sm:text-lg">
@@ -76,7 +82,7 @@
 		{/if}
 
 		<div class="my-6 grid grid-cols-3 items-center justify-items-center p-1 sm:p-3">
-			<p class="bg-primary rounded-xl p-1 px-2 text-xs font-bold sm:text-sm">
+			<p class="card bg-primary p-1 px-2 text-xs font-bold sm:text-sm">
 				{match.team_1.name}
 			</p>
 			<div>
@@ -95,7 +101,7 @@
 					{/if}
 				</p>
 			</div>
-			<p class="bg-secondary rounded-xl p-1 px-2 text-xs font-bold sm:text-sm">
+			<p class="card bg-secondary p-1 px-2 text-xs font-bold sm:text-sm">
 				{match.team_2.name}
 			</p>
 		</div>

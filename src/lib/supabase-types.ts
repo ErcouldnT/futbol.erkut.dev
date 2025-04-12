@@ -9,21 +9,21 @@ export type Database = {
 					created_at: string;
 					id: number;
 					match_id: number | null;
-					username: string | null;
+					username: string;
 				};
 				Insert: {
 					comment: string;
 					created_at?: string;
 					id?: number;
 					match_id?: number | null;
-					username?: string | null;
+					username?: string;
 				};
 				Update: {
 					comment?: string;
 					created_at?: string;
 					id?: number;
 					match_id?: number | null;
-					username?: string | null;
+					username?: string;
 				};
 				Relationships: [
 					{
