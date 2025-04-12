@@ -32,7 +32,7 @@
 	<meta name="twitter:image" content="/favicon.png" />
 </svelte:head>
 
-<div class="mx-auto mb-5 max-w-5xl">
+<div class="mx-auto min-h-screen max-w-5xl">
 	<Header />
 	<div class="divider text-sm opacity-50">Akkuyu FC</div>
 	{@render children()}

@@ -2,7 +2,7 @@
 	// import { goto } from "$app/navigation";
 </script>
 
-<main class="navbar bg-base-100 p-0">
+<main class="navbar bg-base-100/0 p-0 backdrop-blur-md">
 	<h1 class="navbar-start place-self-end">
 		<a href="/admin" class="btn btn-sm btn-soft mx-0.5">Giriş yap</a>
 	</h1>

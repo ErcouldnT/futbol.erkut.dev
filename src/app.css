@@ -9,3 +9,11 @@
 html {
 	scrollbar-gutter: stable;
 }
+
+body {
+	background-image: url("/bg_eyup.jpg");
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	min-h-screen: 100vh;
+}

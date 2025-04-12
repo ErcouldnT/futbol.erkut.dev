@@ -50,13 +50,16 @@
 	}
 </script>
 
-<main class="card bg-base-200 w-full p-5">
+<main
+	class="card bg-base-200/50 w-full p-5 shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl
+	{isExpanded ? 'backdrop-blur-2xl' : 'backdrop-blur-md'}"
+>
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div on:click={toggleAccordion} class="cursor-pointer">
 		{#if match.match_time}
 			<div class="flex items-center justify-between">
-				<p class="text-primary text-sm font-bold sm:text-lg">
+				<p class="text-sm font-medium opacity-50 sm:text-lg">
 					{new Date(match.match_time).toLocaleDateString("tr-TR", {
 						day: "2-digit",
 						month: "long",
@@ -67,7 +70,7 @@
 					>Maç Detayları <ArrowDownNarrowWide size={18} /></button
 				>
 			</div>
-			<p class="text-success text-xs sm:text-sm">
+			<p class="text-xs opacity-50 sm:text-sm">
 				{formatMatchTime(new Date(match.match_time))}
 			</p>
 		{/if}

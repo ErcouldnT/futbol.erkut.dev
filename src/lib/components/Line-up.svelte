@@ -174,7 +174,7 @@
 		{#if isLoading}
 			<LoadingSpinner />
 		{:else}
-			<ul class="menu menu-vertical bg-base-200 rounded-box w-56 gap-1">
+			<ul class="menu menu-vertical bg-base-200/50 rounded-box w-56 gap-1 backdrop-blur-md">
 				{#each players as player (player.id)}
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
@@ -217,7 +217,7 @@
 		{#if isLoading}
 			<LoadingSpinner />
 		{:else}
-			<ul class="menu menu-vertical bg-base-200 rounded-box w-56 gap-1">
+			<ul class="menu menu-vertical bg-base-200/50 rounded-box w-56 gap-1 backdrop-blur-md">
 				{#each players as player (player.id)}
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
