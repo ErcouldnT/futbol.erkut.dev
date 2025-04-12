@@ -9,6 +9,8 @@ export type Player = Database["public"]["Tables"]["players"]["Row"];
 
 export type Team = Database["public"]["Tables"]["teams"]["Row"];
 
+export type Comment = Database["public"]["Tables"]["comments"]["Row"];
+
 export type PlayerWithXAndY = Database["public"]["Tables"]["lineups"]["Row"] & {
 	player: Player;
 };

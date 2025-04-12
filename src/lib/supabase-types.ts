@@ -5,21 +5,21 @@ export type Database = {
 		Tables: {
 			comments: {
 				Row: {
-					comment: string;
+					content: string;
 					created_at: string;
 					id: number;
 					match_id: number | null;
 					username: string;
 				};
 				Insert: {
-					comment: string;
+					content: string;
 					created_at?: string;
 					id?: number;
 					match_id?: number | null;
 					username?: string;
 				};
 				Update: {
-					comment?: string;
+					content?: string;
 					created_at?: string;
 					id?: number;
 					match_id?: number | null;

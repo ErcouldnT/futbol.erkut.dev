@@ -40,6 +40,6 @@
 	{/if}
 
 	{#if activeTab === "COMMENTS"}
-		<Comments />
+		<Comments matchId={match.id} />
 	{/if}
 </main>
