@@ -43,6 +43,9 @@
 	let allTeams = [];
 	let selectedTeamId = null;
 	let editTeamName = "";
+	let teamLineup = [];
+	let allPlayersForLineup = [];
+	let selectedPlayerForLineup = "";
 
 	async function handleLogout() {
 		await supabase.auth.signOut();
@@ -197,9 +200,19 @@
 		}
 	}
 
-	function selectTeam(team) {
+	async function selectTeam(team) {
 		selectedTeamId = team.id;
 		editTeamName = team.name;
+
+		const { data: lineup } = await supabase
+			.from("lineups")
+			.select("id, player_id, players(name)")
+			.eq("team_id", team.id);
+
+		const { data: players } = await supabase.from("players").select("id, name");
+
+		teamLineup = lineup ?? [];
+		allPlayersForLineup = players ?? [];
 	}
 
 	async function updateTeam() {
@@ -216,6 +229,29 @@
 			alert("Takım güncellenemedi: " + error.message);
 		} else {
 			editTeamModal.close();
+		}
+	}
+
+	async function removePlayerFromLineup(lineupId: number) {
+		await supabase.from("lineups").delete().eq("id", lineupId);
+		teamLineup = teamLineup.filter((p) => p.id !== lineupId);
+	}
+
+	async function addPlayerToLineup() {
+		if (!selectedTeamId || !selectedPlayerForLineup) return;
+
+		const { data, error } = await supabase
+			.from("lineups")
+			.insert({
+				team_id: selectedTeamId,
+				player_id: selectedPlayerForLineup
+			})
+			.select("id, player_id, players(name)")
+			.single();
+
+		if (!error && data) {
+			teamLineup = [...teamLineup, data];
+			selectedPlayerForLineup = "";
 		}
 	}
 </script>
@@ -443,6 +479,32 @@
 					placeholder="Takım Adı"
 					class="input input-bordered my-2 w-full"
 				/>
+
+				<label class="label-text mt-4">Mevcut Kadro</label>
+				<ul class="space-y-1">
+					{#each teamLineup as row}
+						<li class="flex items-center justify-between rounded border p-2">
+							<span>{row.players?.name}</span>
+							<button class="btn btn-xs btn-error" on:click={() => removePlayerFromLineup(row.id)}>
+								Sil
+							</button>
+						</li>
+					{/each}
+				</ul>
+
+				<div class="mt-4">
+					<label class="label-text">Oyuncu Ekle</label>
+					<div class="flex gap-2">
+						<select bind:value={selectedPlayerForLineup} class="select select-bordered w-full">
+							<option disabled value="">Oyuncu seç</option>
+							{#each allPlayersForLineup as p}
+								<option value={p.id}>{p.name}</option>
+							{/each}
+						</select>
+						<button class="btn btn-primary" on:click={addPlayerToLineup}>Ekle</button>
+					</div>
+				</div>
+
 				<div class="modal-action">
 					<button on:click={() => editTeamModal.close()} class="btn">Vazgeç</button>
 					<button on:click={updateTeam} class="btn btn-primary">Güncelle</button>
