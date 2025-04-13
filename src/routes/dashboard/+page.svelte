@@ -5,8 +5,14 @@
 	const supabase = data.supabase;
 
 	let newPlayerName = "";
+	let newPlayerId = "";
 	let newPlayerNumber = "";
 	let playerModal: HTMLDialogElement;
+	let editPlayerModal: HTMLDialogElement;
+	let allPlayers = [];
+	let selectedPlayerId = null;
+	let editPlayerName = "";
+	let editPlayerNumber = "";
 	let newTeamName = "";
 	let teamModal: HTMLDialogElement;
 
@@ -45,6 +51,7 @@
 
 	async function createPlayer() {
 		const { error } = await supabase.from("players").insert({
+			id: newPlayerId,
 			name: newPlayerName,
 			number: Number(newPlayerNumber)
 		});
@@ -53,8 +60,41 @@
 			alert("Oyuncu eklenemedi: " + error.message);
 		} else {
 			newPlayerName = "";
+			newPlayerId = "";
 			newPlayerNumber = "";
 			playerModal?.close();
+		}
+	}
+
+	async function openEditPlayerModal() {
+		const { data, error } = await supabase.from("players").select("*");
+		if (!error) {
+			allPlayers = data;
+			editPlayerModal.showModal();
+		}
+	}
+
+	function selectPlayer(player) {
+		selectedPlayerId = player.id;
+		editPlayerName = player.name;
+		editPlayerNumber = player.number;
+	}
+
+	async function updatePlayer() {
+		if (!selectedPlayerId) return;
+
+		const { error } = await supabase
+			.from("players")
+			.update({
+				name: editPlayerName,
+				number: editPlayerNumber
+			})
+			.eq("id", selectedPlayerId);
+
+		if (error) {
+			alert("Oyuncu güncellenemedi: " + error.message);
+		} else {
+			editPlayerModal.close();
 		}
 	}
 
@@ -177,7 +217,7 @@
 		<button class="btn btn-primary w-full" on:click={() => playerModal.showModal()}
 			>Oyuncu Ekle</button
 		>
-		<button class="btn btn-secondary w-full">Oyuncu Düzenle</button>
+		<button class="btn btn-secondary w-full" on:click={openEditPlayerModal}>Oyuncu Düzenle</button>
 
 		<button class="btn btn-primary w-full" on:click={() => teamModal.showModal()}>Takım Ekle</button
 		>
@@ -198,6 +238,12 @@
 	<dialog bind:this={playerModal} class="modal">
 		<div class="modal-box relative">
 			<h3 class="text-lg font-bold">Yeni Oyuncu Ekle</h3>
+			<input
+				bind:value={newPlayerId}
+				type="text"
+				placeholder="Oyuncu ID"
+				class="input input-bordered my-2 w-full"
+			/>
 			<input
 				bind:value={newPlayerName}
 				type="text"
@@ -391,6 +437,42 @@
 				<div class="modal-action">
 					<button on:click={() => editTeamModal.close()} class="btn">Vazgeç</button>
 					<button on:click={updateTeam} class="btn btn-primary">Güncelle</button>
+				</div>
+			{/if}
+		</div>
+		<form method="dialog" class="modal-backdrop">
+			<button>close</button>
+		</form>
+	</dialog>
+
+	<dialog bind:this={editPlayerModal} class="modal">
+		<div class="modal-box max-w-xl">
+			<h3 class="mb-2 text-lg font-bold">Bir Oyuncu Seçin</h3>
+			<div class="mb-4">
+				{#each allPlayers as player}
+					<button class="btn btn-sm btn-outline mb-1 w-full" on:click={() => selectPlayer(player)}>
+						{player.name}
+					</button>
+				{/each}
+			</div>
+			{#if selectedPlayerId}
+				<label class="label-text">Oyuncu Adı</label>
+				<input
+					bind:value={editPlayerName}
+					type="text"
+					placeholder="Oyuncu Adı"
+					class="input input-bordered my-2 w-full"
+				/>
+				<label class="label-text">Forma Numarası</label>
+				<input
+					bind:value={editPlayerNumber}
+					type="number"
+					placeholder="Forma No"
+					class="input input-bordered my-2 w-full"
+				/>
+				<div class="modal-action">
+					<button on:click={() => editPlayerModal.close()} class="btn">Vazgeç</button>
+					<button on:click={updatePlayer} class="btn btn-primary">Güncelle</button>
 				</div>
 			{/if}
 		</div>
