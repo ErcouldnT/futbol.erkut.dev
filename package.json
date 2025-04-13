@@ -38,7 +38,8 @@
 	},
 	"dependencies": {
 		"@lucide/svelte": "^0.486.0",
-		"@supabase/supabase-js": "^2.49.3",
+		"@supabase/ssr": "^0.6.1",
+		"@supabase/supabase-js": "^2.49.4",
 		"daisyui": "^5.0.9",
 		"svelte-persisted-store": "^0.12.0"
 	}
