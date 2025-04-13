@@ -33,6 +33,11 @@
 	let editIsVotable = false;
 	let editMatchTime = "";
 
+	let editTeamModal: HTMLDialogElement;
+	let allTeams = [];
+	let selectedTeamId = null;
+	let editTeamName = "";
+
 	async function handleLogout() {
 		await supabase.auth.signOut();
 		goto("/");
@@ -135,6 +140,36 @@
 			editMatchModal.close();
 		}
 	}
+
+	async function openEditTeamModal() {
+		const { data, error } = await supabase.from("teams").select("*");
+		if (!error) {
+			allTeams = data;
+			editTeamModal.showModal();
+		}
+	}
+
+	function selectTeam(team) {
+		selectedTeamId = team.id;
+		editTeamName = team.name;
+	}
+
+	async function updateTeam() {
+		if (!selectedTeamId) return;
+
+		const { error } = await supabase
+			.from("teams")
+			.update({
+				name: editTeamName
+			})
+			.eq("id", selectedTeamId);
+
+		if (error) {
+			alert("Takım güncellenemedi: " + error.message);
+		} else {
+			editTeamModal.close();
+		}
+	}
 </script>
 
 <main class="flex min-h-screen flex-col items-center gap-5">
@@ -146,7 +181,7 @@
 
 		<button class="btn btn-primary w-full" on:click={() => teamModal.showModal()}>Takım Ekle</button
 		>
-		<button class="btn btn-secondary w-full">Takım Düzenle</button>
+		<button class="btn btn-secondary w-full" on:click={openEditTeamModal}>Takım Düzenle</button>
 
 		<button class="btn btn-primary col-span-1 w-full" on:click={() => matchModal.showModal()}
 			>Maç Ekle</button
@@ -333,5 +368,34 @@
 			{/if}
 		</div>
 		<form method="dialog" class="modal-backdrop"><button>close</button></form>
+	</dialog>
+
+	<dialog bind:this={editTeamModal} class="modal">
+		<div class="modal-box max-w-xl">
+			<h3 class="mb-2 text-lg font-bold">Bir Takım Seçin</h3>
+			<div class="mb-4">
+				{#each allTeams as team}
+					<button class="btn btn-sm btn-outline mb-1 w-full" on:click={() => selectTeam(team)}>
+						{team.name}
+					</button>
+				{/each}
+			</div>
+			{#if selectedTeamId}
+				<label class="label-text">Takım Adı</label>
+				<input
+					bind:value={editTeamName}
+					type="text"
+					placeholder="Takım Adı"
+					class="input input-bordered my-2 w-full"
+				/>
+				<div class="modal-action">
+					<button on:click={() => editTeamModal.close()} class="btn">Vazgeç</button>
+					<button on:click={updateTeam} class="btn btn-primary">Güncelle</button>
+				</div>
+			{/if}
+		</div>
+		<form method="dialog" class="modal-backdrop">
+			<button>close</button>
+		</form>
 	</dialog>
 </main>
