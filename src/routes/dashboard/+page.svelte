@@ -111,6 +111,14 @@
 		}
 	}
 
+	async function openMatchModal() {
+		const { data, error } = await supabase.from("teams").select("*");
+		if (!error) {
+			allTeams = data;
+			matchModal.showModal();
+		}
+	}
+
 	async function createMatch() {
 		const { error } = await supabase.from("matches").insert({
 			title: matchTitle,
@@ -223,9 +231,7 @@
 		>
 		<button class="btn btn-secondary w-full" on:click={openEditTeamModal}>Takım Düzenle</button>
 
-		<button class="btn btn-primary col-span-1 w-full" on:click={() => matchModal.showModal()}
-			>Maç Ekle</button
-		>
+		<button class="btn btn-primary col-span-1 w-full" on:click={openMatchModal}>Maç Ekle</button>
 		<button class="btn btn-secondary col-span-1 w-full" on:click={openEditMatchModal}
 			>Maç Düzenle</button
 		>
@@ -294,18 +300,21 @@
 				placeholder="Maç Başlığı"
 				class="input input-bordered my-2 w-full"
 			/>
-			<input
-				bind:value={team1}
-				type="text"
-				placeholder="Takım 1 ID"
-				class="input input-bordered my-2 w-full"
-			/>
-			<input
-				bind:value={team2}
-				type="text"
-				placeholder="Takım 2 ID"
-				class="input input-bordered my-2 w-full"
-			/>
+			<label class="label-text">Takım 1</label>
+			<select bind:value={team1} class="select select-bordered my-2 w-full">
+				<option disabled selected value="">Takım Seçin</option>
+				{#each allTeams as team}
+					<option value={team.id}>{team.name}</option>
+				{/each}
+			</select>
+
+			<label class="label-text">Takım 2</label>
+			<select bind:value={team2} class="select select-bordered my-2 w-full">
+				<option disabled selected value="">Takım Seçin</option>
+				{#each allTeams as team}
+					<option value={team.id}>{team.name}</option>
+				{/each}
+			</select>
 			<input
 				bind:value={homeScore}
 				type="number"
