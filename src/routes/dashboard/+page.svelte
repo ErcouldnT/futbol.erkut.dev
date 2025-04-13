@@ -206,7 +206,7 @@
 
 		const { data: lineup } = await supabase
 			.from("lineups")
-			.select("id, player_id, players(name)")
+			.select("id, player_id, players(name), goals")
 			.eq("team_id", team.id);
 
 		const { data: players } = await supabase.from("players").select("id, name");
@@ -252,6 +252,14 @@
 		if (!error && data) {
 			teamLineup = [...teamLineup, data];
 			selectedPlayerForLineup = "";
+		}
+	}
+
+	async function updateGoalCount(lineupId: number, newGoals: number) {
+		const { error } = await supabase.from("lineups").update({ goals: newGoals }).eq("id", lineupId);
+
+		if (error) {
+			alert("Gol sayısı güncellenemedi: " + error.message);
 		}
 	}
 </script>
@@ -485,9 +493,18 @@
 					{#each teamLineup as row}
 						<li class="flex items-center justify-between rounded border p-2">
 							<span>{row.players?.name}</span>
-							<button class="btn btn-xs btn-error" on:click={() => removePlayerFromLineup(row.id)}>
-								Sil
-							</button>
+							<div class="flex items-center gap-2">
+								<input
+									type="number"
+									min="0"
+									class="input input-bordered input-xs w-16"
+									value={row.goals}
+									on:change={(e) => updateGoalCount(row.id, +e.target.value)}
+								/>
+								<button class="btn btn-xs btn-error" on:click={() => removePlayerFromLineup(row.id)}
+									>Sil</button
+								>
+							</div>
 						</li>
 					{/each}
 				</ul>
