@@ -371,20 +371,20 @@
 					placeholder="Maç Başlığı"
 					class="input input-bordered my-2 w-full"
 				/>
-				<label class="label-text">Takım 1 ID</label>
-				<input
-					bind:value={editTeam1}
-					type="text"
-					placeholder="Takım 1 ID"
-					class="input input-bordered my-2 w-full"
-				/>
-				<label class="label-text">Takım 2 ID</label>
-				<input
-					bind:value={editTeam2}
-					type="text"
-					placeholder="Takım 2 ID"
-					class="input input-bordered my-2 w-full"
-				/>
+				<label class="label-text">Takım 1</label>
+				<select bind:value={editTeam1} class="select select-bordered my-2 w-full">
+					<option disabled selected value="">Takım Seçin</option>
+					{#each allTeams as team}
+						<option value={team.id}>{team.name}</option>
+					{/each}
+				</select>
+				<label class="label-text">Takım 2</label>
+				<select bind:value={editTeam2} class="select select-bordered my-2 w-full">
+					<option disabled selected value="">Takım Seçin</option>
+					{#each allTeams as team}
+						<option value={team.id}>{team.name}</option>
+					{/each}
+				</select>
 				<label class="label-text">Ev Skoru</label>
 				<input
 					bind:value={editHomeScore}
