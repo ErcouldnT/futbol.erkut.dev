@@ -9,13 +9,18 @@
 	let allMatches: MatchWithTeams[] = [];
 
 	const getMatches = async () => {
-		const { data, error } = await supabase.from("matches").select(`
-    *,
-    mvp: players!matches_mvp_fkey(*),
-    jersey_goal: players!matches_jersey_goal_fkey(*),
-    team_1: teams!matches_team_1_fkey(*, lineup:lineups(*, player:players(*))),
-    team_2: teams!matches_team_2_fkey(*, lineup:lineups(*, player:players(*)))
-  `);
+		const { data, error } = await supabase
+			.from("matches")
+			.select(
+				`
+				*,
+				mvp: players!matches_mvp_fkey(*),
+				jersey_goal: players!matches_jersey_goal_fkey(*),
+				team_1: teams!matches_team_1_fkey(*, lineup:lineups(*, player:players(*))),
+				team_2: teams!matches_team_2_fkey(*, lineup:lineups(*, player:players(*)))
+			`
+			)
+			.order("created_at", { ascending: true });
 		if (error) {
 			console.error("Database error:", error);
 		}
