@@ -1,9 +1,9 @@
 <script lang="ts">
-	import Saha from "$lib/components/Line-up.svelte";
+	import Lineup from "$lib/components/Lineup.svelte";
 </script>
 
 <svelte:head>
 	<title>Akkuyu Futbol - Kadro Yap</title>
 </svelte:head>
 
-<Saha />
+<Lineup />

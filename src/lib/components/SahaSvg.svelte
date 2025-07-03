@@ -1,17 +1,18 @@
 <script lang="ts">
+	import type { LineupExpand } from "$lib/types";
 	import { HOME_COLOR, AWAY_COLOR, SAHA_COLOR } from "$lib/constants";
-	import PlayerSvg from "./PlayerSvg.svelte";
-	import type { PlayerWithXAndY } from "$lib/types";
 
-	export let playersHome: PlayerWithXAndY[] = [];
-	export let playersAway: PlayerWithXAndY[] = [];
+	import PlayerSvg from "./PlayerSvg.svelte";
+
+	export let playersHome: LineupExpand[] = [];
+	export let playersAway: LineupExpand[] = [];
 
 	export let showRatings = false;
 	export let showPlayerNames = true;
 	export let showPlayerNumbers = true;
 
 	export let saha: "VERTICAL" | "HORIZONTAL" = "VERTICAL";
-	export let startDrag: (event: PointerEvent | TouchEvent, player: PlayerWithXAndY) => void = () =>
+	export let startDrag: (event: PointerEvent | TouchEvent, player: LineupExpand) => void = () =>
 		null;
 </script>
 
@@ -85,7 +86,7 @@
 	<!-- <line x1="112.5" y1="490" x2="187.5" y2="490" stroke="white" stroke-width="1.5" opacity="0.5" /> -->
 
 	<!-- Oyuncular Home -->
-	{#each playersHome as playerData, index (playerData.player.id)}
+	{#each playersHome as playerData, index (playerData.player)}
 		<PlayerSvg
 			{index}
 			{playerData}
@@ -99,7 +100,7 @@
 	{/each}
 
 	<!-- Oyuncular Away -->
-	{#each playersAway as playerData, index (playerData.player.id)}
+	{#each playersAway as playerData, index (playerData.player)}
 		<PlayerSvg
 			{index}
 			{playerData}

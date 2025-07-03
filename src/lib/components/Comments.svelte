@@ -1,66 +1,45 @@
 <script lang="ts">
 	import type { Comment } from "$lib/types";
 	import { onMount } from "svelte";
-	import { supabase } from "$lib/supabase";
+	import { pb } from "$lib/pb";
 
-	export let matchId: number;
+	export let matchId: string;
 
 	let comments: Comment[] = [];
 	let newComment = "";
 	let username = "";
 	let loading = true;
 
-	onMount(() => {
-		(async () => {
-			const { data, error } = await supabase
-				.from("comments")
-				.select("*")
-				.eq("match_id", matchId)
-				.order("created_at", { ascending: false });
-
-			if (error) {
-				console.error("Yorumları çekerken hata oluştu:", error.message);
-			} else {
-				comments = data;
-			}
+	onMount(async () => {
+		try {
+			// matchId’ye göre yorumları sırayla al
+			const data = await pb.collection<Comment>("comments").getFullList({
+				filter: `match="${matchId}"`,
+				sort: "+created" // yeni yorumlar en altta olsun
+			});
+			comments = [...data];
+		} catch (err) {
+			console.error("Yorumlar çekilemedi:", err);
+		} finally {
 			loading = false;
-		})();
-
-		// Realtime subscription for new comments
-		const subscription = supabase
-			.channel("public:comments")
-			.on(
-				"postgres_changes",
-				{ event: "INSERT", schema: "public", table: "comments" },
-				(payload) => {
-					const newComment = payload.new as Comment;
-					if (newComment.match_id === matchId) {
-						comments = [newComment, ...comments];
-					}
-				}
-			)
-			.subscribe();
-
-		return () => {
-			supabase.removeChannel(subscription);
-		};
+		}
 	});
 
 	async function submitComment() {
 		if (!newComment.trim()) return;
 
-		const { error } = await supabase.from("comments").insert([
-			{
-				content: newComment.trim(),
-				match_id: matchId,
-				username: username.trim() || "Anonim"
-			}
-		]);
+		const payload = {
+			content: newComment.trim(),
+			match: matchId,
+			username: username.trim() || "Anonim"
+		};
 
-		if (error) {
-			console.error("Yorum eklenirken hata oluştu:", error.message);
-		} else {
+		try {
+			const created = await pb.collection<Comment>("comments").create(payload);
+			comments = [...comments, created]; // yeni yorumu listeye ekle
 			newComment = "";
+		} catch (error) {
+			// console.error("Yorum eklenirken hata oluştu:", error.message || error);
 		}
 	}
 </script>

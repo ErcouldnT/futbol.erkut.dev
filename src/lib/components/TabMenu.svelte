@@ -1,16 +1,19 @@
 <script lang="ts">
-	import type { MatchWithTeams } from "$lib/types";
+	import type { MatchExpand } from "$lib/types";
+
 	import TeamInfo from "./TeamInfo.svelte";
 	import Ratings from "./Ratings.svelte";
 	import Comments from "./Comments.svelte";
 
-	export let match: MatchWithTeams;
+	export let match: MatchExpand;
 
 	let activeTab: "PLAYERS" | "RATINGS" | "COMMENTS" = "PLAYERS";
 
 	const setActiveTab = (tab: "PLAYERS" | "RATINGS" | "COMMENTS") => {
 		activeTab = tab;
 	};
+
+	// console.log("Match Data:", match);
 </script>
 
 <!-- •	Goller ve rating'ler arasında geçiş yapmayı sağlayan sekmeleri göstermek.

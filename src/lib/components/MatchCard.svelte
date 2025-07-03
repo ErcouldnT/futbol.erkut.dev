@@ -1,13 +1,14 @@
 <script lang="ts">
-	import type { MatchWithTeams } from "$lib/types";
+	import type { MatchExpand } from "$lib/types";
 	import { ArrowDownNarrowWide } from "@lucide/svelte";
+
 	import TabMenu from "./TabMenu.svelte";
 
-	export let match: MatchWithTeams;
+	export let match: MatchExpand;
 	export let index: number;
 	export let lastMatch = false;
 
-	console.log(index + 1); // for future
+	console.log(index + 1); // for future reference
 
 	let isExpanded = false;
 
@@ -83,7 +84,7 @@
 
 		<div class="my-6 grid grid-cols-3 items-center justify-items-center p-1 sm:p-3">
 			<p class="card bg-primary p-1 px-2 text-xs font-bold sm:text-sm">
-				{match.team_1.name}
+				{match.expand?.home_team?.name}
 			</p>
 			<div>
 				<p class="text-center text-sm font-extrabold sm:text-4xl">
@@ -102,7 +103,7 @@
 				</p>
 			</div>
 			<p class="card bg-secondary p-1 px-2 text-xs font-bold sm:text-sm">
-				{match.team_2.name}
+				{match.expand?.away_team?.name}
 			</p>
 		</div>
 	</div>

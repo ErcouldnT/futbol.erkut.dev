@@ -1,46 +1,26 @@
 <script lang="ts">
-	import type { PlayerWithXAndY } from "$lib/types";
-	import { onMount } from "svelte";
-	import { supabase } from "$lib/supabase";
+	import type { LineupExpand } from "$lib/types";
+	import { pb } from "$lib/pb";
 
-	export let playerData: PlayerWithXAndY;
+	export let playerData: LineupExpand;
 	export let color: string;
-
 	export let index;
 	export let rotate = false;
 	export let showRatings = false;
 	export let showPlayerNames = true;
 	export let showPlayerNumbers = true;
 
-	export let startDrag: (event: PointerEvent | TouchEvent, player: PlayerWithXAndY) => void = () =>
+	export let startDrag: (event: PointerEvent | TouchEvent, player: LineupExpand) => void = () =>
 		null;
 
 	let rating: number | null = null;
-
-	const fetchPlayerRating = async () => {
-		const { data, error } = await supabase
-			.from("votes")
-			.select("rating")
-			.eq("player_id", playerData.player.id)
-			.eq("team_id", playerData.team_id);
-
-		if (data && data.length > 0) {
-			const sum = data.reduce((acc, vote) => acc + vote.rating, 0);
-			rating = +(sum / data.length).toFixed(1) + 2;
-			// rating = Math.round((sum / data.length) * 10) / 10; // round to 1 decimal
-		} else {
-			rating = null;
-		}
-	};
-
-	onMount(fetchPlayerRating);
 </script>
 
 <!-- Circle representing the player -->
 <g
 	class={rotate ? "origin-center cursor-pointer transform-fill lg:rotate-90" : "cursor-move"}
 	tabindex={index}
-	aria-label={`Drag ${playerData.player.name}`}
+	aria-label={`Drag ${playerData.expand.player?.name} player`}
 	role="button"
 	on:pointerdown={(event) => startDrag(event, playerData)}
 	on:touchstart={(event) => startDrag(event, playerData)}
@@ -49,7 +29,12 @@
 	<foreignObject x={playerData.pos_x - 16} y={playerData.pos_y - 16} width="32" height="32">
 		<div class="avatar">
 			<div class="h-8 w-8 rounded-full">
-				<img src={playerData.player.profile_pic} alt={playerData.player.name} />
+				<img
+					src={playerData.expand.player?.profile_pic
+						? `${pb.baseURL}/api/files/players/${playerData.expand.player.id}/${playerData.expand.player.profile_pic}`
+						: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fb.fssta.com%2Fuploads%2Fapplication%2Fsoccer%2Fheadshots%2F885.png&f=1&nofb=1&ipt=9f471ea69d4917e6e6bd8623e7c809aedb7f482cf8901cd071efc6cda978471d"}
+					alt={playerData.expand.player?.name}
+				/>
 			</div>
 		</div>
 	</foreignObject>
@@ -80,9 +65,9 @@
 			text-anchor="middle"
 			dominant-baseline="middle"
 		>
-			<tspan class="font-bold opacity-85">{playerData.player.number}</tspan>
+			<tspan class="font-bold opacity-85">{playerData.expand.player?.number}</tspan>
 			{#if showPlayerNames}
-				<tspan>{playerData.player.name}</tspan>
+				<tspan>{playerData.expand.player?.name}</tspan>
 			{/if}
 		</text>
 	{/if}
