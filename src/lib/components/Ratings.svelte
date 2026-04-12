@@ -1,60 +1,44 @@
-<script lang="ts">
-	import type { Match, LineupExpand } from "$lib/types";
-	import { onMount } from "svelte";
-	import { pb } from "$lib/pb";
+<script lang='ts'>
+  import type { LineupExpand, Match } from '$lib/types'
+  import { onMount } from 'svelte'
 
-	import SahaSvg from "./SahaSvg.svelte";
+  import SahaSvg from './SahaSvg.svelte'
 
-	export let match: Match;
+  const { match }: { match: Match } = $props()
 
-	// console.log("Match Data:", match);
+  const matchId = $derived(match.id)
+  const homeTeamId = $derived(match.homeTeamId)
+  const awayTeamId = $derived(match.awayTeamId)
 
-	const matchId = match.id;
-	const home_team_id = match.home_team;
-	const away_team_id = match.away_team;
+  let homeTeamLineups: LineupExpand[] = $state([])
+  let awayTeamLineups: LineupExpand[] = $state([])
 
-	// console.log(home_team_id, away_team_id);
+  onMount(async () => {
+    try {
+      const resHome = await fetch(`/api/lineups?matchId=${matchId}&teamId=${homeTeamId}`)
+      homeTeamLineups = await resHome.json()
 
-	let home_team_lineups: LineupExpand[] = [];
-	let away_team_lineups: LineupExpand[] = [];
+      const resAway = await fetch(`/api/lineups?matchId=${matchId}&teamId=${awayTeamId}`)
+      awayTeamLineups = await resAway.json()
+    }
+    catch {
+    // console.error("Lineups çekilemedi");
+    }
+  })
 
-	onMount(async () => {
-		try {
-			// Home team line‑ups: match id AND team id
-			const data_home_team_lineups = await pb.collection<LineupExpand>("lineups").getFullList({
-				filter: `match="${matchId}" && team="${home_team_id}"`,
-				sort: "+created",
-				expand: "player"
-			});
+  const matchStartingTime = $derived(new Date(match.matchTime || ''))
+  const matchEndingTime = $derived(new Date(matchStartingTime.getTime() + 60 * 60 * 1000)) // +1 hour
+  const votingEndTime = $derived(new Date(matchEndingTime.getTime() + 24 * 60 * 60 * 1000)) // +24 hours
+  const now = new Date()
 
-			home_team_lineups = [...data_home_team_lineups];
-
-			// Away team line‑ups: match id AND team id
-			const data_away_team_lineups = await pb.collection<LineupExpand>("lineups").getFullList({
-				filter: `match="${matchId}" && team="${away_team_id}"`,
-				sort: "+created",
-				expand: "player"
-			});
-
-			away_team_lineups = [...data_away_team_lineups];
-		} catch (error) {
-			// console.error("Lineups çekilemedi:", error.message);
-		}
-	});
-
-	const matchStartingTime = new Date(match.match_time || "");
-	const matchEndingTime = new Date(matchStartingTime.getTime() + 60 * 60 * 1000); // +1 hour
-	const votingEndTime = new Date(matchEndingTime.getTime() + 24 * 60 * 60 * 1000); // +24 hours
-	const now = new Date();
-
-	const votingEnded = now > votingEndTime;
+  const votingEnded = $derived(now > votingEndTime)
 </script>
 
-<main class="flex max-h-full items-center justify-center p-5 lg:max-h-120">
-	<SahaSvg
-		playersHome={home_team_lineups}
-		playersAway={away_team_lineups}
-		showRatings={votingEnded}
-		saha="HORIZONTAL"
-	/>
+<main class='flex max-h-full items-center justify-center p-5 lg:max-h-120'>
+  <SahaSvg
+    playersHome={homeTeamLineups}
+    playersAway={awayTeamLineups}
+    showRatings={votingEnded}
+    saha='HORIZONTAL'
+  />
 </main>

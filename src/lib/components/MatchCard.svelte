@@ -1,119 +1,115 @@
-<script lang="ts">
-	import type { MatchExpand } from "$lib/types";
-	import { ArrowDownNarrowWide } from "@lucide/svelte";
+<script lang='ts'>
+  import type { MatchExpand } from '$lib/types'
+  import { ArrowDownNarrowWide } from '@lucide/svelte'
+  import { onMount } from 'svelte'
 
-	import TabMenu from "./TabMenu.svelte";
+  import TabMenu from './TabMenu.svelte'
 
-	export let match: MatchExpand;
-	export let index: number;
-	export let lastMatch = false;
+  const {
+    match,
+    lastMatch = false,
+  }: {
+    match: MatchExpand
+    lastMatch?: boolean
+  } = $props()
+  let isExpanded = $state(false)
 
-	console.log(index + 1); // for future reference
+  onMount(() => {
+    if (lastMatch)
+      isExpanded = true
+  })
 
-	let isExpanded = false;
+  const matchStartingTime = $derived(new Date(match.matchTime || ''))
+  const matchEndingTime = $derived(new Date(matchStartingTime.getTime() + match.duration * 60 * 1000)) // +1 hour
+  const votingEndTime = $derived(new Date(matchEndingTime.getTime() + 24 * 60 * 60 * 1000)) // +24 hours
+  const now = new Date()
 
-	// it is not a bug, it is a feature:
-	// son maç istatistikleri otomatik olarak açık
-	if (lastMatch) {
-		isExpanded = true;
-	}
+  // match status
+  const notStarted = $derived(now < matchStartingTime)
+  const playing = $derived(now > matchStartingTime && now < matchEndingTime)
+  // const matchFinished = now > matchEndingTime;
+  const matchInVotingPeriod = $derived(now > matchEndingTime && now < votingEndTime)
+  // const votingEnded = now > votingEndTime;
 
-	const matchStartingTime = new Date(match.match_time || "");
-	const matchEndingTime = new Date(matchStartingTime.getTime() + match.duration * 60 * 1000); // +1 hour
-	const votingEndTime = new Date(matchEndingTime.getTime() + 24 * 60 * 60 * 1000); // +24 hours
-	const now = new Date();
+  const toggleAccordion = () => {
+    isExpanded = !isExpanded
+  }
 
-	// match status
-	const notStarted = now < matchStartingTime;
-	const playing = now > matchStartingTime && now < matchEndingTime;
-	// const matchFinished = now > matchEndingTime;
-	const matchInVotingPeriod = now > matchEndingTime && now < votingEndTime;
-	// const votingEnded = now > votingEndTime;
+  // todo: utils e gönder
+  function formatMatchTime(matchTime: Date): string {
+    const pad = (num: number) => num.toString().padStart(2, '0')
 
-	const toggleAccordion = () => {
-		isExpanded = !isExpanded;
-	};
+    const startHours = pad(matchTime.getHours())
+    const startMinutes = pad(matchTime.getMinutes())
 
-	// todo: utils e gönder
-	function formatMatchTime(matchTime: Date): string {
-		const pad = (num: number) => num.toString().padStart(2, "0");
+    const endTime = new Date(matchTime)
+    endTime.setMinutes(endTime.getMinutes() + match.duration)
 
-		const startHours = pad(matchTime.getHours());
-		const startMinutes = pad(matchTime.getMinutes());
+    const endHours = pad(endTime.getHours())
+    const endMinutes = pad(endTime.getMinutes())
 
-		const endTime = new Date(matchTime);
-		endTime.setMinutes(endTime.getMinutes() + match.duration);
-
-		const endHours = pad(endTime.getHours());
-		const endMinutes = pad(endTime.getMinutes());
-
-		return `${startHours}:${startMinutes} - ${endHours}.${endMinutes}`;
-	}
+    return `${startHours}:${startMinutes} - ${endHours}.${endMinutes}`
+  }
 </script>
 
 <main
-	class="card bg-base-200/50 w-full p-5 shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl
-	{isExpanded ? 'backdrop-blur-2xl' : 'backdrop-blur-md'}"
+  class="card bg-base-200/50 w-full p-5 shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl
+    {isExpanded ? 'backdrop-blur-2xl' : 'backdrop-blur-md'}"
 >
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div on:click={toggleAccordion} class="cursor-pointer">
-		{#if match.title}
-			<p class="text-warning text-center text-sm font-medium opacity-100 sm:text-xl">
-				{match.title}
-			</p>
-		{/if}
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div onclick={toggleAccordion} class='cursor-pointer'>
+    {#if match.title}
+      <p class='text-warning text-center text-sm font-medium opacity-100 sm:text-xl'>
+        {match.title}
+      </p>
+    {/if}
 
-		{#if match.match_time}
-			<div class="flex items-center justify-between">
-				<p class="text-sm font-medium opacity-50 sm:text-lg">
-					{new Date(match.match_time).toLocaleDateString("tr-TR", {
-						day: "2-digit",
-						month: "long",
-						year: "numeric"
-					})}
-				</p>
-				<button class="btn btn-sm sm:btn-md font-thin opacity-50"
-					>Maç Detayları <ArrowDownNarrowWide size={18} /></button
-				>
-			</div>
-			<p class="text-xs opacity-50 sm:text-sm">
-				{formatMatchTime(new Date(match.match_time))}
-			</p>
-		{/if}
+    {#if match.matchTime}
+      <div class='flex items-center justify-between'>
+        <p class='text-sm font-medium opacity-50 sm:text-lg'>
+          {new Date(match.matchTime).toLocaleDateString('tr-TR', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+          })}
+        </p>
+        <button class='btn btn-sm sm:btn-md font-thin opacity-50'
+        >Maç Detayları <ArrowDownNarrowWide size={18} /></button
+        >
+      </div>
+      <p class='text-xs opacity-50 sm:text-sm'>
+        {formatMatchTime(new Date(match.matchTime))}
+      </p>
+    {/if}
 
-		<div class="my-6 grid grid-cols-3 items-center justify-items-center p-1 sm:p-3">
-			<p class="card bg-primary p-1 px-2 text-xs font-bold sm:text-sm">
-				{match.expand?.home_team?.name}
-			</p>
-			<div>
-				<p class="text-center text-sm font-extrabold sm:text-4xl">
-					{match.home_score} - {match.away_score}
-				</p>
-				<p class="text-center text-xs">
-					{#if notStarted}
-						<span class="opacity-50">Maç henüz başlamadı.</span>
-					{:else if playing}
-						<span class="text-success">Maç şu anda oynanıyor...</span>
-					{:else if matchInVotingPeriod && match.is_votable}
-						<span class="text-warning">Rating oylaması yapılıyor...</span>
-					{:else}
-						<span class="opacity-50">Maç sonucu</span>
-					{/if}
-				</p>
-			</div>
-			<p class="card bg-secondary p-1 px-2 text-xs font-bold sm:text-sm">
-				{match.expand?.away_team?.name}
-			</p>
-		</div>
-	</div>
+    <div class='my-6 grid grid-cols-3 items-center justify-items-center p-1 sm:p-3'>
+      <p class='card bg-primary p-1 px-2 text-xs font-bold sm:text-sm'>
+        {match.homeTeam?.name}
+      </p>
+      <div>
+        <p class='text-center text-sm font-extrabold sm:text-4xl'>
+          {match.homeScore} - {match.awayScore}
+        </p>
+        <p class='text-center text-xs'>
+          {#if notStarted}
+            <span class='opacity-50'>Maç henüz başlamadı.</span>
+          {:else if playing}
+            <span class='text-success'>Maç şu anda oynanıyor...</span>
+          {:else if matchInVotingPeriod && match.isVotable}
+            <span class='text-warning'>Rating oylaması yapılıyor...</span>
+          {:else}
+            <span class='opacity-50'>Maç sonucu</span>
+          {/if}
+        </p>
+      </div>
+      <p class='card bg-secondary p-1 px-2 text-xs font-bold sm:text-sm'>
+        {match.awayTeam?.name}
+      </p>
+    </div>
+  </div>
 
-	<!-- <div class="flex items-center justify-center gap-5 opacity-50">
-		<button on:click={() => setActiveTab("PLAYERS")} class="btn btn-sm">Oyuncular</button>
-		<button on:click={() => setActiveTab("RATINGS")} class="btn btn-sm">Rating'ler</button>
-	</div> -->
-
-	{#if isExpanded}
-		<TabMenu {match} />
-	{/if}
+  {#if isExpanded}
+    <TabMenu {match} />
+  {/if}
 </main>

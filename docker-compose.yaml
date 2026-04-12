@@ -1,0 +1,14 @@
+services:
+  futbol:
+    build: .
+    ports:
+      - '3000:3000'
+    volumes:
+      - .data:/app/data
+    environment:
+      - PORT=3000
+      - DATABASE_URL=/app/data/local.db
+    restart: always
+
+volumes:
+  .data:

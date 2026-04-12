@@ -1,19 +1,19 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @plugin "daisyui" {
-	themes: dark --default;
+  themes: dark --default;
 }
 
 @plugin "@tailwindcss/typography";
 
 html {
-	scrollbar-gutter: stable;
+  scrollbar-gutter: stable;
 }
 
 body {
-	background-image: url("/bg_eyup.jpg");
-	background-size: cover;
-	background-position: center;
-	background-repeat: no-repeat;
-	min-h-screen: 100vh;
+  background-image: url('$lib/assets/bg_eyup.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
 }
