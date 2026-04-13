@@ -1,6 +1,6 @@
 <script lang='ts'>
   import type { MatchExpand } from '$lib/types'
-  import { ArrowDownNarrowWide } from '@lucide/svelte'
+  import { Calendar, ChevronDown, Clock, Trophy } from '@lucide/svelte'
   import { onMount } from 'svelte'
 
   import TabMenu from './TabMenu.svelte'
@@ -20,20 +20,17 @@
   })
 
   const matchStartingTime = $derived(new Date(match.matchTime || ''))
-  const matchEndingTime = $derived(new Date(matchStartingTime.getTime() + match.duration * 60 * 1000)) // +1 hour
+  const matchEndingTime = $derived(new Date(matchStartingTime.getTime() + match.duration * 60 * 1000))
   const now = new Date()
 
   // match status
   const notStarted = $derived(now < matchStartingTime)
   const playing = $derived(now > matchStartingTime && now < matchEndingTime)
-  // const matchFinished = now > matchEndingTime;
-  // const votingEnded = now > votingEndTime;
 
   const toggleAccordion = () => {
     isExpanded = !isExpanded
   }
 
-  // todo: utils e gönder
   function formatMatchTime(matchTime: Date): string {
     const pad = (num: number) => num.toString().padStart(2, '0')
 
@@ -46,66 +43,131 @@
     const endHours = pad(endTime.getHours())
     const endMinutes = pad(endTime.getMinutes())
 
-    return `${startHours}:${startMinutes} - ${endHours}.${endMinutes}`
+    return `${startHours}:${startMinutes} - ${endHours}:${endMinutes}`
   }
 </script>
 
-<main
-  class="card bg-base-200/50 w-full p-5 shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl
-    {isExpanded ? 'backdrop-blur-2xl' : 'backdrop-blur-md'}"
+<div
+  class="group relative w-full overflow-hidden rounded-3xl border border-white/5 bg-gradient-to-br from-base-200/80 to-base-300/80 p-px shadow-2xl transition-all duration-500 hover:shadow-primary/10
+    {isExpanded ? 'ring-1 ring-primary/30' : ''}"
 >
-  <!-- svelte-ignore a11y_click_events_have_key_events -->
-  <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div onclick={toggleAccordion} class='cursor-pointer'>
-    {#if match.title}
-      <p class='text-warning text-center text-sm font-medium opacity-100 sm:text-xl'>
-        {match.title}
-      </p>
-    {/if}
+  <div class='relative overflow-hidden rounded-[23px] bg-base-200/40 backdrop-blur-xl'>
+    <!-- Header Decor -->
+    <div class='absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none'></div>
 
-    {#if match.matchTime}
-      <div class='flex items-center justify-between'>
-        <p class='text-sm font-medium opacity-50 sm:text-lg'>
-          {new Date(match.matchTime).toLocaleDateString('tr-TR', {
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric',
-          })}
-        </p>
-        <button class='btn btn-sm sm:btn-md font-thin opacity-50'
-        >Maç Detayları <ArrowDownNarrowWide size={18} /></button
-        >
-      </div>
-      <p class='text-xs opacity-50 sm:text-sm'>
-        {formatMatchTime(new Date(match.matchTime))}
-      </p>
-    {/if}
+    <main class='relative z-10 p-4 sm:p-8'>
+      <div class='group/header'>
+        <div class='flex flex-col gap-6'>
+          <!-- Title & Date -->
+          <div class='flex flex-col items-center justify-between gap-4 sm:flex-row'>
+            <div class='flex items-center gap-3'>
+              <div class='rounded-full bg-primary/10 p-2 text-primary'>
+                <Trophy size={20} />
+              </div>
+              <h2 class='text-lg font-bold tracking-tight sm:text-2xl bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent'>
+                {match.title || 'Haftalık Maç'}
+              </h2>
+            </div>
 
-    <div class='my-6 grid grid-cols-3 items-center justify-items-center p-1 sm:p-3'>
-      <p class='card bg-primary p-1 px-2 text-xs font-bold sm:text-sm'>
-        {match.homeTeam?.name}
-      </p>
-      <div>
-        <p class='text-center text-sm font-extrabold sm:text-4xl'>
-          {match.homeScore} - {match.awayScore}
-        </p>
-        <p class='text-center text-xs'>
-          {#if notStarted}
-            <span class='opacity-50'>Maç henüz başlamadı.</span>
-          {:else if playing}
-            <span class='text-success'>Maç şu anda oynanıyor...</span>
-          {:else}
-            <span class='opacity-50'>Maç sonucu</span>
-          {/if}
-        </p>
+            <div class='flex items-center gap-4 text-xs font-medium opacity-60 sm:text-sm'>
+              <div class='flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1'>
+                <Calendar size={14} />
+                <span>
+                  {new Date(match.matchTime).toLocaleDateString('tr-TR', {
+                    day: '2-digit',
+                    month: 'long',
+                  })}
+                </span>
+              </div>
+              <div class='flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1'>
+                <Clock size={14} />
+                <span>{formatMatchTime(new Date(match.matchTime))}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Scoreboard -->
+          <div class='relative flex items-center justify-between gap-4 py-4 sm:gap-8'>
+            <!-- Background Glows -->
+            <div class='absolute inset-0 flex items-center justify-center opacity-20 blur-[80px] pointer-events-none'>
+              <div class='h-32 w-32 rounded-full bg-primary'></div>
+              <div class='h-32 w-32 rounded-full bg-secondary ml-[-40px]'></div>
+            </div>
+
+            <!-- Home Team -->
+            <div class='flex flex-1 flex-col items-center gap-3 text-center sm:flex-row sm:justify-end'>
+              <span class='order-2 text-sm font-black tracking-wide text-white/70 sm:order-1 sm:text-lg'>
+                {match.homeTeam?.name}
+              </span>
+              <div class='group/logo order-1 relative h-16 w-16 overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-px shadow-2xl sm:order-2 sm:h-20 sm:w-20 transition-transform hover:scale-105'>
+                <div class='absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent'></div>
+                <div class='relative flex h-full w-full items-center justify-center rounded-[15px] bg-base-300/40 backdrop-blur-md'>
+                  <span class='text-2xl font-black text-primary sm:text-4xl drop-shadow-[0_0_12px_rgba(var(--primary),0.5)]'>
+                    {match.homeTeam?.name?.charAt(0)}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Score -->
+            <div class='relative flex flex-col items-center gap-2'>
+              <div class='flex items-center gap-4 rounded-[2rem] border border-white/10 bg-gradient-to-b from-white/10 to-transparent px-8 py-3 shadow-[0_20px_50px_rgba(0,0,0,0.3)] backdrop-blur-md'>
+                <span class='text-4xl font-black tabular-nums text-white sm:text-6xl'>{match.homeScore}</span>
+                <div class='h-8 w-px bg-white/10 sm:h-12'></div>
+                <span class='text-4xl font-black tabular-nums text-white sm:text-6xl'>{match.awayScore}</span>
+              </div>
+
+              <div class='absolute -bottom-3 flex translate-y-1/2 items-center gap-2 rounded-full border border-white/10 bg-base-300/80 px-4 py-1.5 shadow-xl backdrop-blur-xl'>
+                {#if notStarted}
+                  <span class='flex h-2 w-2 rounded-full bg-warning shadow-[0_0_8px_rgba(var(--warning),0.5)]'></span>
+                  <span class='text-[10px] uppercase tracking-widest text-warning font-black'>Bekleniyor</span>
+                {:else if playing}
+                  <span class='relative flex h-2 w-2'>
+                    <span class='absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75'></span>
+                    <span class='relative inline-flex h-2 w-2 rounded-full bg-success shadow-[0_0_8px_rgba(var(--success),0.5)]'></span>
+                  </span>
+                  <span class='text-[10px] uppercase tracking-widest text-success font-black'>Canlı</span>
+                {:else}
+                  <span class='text-[10px] uppercase tracking-widest opacity-40 font-black'>Bitti</span>
+                {/if}
+              </div>
+            </div>
+
+            <!-- Away Team -->
+            <div class='flex flex-1 flex-col items-center gap-3 text-center sm:flex-row'>
+              <div class='group/logo relative h-16 w-16 overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-px shadow-2xl sm:h-20 sm:w-20 transition-transform hover:scale-105'>
+                <div class='absolute inset-0 bg-gradient-to-br from-secondary/20 to-transparent'></div>
+                <div class='relative flex h-full w-full items-center justify-center rounded-[15px] bg-base-300/40 backdrop-blur-md'>
+                  <span class='text-2xl font-black text-secondary sm:text-4xl drop-shadow-[0_0_12px_rgba(var(--secondary),0.5)]'>
+                    {match.awayTeam?.name?.charAt(0)}
+                  </span>
+                </div>
+              </div>
+              <span class='text-sm font-black tracking-wide text-white/70 sm:text-lg'>
+                {match.awayTeam?.name}
+              </span>
+            </div>
+          </div>
+
+          <!-- Interaction Footer -->
+          <div class='flex items-center justify-center pt-2'>
+            <button
+              onclick={toggleAccordion}
+              class='flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-xs font-semibold text-white/70 transition-all hover:bg-primary hover:text-white'
+            >
+              Maç Detayları
+              <ChevronDown size={16} class="transition-transform duration-500 {isExpanded ? 'rotate-180' : ''}" />
+            </button>
+          </div>
+        </div>
       </div>
-      <p class='card bg-secondary p-1 px-2 text-xs font-bold sm:text-sm'>
-        {match.awayTeam?.name}
-      </p>
-    </div>
+
+      <!-- Expandable Area -->
+      {#if isExpanded}
+        <div class='mt-6 border-t border-white/5 pt-6 animate-in fade-in slide-in-from-top-4 duration-500'>
+          <TabMenu {match} />
+        </div>
+      {/if}
+    </main>
   </div>
-
-  {#if isExpanded}
-    <TabMenu {match} />
-  {/if}
-</main>
+</div>

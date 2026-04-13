@@ -1,23 +1,20 @@
 <script lang='ts'>
   import type { LineupExpand, Player } from '$lib/types'
-  import type { PageData } from './$types'
   import { applyAction, deserialize, enhance } from '$app/forms'
   import { goto } from '$app/navigation'
   import {
+    allPlayersStore,
     awayTeamNameStore,
     customPlayersStore,
     homeTeamNameStore,
     playersAwayStore,
     playersHomeStore,
-    allPlayersStore,
   } from '$lib/stores/players'
-  import { Plus, Settings2 } from '@lucide/svelte'
   import { titleCase } from '$lib/utils'
+  import { Plus, Settings2 } from '@lucide/svelte'
   import SahaSvg from './SahaSvg.svelte'
 
-  let { data }: { data: PageData } = $props()
-
-  let playersList = $derived($allPlayersStore)
+  const playersList = $derived($allPlayersStore)
 
   let newHomePlayerName = $state('')
   let newAwayPlayerName = $state('')
@@ -159,8 +156,8 @@
   const addPlayer = (player: Player, team: 'HOME' | 'AWAY') => {
     // console.log(player);
 
-    const isOnField = playersHome.some(lineup => lineup.player.id === player.id) ||
-                     playersAway.some(lineup => lineup.player.id === player.id)
+    const isOnField = playersHome.some(lineup => lineup.player.id === player.id)
+      || playersAway.some(lineup => lineup.player.id === player.id)
 
     if (!isOnField) {
       const { posX, posY } = randomXAndY(team === 'HOME')
@@ -208,7 +205,7 @@
     if (newNumberStr === null)
       return
 
-    const newNumber = parseInt(newNumberStr)
+    const newNumber = Number.parseInt(newNumberStr)
     if (Number.isNaN(newNumber))
       return
 
@@ -313,7 +310,7 @@
       else {
         if (result.type === 'failure') {
           // eslint-disable-next-line no-alert
-          alert('Hata: ' + (result.data?.message || 'Bilinmeyen bir hata oluştu'))
+          alert(`Hata: ${result.data?.message || 'Bilinmeyen bir hata oluştu'}`)
         }
         await applyAction(result)
       }
@@ -483,8 +480,6 @@
   </button>
 
   {#if showSaveModal}
-    <!-- svelte-ignore a11y_click_events_have_key_events -->
-    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
     <dialog
       class='modal modal-open modal-bottom sm:modal-middle backdrop-blur-sm'
       onclick={() => (showSaveModal = false)}
