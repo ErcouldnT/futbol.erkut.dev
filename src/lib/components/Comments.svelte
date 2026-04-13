@@ -123,7 +123,7 @@
           type='text'
           value={username}
           oninput={e => username = titleCase(e.currentTarget.value)}
-          placeholder='Rumuzunuz'
+          placeholder='İsim'
           class='input h-12 w-full border-none bg-white/5 pl-11 text-sm font-medium transition-all focus:bg-white/10 focus:ring-2 focus:ring-primary/20 rounded-2xl'
         />
       </div>

@@ -95,15 +95,12 @@
             </div>
 
             <!-- Home Team -->
-            <div class='flex flex-1 flex-col items-center gap-3 text-center sm:flex-row sm:justify-end'>
-              <span class='order-2 text-sm font-black tracking-wide text-white/70 sm:order-1 sm:text-lg'>
-                {match.homeTeam?.name}
-              </span>
-              <div class='group/logo order-1 relative h-16 w-16 overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-px shadow-2xl sm:order-2 sm:h-20 sm:w-20 transition-transform hover:scale-105'>
+            <div class='flex flex-1 items-center justify-end'>
+              <div class='group/logo relative h-12 overflow-hidden rounded-xl border border-white/10 bg-white/5 p-px shadow-2xl sm:h-16 transition-transform hover:scale-105'>
                 <div class='absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent'></div>
-                <div class='relative flex h-full w-full items-center justify-center rounded-[15px] bg-base-300/40 backdrop-blur-md'>
-                  <span class='text-2xl font-black text-primary sm:text-4xl drop-shadow-[0_0_12px_rgba(var(--primary),0.5)]'>
-                    {match.homeTeam?.name?.charAt(0)}
+                <div class='relative flex h-full items-center justify-center rounded-[11px] bg-base-300/40 px-4 sm:px-6 backdrop-blur-md'>
+                  <span class='text-sm font-black text-primary sm:text-xl drop-shadow-[0_0_12px_rgba(var(--primary),0.5)] whitespace-nowrap tracking-wider'>
+                    {match.homeTeam?.name}
                   </span>
                 </div>
               </div>
@@ -134,18 +131,15 @@
             </div>
 
             <!-- Away Team -->
-            <div class='flex flex-1 flex-col items-center gap-3 text-center sm:flex-row'>
-              <div class='group/logo relative h-16 w-16 overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-px shadow-2xl sm:h-20 sm:w-20 transition-transform hover:scale-105'>
+            <div class='flex flex-1 items-center justify-start'>
+              <div class='group/logo relative h-12 overflow-hidden rounded-xl border border-white/10 bg-white/5 p-px shadow-2xl sm:h-16 transition-transform hover:scale-105'>
                 <div class='absolute inset-0 bg-gradient-to-br from-secondary/20 to-transparent'></div>
-                <div class='relative flex h-full w-full items-center justify-center rounded-[15px] bg-base-300/40 backdrop-blur-md'>
-                  <span class='text-2xl font-black text-secondary sm:text-4xl drop-shadow-[0_0_12px_rgba(var(--secondary),0.5)]'>
-                    {match.awayTeam?.name?.charAt(0)}
+                <div class='relative flex h-full items-center justify-center rounded-[11px] bg-base-300/40 px-4 sm:px-6 backdrop-blur-md'>
+                  <span class='text-sm font-black text-secondary sm:text-xl drop-shadow-[0_0_12px_rgba(var(--secondary),0.5)] whitespace-nowrap tracking-wider'>
+                    {match.awayTeam?.name}
                   </span>
                 </div>
               </div>
-              <span class='text-sm font-black tracking-wide text-white/70 sm:text-lg'>
-                {match.awayTeam?.name}
-              </span>
             </div>
           </div>
 
