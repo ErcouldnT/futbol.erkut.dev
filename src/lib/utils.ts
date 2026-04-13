@@ -24,3 +24,19 @@ export function shuffleArray<T>(array: T[]): T[] {
   }
   return shuffled
 }
+
+/**
+ * Capitalizes the first letter of each word in a string.
+ * Supports Turkish characters.
+ * @param str - The string to capitalize.
+ * @returns The capitalized string.
+ */
+export function titleCase(str: string): string {
+  if (!str)
+    return ''
+  return str
+    .toLocaleLowerCase('tr-TR')
+    .split(' ')
+    .map(word => word.charAt(0).toLocaleUpperCase('tr-TR') + word.slice(1))
+    .join(' ')
+}

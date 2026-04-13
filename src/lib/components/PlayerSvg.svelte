@@ -6,7 +6,6 @@
     color,
     index,
     rotate = false,
-    showRatings = false,
     showPlayerNames = true,
     showPlayerNumbers = true,
     startDrag = () => null,
@@ -15,7 +14,6 @@
     color: string
     index: number
     rotate?: boolean
-    showRatings?: boolean
     showPlayerNames?: boolean
     showPlayerNumbers?: boolean
     startDrag?: (event: PointerEvent | TouchEvent, player: LineupExpand) => void
@@ -43,21 +41,6 @@
       </div>
     </div>
   </foreignObject>
-
-  <!-- Player's rating above the avatar -->
-  {#if showRatings}
-    <text
-      class='pointer-events-none font-extrabold'
-      x={playerData.posX}
-      y={playerData.posY - 22}
-      fill={color}
-      font-size='10'
-      text-anchor='middle'
-      dominant-baseline='middle'
-    >
-      {playerData.rating !== null ? `${playerData.rating}` : ''}
-    </text>
-  {/if}
 
   <!-- Player's number above the avatar -->
   {#if showPlayerNumbers}

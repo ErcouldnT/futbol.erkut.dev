@@ -7,7 +7,6 @@
   const {
     playersHome = [],
     playersAway = [],
-    showRatings = false,
     showPlayerNames = true,
     showPlayerNumbers = true,
     saha = 'VERTICAL',
@@ -15,7 +14,6 @@
   }: {
     playersHome?: LineupExpand[]
     playersAway?: LineupExpand[]
-    showRatings?: boolean
     showPlayerNames?: boolean
     showPlayerNumbers?: boolean
     saha?: 'VERTICAL' | 'HORIZONTAL'
@@ -24,6 +22,7 @@
 </script>
 
 <svg
+  id='field-svg'
   xmlns='http://www.w3.org/2000/svg'
   viewBox='0 0 300 500'
   class="h-full max-h-screen w-full max-w-md {saha === 'HORIZONTAL' ? 'lg:-rotate-90' : ''}"
@@ -102,7 +101,6 @@
       {startDrag}
       {showPlayerNames}
       {showPlayerNumbers}
-      {showRatings}
     />
   {/each}
 
@@ -116,7 +114,6 @@
       {startDrag}
       {showPlayerNames}
       {showPlayerNumbers}
-      {showRatings}
     />
   {/each}
 </svg>

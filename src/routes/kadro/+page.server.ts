@@ -1,26 +1,30 @@
-import type { Actions, PageServerLoad } from './$types'
+import { eq } from 'drizzle-orm'
+import type { Actions } from './$types'
 import { db } from '$lib/db'
-import { lineups, matches, teams } from '$lib/db/schema'
-import { fail, redirect } from '@sveltejs/kit'
+import { lineups, matches, players, teams } from '$lib/db/schema'
+import { fail, isRedirect, redirect } from '@sveltejs/kit'
 import { v4 as uuidv4 } from 'uuid'
 
-export const load: PageServerLoad = async () => {
-  const players = await db.query.players.findMany({
-    orderBy: (players, { asc }) => [asc(players.name)],
-  })
-
-  return {
-    players,
-  }
-}
-
 export const actions: Actions = {
+  checkPlayer: async ({ request }) => {
+    const formData = await request.formData()
+    const name = formData.get('name') as string
+
+    if (!name)
+      return fail(400, { message: 'Name is required' })
+
+    const player = db.select().from(players).where(eq(players.name, name)).get()
+    return { player }
+  },
   saveMatch: async ({ request }) => {
-    const data = await request.formData()
-    const homeTeamName = data.get('homeTeamName') as string
-    const awayTeamName = data.get('awayTeamName') as string
-    const homePlayers = JSON.parse(data.get('homePlayers') as string)
-    const awayPlayers = JSON.parse(data.get('awayPlayers') as string)
+    const formData = await request.formData()
+    const homeTeamName = formData.get('homeTeamName') as string
+    const awayTeamName = formData.get('awayTeamName') as string
+    const homePlayers = JSON.parse(formData.get('homePlayers') as string)
+    const awayPlayers = JSON.parse(formData.get('awayPlayers') as string)
+    const title = formData.get('title') as string
+    const matchTime = formData.get('matchTime') as string
+    const duration = parseInt(formData.get('duration') as string || '60')
 
     if (!homeTeamName || !awayTeamName) {
       return fail(400, { message: 'Missing team names' })
@@ -31,26 +35,59 @@ export const actions: Actions = {
       const awayTeamId = uuidv4()
       const matchId = uuidv4()
 
-      await db.transaction(async (tx) => {
-        await tx.insert(teams).values([
+      // Better-sqlite3 transactions must be synchronous
+      db.transaction((tx) => {
+        const playerMap = new Map<string, string>()
+        const allPlayersInLineup = [...homePlayers, ...awayPlayers]
+
+        for (const p of allPlayersInLineup) {
+          if (playerMap.has(p.player.id))
+            continue
+
+          // Use sync .get() for check
+          const existing = tx.select().from(players).where(eq(players.name, p.player.name)).get()
+
+          if (existing) {
+            playerMap.set(p.player.id, existing.id)
+            // Eğer numara değişmişse güncelle
+            if (existing.number !== p.player.number) {
+              tx.update(players)
+                .set({ number: p.player.number, updatedAt: new Date() })
+                .where(eq(players.id, existing.id))
+                .run()
+            }
+          }
+          else {
+            const newId = uuidv4()
+            tx.insert(players).values({
+              id: newId,
+              name: p.player.name,
+              number: p.player.number,
+            }).run()
+            playerMap.set(p.player.id, newId)
+          }
+        }
+
+        tx.insert(teams).values([
           { id: homeTeamId, name: homeTeamName },
           { id: awayTeamId, name: awayTeamName },
-        ])
+        ]).run()
 
-        await tx.insert(matches).values({
+        tx.insert(matches).values({
           id: matchId,
-          title: `${homeTeamName} vs ${awayTeamName}`,
+          title: title || `${homeTeamName} vs ${awayTeamName}`,
           homeTeamId,
           awayTeamId,
-          matchTime: new Date().toISOString(),
-        })
+          matchTime: matchTime || new Date().toISOString(),
+          duration,
+        }).run()
 
         const lineupValues = [
           ...homePlayers.map((p: any) => ({
             id: uuidv4(),
             matchId,
             teamId: homeTeamId,
-            playerId: p.playerId,
+            playerId: playerMap.get(p.player.id),
             posX: p.posX,
             posY: p.posY,
           })),
@@ -58,24 +95,24 @@ export const actions: Actions = {
             id: uuidv4(),
             matchId,
             teamId: awayTeamId,
-            playerId: p.playerId,
+            playerId: playerMap.get(p.player.id),
             posX: p.posX,
             posY: p.posY,
           })),
         ]
 
         if (lineupValues.length > 0) {
-          await tx.insert(lineups).values(lineupValues)
+          tx.insert(lineups).values(lineupValues).run()
         }
       })
 
       throw redirect(303, '/')
     }
     catch (error) {
-      if (error instanceof Error && 'status' in error)
-        throw error // Re-throw redirect
-      console.error(error)
-      return fail(500, { message: 'Failed to save match' })
+      if (isRedirect(error))
+        throw error
+      console.error('SAVE MATCH ERROR:', error)
+      return fail(500, { message: 'Failed to save match: ' + (error as Error).message })
     }
   },
 }

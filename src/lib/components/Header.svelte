@@ -1,5 +1,29 @@
 <script lang='ts'>
-// import { goto } from "$app/navigation";
+  import { page } from '$app/state'
+  import {
+    awayTeamNameStore,
+    customPlayersStore,
+    homeTeamNameStore,
+    playersAwayStore,
+    playersHomeStore,
+    allPlayersStore,
+  } from '$lib/stores/players'
+
+  function resetKadro() {
+    if (confirm('Bütün kadroyu sıfırlamak istediğinize emin misiniz?')) {
+      homeTeamNameStore.set('')
+      awayTeamNameStore.set('')
+      playersHomeStore.set([])
+      playersAwayStore.set([])
+      customPlayersStore.set([])
+      allPlayersStore.set([])
+      
+      // Depoların güncellendiğinden emin olmak için çok kısa bir gecikme
+      setTimeout(() => {
+        window.location.reload()
+      }, 50)
+    }
+  }
 </script>
 
 <main class='navbar bg-base-100/0 p-0 backdrop-blur-md'>
@@ -12,6 +36,10 @@
     </a>
   </div>
   <div class='navbar-end place-self-end'>
-    <a href='/kadro' class='btn btn-soft btn-sm mx-0.5'>Kadro yap</a>
+    {#if page.url.pathname === '/kadro'}
+      <button onclick={resetKadro} class='btn btn-error btn-sm mx-0.5'>Sıfırla</button>
+    {:else}
+      <a href='/kadro' class='btn btn-soft btn-sm mx-0.5'>Kadro yap</a>
+    {/if}
   </div>
 </main>

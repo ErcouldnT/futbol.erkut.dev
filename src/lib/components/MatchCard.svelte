@@ -21,14 +21,12 @@
 
   const matchStartingTime = $derived(new Date(match.matchTime || ''))
   const matchEndingTime = $derived(new Date(matchStartingTime.getTime() + match.duration * 60 * 1000)) // +1 hour
-  const votingEndTime = $derived(new Date(matchEndingTime.getTime() + 24 * 60 * 60 * 1000)) // +24 hours
   const now = new Date()
 
   // match status
   const notStarted = $derived(now < matchStartingTime)
   const playing = $derived(now > matchStartingTime && now < matchEndingTime)
   // const matchFinished = now > matchEndingTime;
-  const matchInVotingPeriod = $derived(now > matchEndingTime && now < votingEndTime)
   // const votingEnded = now > votingEndTime;
 
   const toggleAccordion = () => {
@@ -96,8 +94,6 @@
             <span class='opacity-50'>Maç henüz başlamadı.</span>
           {:else if playing}
             <span class='text-success'>Maç şu anda oynanıyor...</span>
-          {:else if matchInVotingPeriod && match.isVotable}
-            <span class='text-warning'>Rating oylaması yapılıyor...</span>
           {:else}
             <span class='opacity-50'>Maç sonucu</span>
           {/if}
