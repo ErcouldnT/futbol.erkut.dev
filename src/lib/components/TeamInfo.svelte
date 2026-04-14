@@ -1,5 +1,6 @@
 <script lang='ts'>
   import type { LineupExpand, MatchExpand } from '$lib/types'
+  import { invalidateAll } from '$app/navigation'
   import { onMount } from 'svelte'
 
   const { match }: { match: MatchExpand } = $props()
@@ -13,20 +14,38 @@
   async function loadLineups() {
     const resHome = await fetch(`/api/lineups?matchId=${match.id}&teamId=${homeTeamId}`)
     const dataLineupHomeTeam = await resHome.json()
-    lineupHomeTeam = sortPlayersByGoals([...dataLineupHomeTeam])
+    lineupHomeTeam = sortPlayersAlphabetically([...dataLineupHomeTeam])
 
     const resAway = await fetch(`/api/lineups?matchId=${match.id}&teamId=${awayTeamId}`)
     const dataLineupAwayTeam = await resAway.json()
-    lineupAwayTeam = sortPlayersByGoals([...dataLineupAwayTeam])
+    lineupAwayTeam = sortPlayersAlphabetically([...dataLineupAwayTeam])
   }
 
   onMount(async () => {
     loadLineups()
   })
 
-  // sort players by goals scored (from most to least)
-  function sortPlayersByGoals(players: LineupExpand[]) {
-    return players.sort((a, b) => b.goals - a.goals)
+  // sort players alphabetically
+  function sortPlayersAlphabetically(players: LineupExpand[]) {
+    return players.sort((a, b) => a.player.name.localeCompare(b.player.name, 'tr-TR'))
+  }
+
+  async function updateGoals(lineupId: string, teamId: string, type: 'increment' | 'decrement') {
+    const res = await fetch('/api/lineups', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: lineupId,
+        matchId: match.id,
+        teamId,
+        type,
+      }),
+    })
+
+    if (res.ok) {
+      await loadLineups()
+      await invalidateAll()
+    }
   }
 </script>
 
@@ -39,9 +58,9 @@
     </div>
     <div class='flex flex-col gap-3'>
       {#each lineupHomeTeam as playerData (playerData.player.id)}
-        <div class='flex items-center justify-between rounded-xl bg-white/5 p-3 transition-colors hover:bg-white/10'>
+        <div class='flex items-center justify-between rounded-xl bg-white/5 p-3 transition-all hover:bg-white/10 group/row'>
           <div class='flex items-center gap-3'>
-            <div class='h-1.5 w-1.5 rounded-full bg-primary/60'></div>
+            <div class='h-1.5 w-1.5 rounded-full bg-primary/60 group-hover/row:scale-150 transition-transform'></div>
             <span class='text-sm font-semibold text-white/90'>
               {playerData.player.name}
               {#if playerData.player.name === match.mvp?.name}
@@ -53,10 +72,23 @@
             {#if playerData.player.name === match.jerseyGoal?.name}
               <span class='text-xs' title='Forma Golü'>👕</span>
             {/if}
-            <div class='flex gap-0.5'>
-              {#each Array.from({ length: playerData.goals }) as _}
-                <span class='text-xs drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]'>⚽</span>
-              {/each}
+
+            <div class='flex items-center gap-1'>
+              <button
+                onclick={() => updateGoals(playerData.id, homeTeamId, 'increment')}
+                oncontextmenu={(e) => {
+                  e.preventDefault()
+                  updateGoals(playerData.id, homeTeamId, 'decrement')
+                }}
+                class="flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/5 px-2.5 py-1 text-xs font-bold transition-all hover:border-primary/50 hover:bg-primary/20 hover:scale-105 active:scale-95
+                  {playerData.goals > 0 ? 'text-white border-primary/30 bg-primary/10' : 'text-white/20'}"
+                title='Tıkla: +1 Artır, Sağ Tık: -1 Azalt'
+              >
+                <span class={playerData.goals > 0 ? 'drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'grayscale opacity-50'}>⚽</span>
+                {#if playerData.goals > 0}
+                  <span class='text-primary'>x{playerData.goals}</span>
+                {/if}
+              </button>
             </div>
           </div>
         </div>
@@ -72,9 +104,9 @@
     </div>
     <div class='flex flex-col gap-3'>
       {#each lineupAwayTeam as playerData (playerData.player.id)}
-        <div class='flex items-center justify-between rounded-xl bg-white/5 p-3 transition-colors hover:bg-white/10'>
+        <div class='flex items-center justify-between rounded-xl bg-white/5 p-3 transition-all hover:bg-white/10 group/row'>
           <div class='flex items-center gap-3'>
-            <div class='h-1.5 w-1.5 rounded-full bg-secondary/60'></div>
+            <div class='h-1.5 w-1.5 rounded-full bg-secondary/60 group-hover/row:scale-150 transition-transform'></div>
             <span class='text-sm font-semibold text-white/90'>
               {playerData.player.name}
               {#if playerData.player.name === match.mvp?.name}
@@ -86,10 +118,23 @@
             {#if playerData.player.name === match.jerseyGoal?.name}
               <span class='text-xs' title='Forma Golü'>👕</span>
             {/if}
-            <div class='flex gap-0.5'>
-              {#each Array.from({ length: playerData.goals }) as _}
-                <span class='text-xs drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]'>⚽</span>
-              {/each}
+
+            <div class='flex items-center gap-1'>
+              <button
+                onclick={() => updateGoals(playerData.id, awayTeamId, 'increment')}
+                oncontextmenu={(e) => {
+                  e.preventDefault()
+                  updateGoals(playerData.id, awayTeamId, 'decrement')
+                }}
+                class="flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/5 px-2.5 py-1 text-xs font-bold transition-all hover:border-secondary/50 hover:bg-secondary/20 hover:scale-105 active:scale-95
+                  {playerData.goals > 0 ? 'text-white border-secondary/30 bg-secondary/10' : 'text-white/20'}"
+                title='Tıkla: +1 Artır, Sağ Tık: -1 Azalt'
+              >
+                <span class={playerData.goals > 0 ? 'drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'grayscale opacity-50'}>⚽</span>
+                {#if playerData.goals > 0}
+                  <span class='text-secondary'>x{playerData.goals}</span>
+                {/if}
+              </button>
             </div>
           </div>
         </div>

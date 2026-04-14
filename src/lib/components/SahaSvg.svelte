@@ -27,8 +27,20 @@
   viewBox='0 0 300 500'
   class="h-full max-h-screen w-full max-w-md {saha === 'HORIZONTAL' ? 'lg:-rotate-90' : ''}"
 >
+  <!-- Patterns & Gradients -->
+  <defs>
+    <pattern id='stripes' width='300' height='40' patternUnits='userSpaceOnUse'>
+      <rect width='300' height='20' fill='white' opacity='0.02' />
+    </pattern>
+    <radialGradient id='fieldGradient' cx='50%' cy='50%' r='50%'>
+      <stop offset='0%' stop-color='#142b14' />
+      <stop offset='100%' stop-color={SAHA_COLOR} />
+    </radialGradient>
+  </defs>
+
   <!-- Çim Alanı -->
-  <rect x='0' y='0' width='300' height='500' fill={SAHA_COLOR} />
+  <rect x='0' y='0' width='300' height='500' fill='url(#fieldGradient)' />
+  <rect x='0' y='0' width='300' height='500' fill='url(#stripes)' />
 
   <!-- Saha Dış Çizgisi -->
   <rect
@@ -39,7 +51,7 @@
     fill='none'
     stroke='white'
     stroke-width='1.5'
-    opacity='0.5'
+    opacity='0.2'
   />
 
   <!-- Orta Çizgi -->

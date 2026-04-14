@@ -286,6 +286,8 @@
   }
 </script>
 
+<svelte:window onkeydown={e => e.key === 'Escape' && (showSaveModal = false)} />
+
 <form
   method='POST'
   action='?/saveMatch'
@@ -325,251 +327,331 @@
   <input type='hidden' name='matchTime' value={matchTime} />
   <input type='hidden' name='duration' value={matchDuration} />
 
-  <main class='mt-5 flex flex-col items-center justify-center gap-16 lg:flex-row'>
-    <div class='flex flex-col items-center gap-2'>
-      <input
-        type='text'
-        bind:value={homeTeamName}
-        placeholder='Ev sahibi takım adı'
-        class='input input-bordered input-sm text-primary mb-2 w-full text-center font-bold'
-        class:border-2={homeTeamName.trim() === ''}
-        class:border-red-500={homeTeamName.trim() === ''}
-        onkeydown={e => e.key === 'Enter' && e.preventDefault()}
-      />
+  <main class='mt-8 flex flex-col items-start justify-center gap-8 lg:flex-row lg:gap-12'>
+    <!-- Home Team Column -->
+    <div class='flex w-full flex-col gap-4 lg:w-72'>
+      <div class='group relative overflow-hidden rounded-3xl border border-white/5 bg-white/5 p-5 shadow-xl backdrop-blur-xl'>
+        <div class='absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none'></div>
 
-      <div class='join mb-2 w-full px-2'>
-        <input
-          type='text'
-          placeholder='Futbolcu ekle...'
-          class='input input-bordered input-sm join-item flex-1'
-          bind:value={newHomePlayerName}
-          onkeydown={e => e.key === 'Enter' && (e.preventDefault(), addNewPlayer('HOME'))}
-        />
-        <button type='button' class='btn btn-sm join-item' onclick={() => addNewPlayer('HOME')}>
-          <Plus size={16} />
-        </button>
+        <div class='relative flex flex-col gap-4'>
+          <input
+            type='text'
+            bind:value={homeTeamName}
+            placeholder='Ev Sahibi'
+            class='w-full bg-transparent text-center text-xl font-black uppercase tracking-[0.2em] text-primary outline-none placeholder:opacity-20'
+            onkeydown={e => e.key === 'Enter' && e.preventDefault()}
+          />
+
+          <div class='flex items-center gap-2'>
+            <div class='relative flex-1'>
+              <input
+                type='text'
+                placeholder='Oyuncu ekle...'
+                class='w-full rounded-xl border border-white/5 bg-white/5 px-4 py-2 text-xs font-medium outline-none transition-all focus:bg-white/10'
+                bind:value={newHomePlayerName}
+                onkeydown={e => e.key === 'Enter' && (e.preventDefault(), addNewPlayer('HOME'))}
+              />
+            </div>
+            <button
+              type='button'
+              class='flex h-9 w-9 items-center justify-center rounded-xl bg-primary/20 text-primary transition-all hover:bg-primary hover:text-white active:scale-95'
+              onclick={() => addNewPlayer('HOME')}
+            >
+              <Plus size={18} />
+            </button>
+          </div>
+        </div>
       </div>
 
-      <ul class='menu menu-vertical bg-base-200/50 rounded-box w-56 gap-1 backdrop-blur-md'>
+      <div class='custom-scrollbar flex max-h-[400px] flex-col gap-2 overflow-y-auto pr-1'>
         {#each playersList as player (player.id)}
-          <!-- svelte-ignore a11y_click_events_have_key_events -->
-          <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-          <li
+          <div
+            role='button'
+            tabindex='0'
             onclick={() => {
               if (playersHome.some(lineup => lineup.player.id === player.id)) {
                 removePlayer(player, 'HOME')
               }
-              else {
-                if (!playersAway.some(lineup => lineup.player.id === player.id)) {
+              else if (!playersAway.some(lineup => lineup.player.id === player.id)) {
+                addPlayer(player, 'HOME')
+              }
+            }}
+            onkeydown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                if (playersHome.some(lineup => lineup.player.id === player.id)) {
+                  removePlayer(player, 'HOME')
+                }
+                else if (!playersAway.some(lineup => lineup.player.id === player.id)) {
                   addPlayer(player, 'HOME')
                 }
               }
             }}
-            class='card opacity-30'
-            class:opacity-100={playersHome.some(lineup => lineup.player.id === player.id)}
-            class:bg-primary={playersHome.some(lineup => lineup.player.id === player.id)}
+            class="group/player relative overflow-hidden rounded-2xl border bg-white/5 p-3 text-left transition-all hover:bg-white/10 active:scale-98 {playersHome.some(lineup => lineup.player.id === player.id) ? 'bg-primary/20 border-primary/30' : 'border-white/5 opacity-40'}"
           >
-            <div class='flex items-center justify-between gap-2'>
+            <div class='flex items-center gap-3'>
               <div class='avatar'>
-                <div class='h-4 w-4 rounded-full'>
+                <div class='h-8 w-8 rounded-full border border-white/10'>
                   <img
-                    src='https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fb.fssta.com%2Fuploads%2Fapplication%2Fsoccer%2Fheadshots%2F885.png&f=1&nofb=1&ipt=9f471ea69d4917e6e6bd8623e7c809aedb7f482cf8901cd071efc6cda978471d'
+                    src='https://api.dicebear.com/7.x/avataaars/svg?seed={player.name}'
                     alt={player.name}
                   />
                 </div>
               </div>
-              <div class='flex-1'>
-                <span class='text-xs font-bold'>{player.name}</span>
+              <div class='flex flex-1 flex-col'>
+                <span class='text-xs font-bold text-white/90'>{player.name}</span>
+                <span class='text-[10px] font-medium text-white/30 uppercase'>Oyuncu</span>
               </div>
-              <!-- svelte-ignore a11y_click_events_have_key_events -->
-              <!-- svelte-ignore a11y_no_static_element_interactions -->
-              <span
-                onclick={e => updatePlayerNumber(e, player)}
-                class='text-warning badge cursor-pointer text-xs transition-colors hover:bg-warning hover:text-warning-content'
+              <button
+                type='button'
+                class='flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-[10px] font-black text-warning transition-colors group-hover/player:bg-warning group-hover/player:text-warning-content'
+                onclick={(e) => {
+                  e.stopPropagation()
+                  updatePlayerNumber(e, player)
+                }}
               >
                 {player.number}
-              </span>
+              </button>
             </div>
-          </li>
+          </div>
         {/each}
-      </ul>
+      </div>
     </div>
 
-    <SahaSvg {playersHome} {playersAway} {showPlayerNames} {showPlayerNumbers} {startDrag} />
-
-    <div class='flex flex-col items-center gap-2'>
-      <input
-        type='text'
-        bind:value={awayTeamName}
-        placeholder='Rakip takım adı'
-        class='input input-bordered input-sm text-secondary mb-2 w-full text-center font-bold'
-        class:border-2={awayTeamName.trim() === ''}
-        class:border-red-500={awayTeamName.trim() === ''}
-        onkeydown={e => e.key === 'Enter' && e.preventDefault()}
-      />
-
-      <div class='join mb-2 w-full px-2'>
-        <input
-          type='text'
-          placeholder='Futbolcu ekle...'
-          class='input input-bordered input-sm join-item flex-1'
-          bind:value={newAwayPlayerName}
-          onkeydown={e => e.key === 'Enter' && (e.preventDefault(), addNewPlayer('AWAY'))}
-        />
-        <button type='button' class='btn btn-sm join-item' onclick={() => addNewPlayer('AWAY')}>
-          <Plus size={16} />
-        </button>
+    <!-- Pitch Area -->
+    <div class='relative flex flex-col items-center gap-6'>
+      <div class='relative rounded-[2.5rem] border border-white/10 bg-black/40 p-2 shadow-2xl backdrop-blur-2xl'>
+        <div class='absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none rounded-[2rem]'></div>
+        <SahaSvg {playersHome} {playersAway} {showPlayerNames} {showPlayerNumbers} {startDrag} />
       </div>
 
-      <ul class='menu menu-vertical bg-base-200/50 rounded-box w-56 gap-1 backdrop-blur-md'>
+      <button
+        type='button'
+        class='group/save relative overflow-hidden rounded-2xl bg-gradient-to-r from-warning/20 to-warning/10 p-px transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50'
+        disabled={playersHome.length === 0 || playersAway.length === 0 || isSaving}
+        onclick={openSaveModal}
+      >
+        <div class='relative flex items-center justify-center gap-3 rounded-[15px] bg-base-300 px-10 py-4 font-black uppercase tracking-widest text-warning backdrop-blur-md'>
+          {#if isSaving}
+            <span class='loading loading-spinner loading-sm'></span>
+          {:else}
+            <Settings2 size={18} />
+          {/if}
+          Maçı Kaydet
+        </div>
+      </button>
+    </div>
+
+    <!-- Away Team Column -->
+    <div class='flex w-full flex-col gap-4 lg:w-72'>
+      <div class='group relative overflow-hidden rounded-3xl border border-white/5 bg-white/5 p-5 shadow-xl backdrop-blur-xl'>
+        <div class='absolute inset-0 bg-gradient-to-br from-secondary/10 to-transparent pointer-events-none'></div>
+
+        <div class='relative flex flex-col gap-4'>
+          <input
+            type='text'
+            bind:value={awayTeamName}
+            placeholder='Rakip Takım'
+            class='w-full bg-transparent text-center text-xl font-black uppercase tracking-[0.2em] text-secondary outline-none placeholder:opacity-20'
+            onkeydown={e => e.key === 'Enter' && e.preventDefault()}
+          />
+
+          <div class='flex items-center gap-2'>
+            <div class='relative flex-1'>
+              <input
+                type='text'
+                placeholder='Oyuncu ekle...'
+                class='w-full rounded-xl border border-white/5 bg-white/5 px-4 py-2 text-xs font-medium outline-none transition-all focus:bg-white/10'
+                bind:value={newAwayPlayerName}
+                onkeydown={e => e.key === 'Enter' && (e.preventDefault(), addNewPlayer('AWAY'))}
+              />
+            </div>
+            <button
+              type='button'
+              class='flex h-9 w-9 items-center justify-center rounded-xl bg-secondary/20 text-secondary transition-all hover:bg-secondary hover:text-white active:scale-95'
+              onclick={() => addNewPlayer('AWAY')}
+            >
+              <Plus size={18} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class='custom-scrollbar flex max-h-[400px] flex-col gap-2 overflow-y-auto pr-1'>
         {#each playersList as player (player.id)}
-          <!-- svelte-ignore a11y_click_events_have_key_events -->
-          <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-          <li
+          <div
+            role='button'
+            tabindex='0'
             onclick={() => {
               if (playersAway.some(lineup => lineup.player.id === player.id)) {
                 removePlayer(player, 'AWAY')
               }
-              else {
-                if (!playersHome.some(lineup => lineup.player.id === player.id)) {
+              else if (!playersHome.some(lineup => lineup.player.id === player.id)) {
+                addPlayer(player, 'AWAY')
+              }
+            }}
+            onkeydown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                if (playersAway.some(lineup => lineup.player.id === player.id)) {
+                  removePlayer(player, 'AWAY')
+                }
+                else if (!playersHome.some(lineup => lineup.player.id === player.id)) {
                   addPlayer(player, 'AWAY')
                 }
               }
             }}
-            class='card opacity-30'
-            class:opacity-100={playersAway.some(lineup => lineup.player.id === player.id)}
-            class:bg-secondary={playersAway.some(lineup => lineup.player.id === player.id)}
+            class="group/player relative overflow-hidden rounded-2xl border bg-white/5 p-3 text-left transition-all hover:bg-white/10 active:scale-98 {playersAway.some(lineup => lineup.player.id === player.id) ? 'bg-secondary/20 border-secondary/30' : 'border-white/5 opacity-40'}"
           >
-            <div class='flex items-center gap-2'>
+            <div class='flex items-center gap-3'>
               <div class='avatar'>
-                <div class='h-4 w-4 rounded-full'>
+                <div class='h-8 w-8 rounded-full border border-white/10'>
                   <img
-                    src='https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fb.fssta.com%2Fuploads%2Fapplication%2Fsoccer%2Fheadshots%2F885.png&f=1&nofb=1&ipt=9f471ea69d4917e6e6bd8623e7c809aedb7f482cf8901cd071efc6cda978471d'
+                    src='https://api.dicebear.com/7.x/avataaars/svg?seed={player.name}'
                     alt={player.name}
                   />
                 </div>
               </div>
-              <div class='flex-1'>
-                <span class='text-xs font-bold'>{player.name}</span>
+              <div class='flex flex-1 flex-col'>
+                <span class='text-xs font-bold text-white/90'>{player.name}</span>
+                <span class='text-[10px] font-medium text-white/30 uppercase'>Oyuncu</span>
               </div>
-              <!-- svelte-ignore a11y_click_events_have_key_events -->
-              <!-- svelte-ignore a11y_no_static_element_interactions -->
-              <span
-                onclick={e => updatePlayerNumber(e, player)}
-                class='text-warning badge cursor-pointer text-xs transition-colors hover:bg-warning hover:text-warning-content'
+              <button
+                type='button'
+                class='flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-[10px] font-black text-warning transition-colors group-hover/player:bg-warning group-hover/player:text-warning-content'
+                onclick={(e) => {
+                  e.stopPropagation()
+                  updatePlayerNumber(e, player)
+                }}
               >
                 {player.number}
-              </span>
+              </button>
             </div>
-          </li>
+          </div>
         {/each}
-      </ul>
+      </div>
     </div>
   </main>
 
-  <button
-    type='button'
-    class='btn btn-warning m-4 mx-auto w-full'
-    disabled={playersHome.length === 0 || playersAway.length === 0 || isSaving}
-    onclick={openSaveModal}
-  >
-    {#if isSaving}
-      <span class='loading loading-spinner'></span>
-    {/if}
-    Maçı Kaydet
-  </button>
-
   {#if showSaveModal}
-    <dialog
-      class='modal modal-open modal-bottom sm:modal-middle backdrop-blur-sm'
-      onclick={() => (showSaveModal = false)}
-    >
-      <div class='modal-box border-warning/20 border text-left' onclick={e => e.stopPropagation()}>
-        <h3 class='text-warning flex items-center gap-2 text-xl font-bold'>
-          <Settings2 size={24} />
-          Maç Detayları
-        </h3>
-        <p class='py-2 text-sm opacity-60'>Lütfen maç bilgilerini doğrulayın veya eksikleri tamamlayın.</p>
+    <div class='fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-xl transition-all animate-in fade-in duration-300'>
+      <div
+        class='absolute inset-0 bg-black/60'
+        onclick={() => (showSaveModal = false)}
+        onkeydown={e => (e.key === 'Enter' || e.key === ' ') && (showSaveModal = false)}
+        role='button'
+        tabindex='0'
+        aria-label='Close modal'
+      ></div>
 
-        <div class='mt-4 flex flex-col gap-4'>
-          <div class='grid grid-cols-1 gap-4 sm:grid-cols-2'>
-            <label class='form-control w-full'>
-              <div class='label'>
-                <span class='label-text font-semibold'>Ev Sahibi Takım</span>
-              </div>
-              <input
-                type='text'
-                bind:value={homeTeamName}
-                class='input input-bordered w-full focus:input-warning transition-all'
-              />
-            </label>
-            <label class='form-control w-full'>
-              <div class='label'>
-                <span class='label-text font-semibold'>Rakip Takım</span>
-              </div>
-              <input
-                type='text'
-                bind:value={awayTeamName}
-                class='input input-bordered w-full focus:input-warning transition-all'
-              />
-            </label>
-          </div>
+      <div
+        class='relative w-full max-w-2xl overflow-hidden rounded-[3.5rem] border border-white/10 bg-gradient-to-br from-base-100 to-base-300 p-px shadow-[0_0_50px_rgba(0,0,0,0.5)] animate-in zoom-in-95 duration-300'
+        onclick={e => e.stopPropagation()}
+        role='presentation'
+      >
+        <div class='relative flex flex-col gap-8 rounded-[3.4rem] bg-base-100/90 p-8 sm:p-14'>
+          <!-- Background Decor -->
+          <div class='absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-warning/10 to-transparent pointer-events-none'></div>
 
-          <label class='form-control w-full'>
-            <div class='label'>
-              <span class='label-text font-semibold'>Maç Başlığı</span>
+          <div class='relative flex flex-col items-center text-center gap-2'>
+            <div class='flex h-16 w-16 items-center justify-center rounded-2xl bg-warning/10 text-warning mb-2 shadow-inner'>
+              <Settings2 size={32} />
             </div>
-            <input
-              type='text'
-              bind:value={matchTitle}
-              placeholder={`${homeTeamName} vs ${awayTeamName}`}
-              class='input input-bordered w-full focus:input-warning transition-all'
-            />
-          </label>
-
-          <div class='grid grid-cols-1 gap-4 sm:grid-cols-2'>
-            <label class='form-control w-full'>
-              <div class='label'>
-                <span class='label-text font-semibold'>Maç Saati</span>
-              </div>
-              <input
-                type='datetime-local'
-                bind:value={matchTime}
-                class='input input-bordered w-full focus:input-warning transition-all'
-              />
-            </label>
-
-            <label class='form-control w-full'>
-              <div class='label'>
-                <span class='label-text font-semibold'>Süre (Dk)</span>
-              </div>
-              <input
-                type='number'
-                bind:value={matchDuration}
-                placeholder='60'
-                min='1'
-                class='input input-bordered w-full focus:input-warning transition-all'
-              />
-            </label>
+            <h3 class='text-3xl font-black uppercase tracking-tighter text-white'>Maç Yayınla</h3>
+            <p class='text-xs font-bold text-white/20 uppercase tracking-[0.3em]'>Bilgileri Son Bir Kez Gözden Geçirin</p>
           </div>
-        </div>
 
-        <div class='modal-action gap-2'>
-          <button type='button' class='btn btn-ghost' onclick={() => (showSaveModal = false)}>
-            Vazgeç
-          </button>
-          <button
-            type='submit'
-            class='btn btn-warning px-8'
-            disabled={isSaving}
-          >
-            {#if isSaving}
-              <span class='loading loading-spinner'></span>
-            {/if}
-            Maçı Oluştur
-          </button>
+          <!-- Summary Cards -->
+          <div class='grid grid-cols-2 gap-4'>
+            <div class='flex flex-col items-center gap-2 rounded-2xl border border-primary/10 bg-primary/5 p-4'>
+              <span class='text-[10px] font-black uppercase tracking-widest text-primary/50'>Ev Sahibi</span>
+              <span class='text-sm font-black text-white'>{homeTeamName || 'Takım 1'}</span>
+              <span class='badge badge-sm border-primary/20 bg-primary/20 text-primary'>{playersHome.length} Oyuncu</span>
+            </div>
+            <div class='flex flex-col items-center gap-2 rounded-2xl border border-secondary/10 bg-secondary/5 p-4'>
+              <span class='text-[10px] font-black uppercase tracking-widest text-secondary/50'>Rakip</span>
+              <span class='text-sm font-black text-white'>{awayTeamName || 'Takım 2'}</span>
+              <span class='badge badge-sm border-secondary/20 bg-secondary/20 text-secondary'>{playersAway.length} Oyuncu</span>
+            </div>
+          </div>
+
+          <div class='flex flex-col gap-5'>
+            <div class='grid grid-cols-1 gap-5 sm:grid-cols-2'>
+              <div class='flex flex-col gap-2'>
+                <label for='match-title-input' class='text-[10px] font-black uppercase tracking-[0.2em] text-white/30 px-1'>Maç Başlığı</label>
+                <input
+                  id='match-title-input'
+                  type='text'
+                  name='title'
+                  bind:value={matchTitle}
+                  class='w-full rounded-2xl border border-white/5 bg-white/5 px-5 py-4 text-sm font-bold outline-none transition-all focus:bg-white/10 focus:ring-1 focus:ring-warning/30'
+                />
+              </div>
+              <div class='flex flex-col gap-2'>
+                <label for='match-duration-input' class='text-[10px] font-black uppercase tracking-[0.2em] text-white/30 px-1'>Süre (Dakika)</label>
+                <input
+                  id='match-duration-input'
+                  type='number'
+                  name='duration'
+                  bind:value={matchDuration}
+                  class='w-full rounded-2xl border border-white/5 bg-white/5 px-5 py-4 text-sm font-bold outline-none transition-all focus:bg-white/10 focus:ring-1 focus:ring-warning/30'
+                />
+              </div>
+            </div>
+
+            <div class='flex flex-col gap-2'>
+              <label for='match-time-input' class='text-[10px] font-black uppercase tracking-[0.2em] text-white/30 px-1'>Başlama Zamanı</label>
+              <input
+                id='match-time-input'
+                type='datetime-local'
+                name='matchTime'
+                bind:value={matchTime}
+                class='w-full rounded-2xl border border-white/5 bg-white/5 px-5 py-5 text-sm font-black outline-none transition-all focus:bg-white/10 focus:ring-1 focus:ring-warning/30'
+              />
+            </div>
+          </div>
+
+          <div class='mt-4 flex flex-col gap-4'>
+            <button
+              type='submit'
+              class='group/final relative overflow-hidden rounded-2xl bg-warning p-px transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50'
+              disabled={isSaving}
+            >
+              <div class='flex items-center justify-center gap-3 rounded-[15px] bg-warning px-8 py-5 font-black uppercase tracking-[0.2em] text-warning-content transition-all group-hover/final:bg-warning-focus'>
+                {#if isSaving}
+                  <span class='loading loading-spinner loading-md'></span>
+                  Yayınlanıyor...
+                {:else}
+                  Maçı Şimdi Yayınla
+                {/if}
+              </div>
+            </button>
+            <button
+              type='button'
+              class='px-8 py-2 text-[10px] font-black uppercase tracking-[0.3em] text-white/20 transition-all hover:text-white'
+              onclick={() => (showSaveModal = false)}
+            >
+              İşlemi İptal Et
+            </button>
+          </div>
         </div>
       </div>
-    </dialog>
+    </div>
   {/if}
 </form>
+
+<style>
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+</style>

@@ -1,6 +1,7 @@
 <script lang='ts'>
   import type { MatchExpand } from '$lib/types'
-  import { Calendar, ChevronDown, Clock, Trophy } from '@lucide/svelte'
+  import { enhance } from '$app/forms'
+  import { Calendar, ChevronDown, Clock, Trash2, Trophy } from '@lucide/svelte'
   import { onMount } from 'svelte'
 
   import TabMenu from './TabMenu.svelte'
@@ -45,13 +46,27 @@
 
     return `${startHours}:${startMinutes} - ${endHours}:${endMinutes}`
   }
+
+  // Pre-calculate scorers to avoid expensive filter/sort on every render
+  const homeScorers = $derived(
+    match.lineups
+      ?.filter(l => l.teamId === match.homeTeamId && l.goals > 0)
+      .sort((a, b) => b.goals - a.goals) || [],
+  )
+
+  const awayScorers = $derived(
+    match.lineups
+      ?.filter(l => l.teamId === match.awayTeamId && l.goals > 0)
+      .sort((a, b) => b.goals - a.goals) || [],
+  )
 </script>
 
 <div
   class="group relative w-full overflow-hidden rounded-3xl border border-white/5 bg-gradient-to-br from-base-200/80 to-base-300/80 p-px shadow-2xl transition-all duration-500 hover:shadow-primary/10
     {isExpanded ? 'ring-1 ring-primary/30' : ''}"
+  style='will-change: transform;'
 >
-  <div class='relative overflow-hidden rounded-[23px] bg-base-200/40 backdrop-blur-xl'>
+  <div class='relative overflow-hidden rounded-[23px] bg-base-200/40 backdrop-blur-lg'>
     <!-- Header Decor -->
     <div class='absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none'></div>
 
@@ -83,6 +98,36 @@
                 <Clock size={14} />
                 <span>{formatMatchTime(new Date(match.matchTime))}</span>
               </div>
+
+              <!-- Delete Button -->
+              <form
+                action='/?/deleteMatch'
+                method='POST'
+                use:enhance={({ cancel }) => {
+                  // eslint-disable-next-line no-alert
+                  if (!confirm('Bu maçı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.')) {
+                    cancel()
+                    return
+                  }
+                  return async ({ result, update }) => {
+                    if (result.type === 'error') {
+                      // eslint-disable-next-line no-alert
+                      alert(result.error.message)
+                    }
+                    await update()
+                  }
+                }}
+                class='ml-2'
+              >
+                <input type='hidden' name='id' value={match.id} />
+                <button
+                  type='submit'
+                  class='flex items-center justify-center rounded-full bg-error/10 p-2 text-error transition-all hover:bg-error hover:text-white'
+                  title='Maçı Sil'
+                >
+                  <Trash2 size={16} />
+                </button>
+              </form>
             </div>
           </div>
 
@@ -95,7 +140,7 @@
             </div>
 
             <!-- Home Team -->
-            <div class='flex flex-1 items-center justify-end'>
+            <div class='flex flex-1 flex-col items-end gap-2'>
               <div class='group/logo relative h-12 overflow-hidden rounded-xl border border-white/10 bg-white/5 p-px shadow-2xl sm:h-16 transition-transform hover:scale-105'>
                 <div class='absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent'></div>
                 <div class='relative flex h-full items-center justify-center rounded-[11px] bg-base-300/40 px-4 sm:px-6 backdrop-blur-md'>
@@ -103,6 +148,20 @@
                     {match.homeTeam?.name}
                   </span>
                 </div>
+              </div>
+
+              <!-- Scorers Summary -->
+              <div class='flex flex-col items-end opacity-40'>
+                {#each homeScorers as scorer}
+                  <div class='flex items-center gap-1 text-[10px] font-medium sm:text-xs'>
+                    <span>{scorer.player.name}</span>
+                    <div class='flex gap-0.5 leading-none'>
+                      {#each Array.from({ length: scorer.goals }) as _}
+                        <span>⚽</span>
+                      {/each}
+                    </div>
+                  </div>
+                {/each}
               </div>
             </div>
 
@@ -131,7 +190,7 @@
             </div>
 
             <!-- Away Team -->
-            <div class='flex flex-1 items-center justify-start'>
+            <div class='flex flex-1 flex-col items-start gap-2'>
               <div class='group/logo relative h-12 overflow-hidden rounded-xl border border-white/10 bg-white/5 p-px shadow-2xl sm:h-16 transition-transform hover:scale-105'>
                 <div class='absolute inset-0 bg-gradient-to-br from-secondary/20 to-transparent'></div>
                 <div class='relative flex h-full items-center justify-center rounded-[11px] bg-base-300/40 px-4 sm:px-6 backdrop-blur-md'>
@@ -139,6 +198,20 @@
                     {match.awayTeam?.name}
                   </span>
                 </div>
+              </div>
+
+              <!-- Scorers Summary -->
+              <div class='flex flex-col items-start opacity-40'>
+                {#each awayScorers as scorer}
+                  <div class='flex items-center gap-1 text-[10px] font-medium sm:text-xs'>
+                    <div class='flex gap-0.5 leading-none'>
+                      {#each Array.from({ length: scorer.goals }) as _}
+                        <span>⚽</span>
+                      {/each}
+                    </div>
+                    <span>{scorer.player.name}</span>
+                  </div>
+                {/each}
               </div>
             </div>
           </div>

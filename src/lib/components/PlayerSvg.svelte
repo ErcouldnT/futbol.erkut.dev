@@ -31,32 +31,63 @@
   ontouchstart={event => startDrag(event, playerData)}
   style='filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));'
 >
-  <foreignObject x={playerData.posX - 16} y={playerData.posY - 16} width='32' height='32'>
-    <div class='avatar'>
-      <div class='h-8 w-8 rounded-full'>
+  <foreignObject x={playerData.posX - 22} y={playerData.posY - 22} width='44' height='44'>
+    <div class='flex h-full w-full items-center justify-center'>
+      <div
+        class='relative h-10 w-10 rounded-full border-2 bg-base-300 shadow-xl transition-transform hover:scale-110 active:scale-95'
+        style='border-color: {color}; box-shadow: 0 0 20px {color}60;'
+      >
         <img
-          src='https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fb.fssta.com%2Fuploads%2Fapplication%2Fsoccer%2Fheadshots%2F885.png&f=1&nofb=1&ipt=9f471ea69d4917e6e6bd8623e7c809aedb7f482cf8901cd071efc6cda978471d'
+          src='https://api.dicebear.com/7.x/avataaars/svg?seed={playerData.player?.name}'
           alt={playerData.player?.name}
+          class='rounded-full'
         />
+
+        <!-- Goal Badge -->
+        {#if playerData.goals > 0}
+          <div class='absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-base-300 border border-white/20 shadow-lg text-[10px] pointer-events-none'>
+            ⚽
+            {#if playerData.goals > 1}
+              <span class='absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[8px] font-black text-white border border-white/20 shadow-sm'>
+                {playerData.goals}
+              </span>
+            {/if}
+          </div>
+        {/if}
+
+        <!-- Selection/Drag Indicator -->
+        <div class='absolute -inset-1.5 rounded-full border-2 border-white/20 opacity-0 group-hover:opacity-100 transition-opacity'></div>
       </div>
     </div>
   </foreignObject>
 
-  <!-- Player's number above the avatar -->
-  {#if showPlayerNumbers}
-    <text
-      class='pointer-events-none font-extrabold font-stretch-semi-expanded'
-      x={playerData.posX}
-      y={playerData.posY + 25}
-      fill={color}
-      font-size='10'
-      text-anchor='middle'
-      dominant-baseline='middle'
-    >
-      <tspan class='font-bold opacity-85'>{playerData.player?.number}</tspan>
-      {#if showPlayerNames}
-        <tspan>{playerData.player?.name}</tspan>
-      {/if}
-    </text>
+  <!-- Player's name/number below the avatar (enlarged) -->
+  {#if showPlayerNumbers || showPlayerNames}
+    <g transform='translate({playerData.posX}, {playerData.posY + 30})'>
+      <rect
+        x='-30'
+        y='-10'
+        width='60'
+        height='20'
+        rx='10'
+        fill='black'
+        opacity='0.6'
+      />
+      <text
+        class='pointer-events-none font-black uppercase tracking-tight'
+        fill='white'
+        font-size='10'
+        text-anchor='middle'
+        dominant-baseline='middle'
+      >
+        {#if showPlayerNumbers && showPlayerNames}
+          {playerData.player?.number}. {playerData.player?.name?.split(' ')[0]}
+        {:else if showPlayerNumbers}
+          {playerData.player?.number}
+        {:else}
+          {playerData.player?.name?.split(' ')[0]}
+        {/if}
+      </text>
+    </g>
   {/if}
 </g>

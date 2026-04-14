@@ -12,6 +12,7 @@ export interface MatchExpand extends Match {
   awayTeam: Team
   mvp?: Player | null
   jerseyGoal?: Player | null
+  lineups: LineupExpand[]
 }
 
 export interface LineupExpand extends Lineup {

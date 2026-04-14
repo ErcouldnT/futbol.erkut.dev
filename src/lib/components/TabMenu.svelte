@@ -10,7 +10,11 @@
     defaultTab?: 'LINEUP' | 'COMMENTS'
   }>()
 
-  let activeTab: 'LINEUP' | 'COMMENTS' = $state(defaultTab)
+  let activeTab: 'LINEUP' | 'COMMENTS' = $state('LINEUP')
+
+  $effect.pre(() => {
+    activeTab = defaultTab
+  })
 
   const setActiveTab = (tab: 'LINEUP' | 'COMMENTS') => {
     activeTab = tab
@@ -28,7 +32,7 @@
       onclick={() => setActiveTab('LINEUP')}
       class="relative z-10 flex h-10 w-[160px] items-center justify-center text-sm font-bold transition-colors duration-300 {activeTab === 'LINEUP' ? 'text-primary-content' : 'text-white/40 hover:text-white/60'}"
     >
-      Kadrolar & Skorlar
+      Kadrolar
     </button>
     <button
       onclick={() => setActiveTab('COMMENTS')}
