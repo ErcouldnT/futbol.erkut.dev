@@ -10,11 +10,17 @@
     playersAwayStore,
     playersHomeStore,
   } from '$lib/stores/players'
-  import { showSaveModalStore } from '$lib/stores/ui'
+  import { isSharingLineup, shareLineupTrigger, showSaveModalStore } from '$lib/stores/ui'
   import { titleCase } from '$lib/utils'
   import { Plus, Settings2 } from '@lucide/svelte'
+  import * as htmlToImage from 'html-to-image'
+  import { onMount } from 'svelte'
   import LoadingSpinner from './LoadingSpinner.svelte'
   import SahaSvg from './SahaSvg.svelte'
+
+  onMount(() => {
+    shareLineupTrigger.set(0)
+  })
 
   const playersList = $derived($allPlayersStore)
 
@@ -295,6 +301,57 @@
     else
       newAwayPlayerName = ''
   }
+
+  async function handleShareLineup() {
+    const element = document.getElementById('field-svg')
+    if (!element)
+      return
+
+    isSharingLineup.set(true)
+    try {
+      // Small delay to ensure any UI state is settled
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      const dataUrl = await htmlToImage.toPng(element, {
+        // backgroundColor: '#0a0a0a',
+        pixelRatio: 3, // Higher quality
+        style: {
+          borderRadius: '2rem',
+        },
+      })
+
+      const blob = await (await fetch(dataUrl)).blob()
+      const file = new File([blob], 'kadro.png', { type: 'image/png' })
+
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'Kadro',
+          text: `${homeTeamName} vs ${awayTeamName} | Akkuyu Futbol`,
+        })
+      }
+      else {
+        // Fallback: download
+        const link = document.createElement('a')
+        link.download = `kadro-${homeTeamName}-${awayTeamName}.png`.toLowerCase()
+        link.href = dataUrl
+        link.click()
+      }
+    }
+    catch (err) {
+      console.error('Share failed:', err)
+    }
+    finally {
+      isSharingLineup.set(false)
+    }
+  }
+
+  $effect(() => {
+    if ($shareLineupTrigger > 0) {
+      handleShareLineup()
+      shareLineupTrigger.set(0)
+    }
+  })
 </script>
 
 <svelte:window onkeydown={e => e.key === 'Escape' && (showSaveModal = false)} />
