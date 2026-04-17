@@ -12,6 +12,7 @@
   } from '$lib/stores/players'
   import { titleCase } from '$lib/utils'
   import { Plus, Settings2 } from '@lucide/svelte'
+  import LoadingSpinner from './LoadingSpinner.svelte'
   import SahaSvg from './SahaSvg.svelte'
 
   const playersList = $derived($allPlayersStore)
@@ -35,7 +36,7 @@
   let matchDuration = $state(60)
 
   function openSaveModal() {
-    matchTitle = `${homeTeamName} vs ${awayTeamName}`
+    matchTitle = 'Halısaha'
     showSaveModal = true
   }
 
@@ -319,11 +320,11 @@
     }
   }}
 >
-  <input type='hidden' name='homeTeamName' value={titleCase(homeTeamName)} />
-  <input type='hidden' name='awayTeamName' value={titleCase(awayTeamName)} />
+  <input type='hidden' name='homeTeamName' value={titleCase(homeTeamName.trim()) || 'Takım 1'} />
+  <input type='hidden' name='awayTeamName' value={titleCase(awayTeamName.trim()) || 'Takım 2'} />
   <input type='hidden' name='homePlayers' value={JSON.stringify(playersHome)} />
   <input type='hidden' name='awayPlayers' value={JSON.stringify(playersAway)} />
-  <input type='hidden' name='title' value={matchTitle} />
+  <input type='hidden' name='title' value={matchTitle.trim() || 'Halısaha'} />
   <input type='hidden' name='matchTime' value={matchTime} />
   <input type='hidden' name='duration' value={matchDuration} />
 
@@ -331,7 +332,7 @@
     <!-- Home Team Column -->
     <div class='flex w-full flex-col gap-4 lg:w-72'>
       <div class='group relative overflow-hidden rounded-3xl border border-white/5 bg-white/5 p-5 shadow-xl backdrop-blur-xl'>
-        <div class='absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none'></div>
+        <div class='absolute inset-0 bg-linear-to-br from-primary/10 to-transparent pointer-events-none'></div>
 
         <div class='relative flex flex-col gap-4'>
           <input
@@ -420,20 +421,20 @@
 
     <!-- Pitch Area -->
     <div class='relative flex flex-col items-center gap-6'>
-      <div class='relative rounded-[2.5rem] border border-white/10 bg-black/40 p-2 shadow-2xl backdrop-blur-2xl'>
-        <div class='absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none rounded-[2rem]'></div>
+      <div class='relative rounded-4xl border border-white/10 bg-black/40 p-2 shadow-2xl backdrop-blur-2xl'>
+        <div class='absolute inset-0 bg-linear-to-b from-white/5 to-transparent pointer-events-none rounded-4xl'></div>
         <SahaSvg {playersHome} {playersAway} {showPlayerNames} {showPlayerNumbers} {startDrag} />
       </div>
 
       <button
         type='button'
-        class='group/save relative overflow-hidden rounded-2xl bg-gradient-to-r from-warning/20 to-warning/10 p-px transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50'
+        class='group/save relative overflow-hidden rounded-2xl bg-linear-to-r from-warning/20 to-warning/10 p-px transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50'
         disabled={playersHome.length === 0 || playersAway.length === 0 || isSaving}
         onclick={openSaveModal}
       >
         <div class='relative flex items-center justify-center gap-3 rounded-[15px] bg-base-300 px-10 py-4 font-black uppercase tracking-widest text-warning backdrop-blur-md'>
           {#if isSaving}
-            <span class='loading loading-spinner loading-sm'></span>
+            <LoadingSpinner size='sm' color='text-warning' />
           {:else}
             <Settings2 size={18} />
           {/if}
@@ -445,7 +446,7 @@
     <!-- Away Team Column -->
     <div class='flex w-full flex-col gap-4 lg:w-72'>
       <div class='group relative overflow-hidden rounded-3xl border border-white/5 bg-white/5 p-5 shadow-xl backdrop-blur-xl'>
-        <div class='absolute inset-0 bg-gradient-to-br from-secondary/10 to-transparent pointer-events-none'></div>
+        <div class='absolute inset-0 bg-linear-to-br from-secondary/10 to-transparent pointer-events-none'></div>
 
         <div class='relative flex flex-col gap-4'>
           <input
@@ -534,7 +535,7 @@
   </main>
 
   {#if showSaveModal}
-    <div class='fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-xl transition-all animate-in fade-in duration-300'>
+    <div class='fixed inset-0 z-100 flex items-center justify-center p-4 backdrop-blur-xl transition-all animate-in fade-in duration-300'>
       <div
         class='absolute inset-0 bg-black/60'
         onclick={() => (showSaveModal = false)}
@@ -545,13 +546,13 @@
       ></div>
 
       <div
-        class='relative w-full max-w-2xl overflow-hidden rounded-[3.5rem] border border-white/10 bg-gradient-to-br from-base-100 to-base-300 p-px shadow-[0_0_50px_rgba(0,0,0,0.5)] animate-in zoom-in-95 duration-300'
+        class='relative w-full max-w-2xl overflow-hidden rounded-[3.5rem] border border-white/10 bg-linear-to-br from-base-100 to-base-300 p-px shadow-[0_0_50px_rgba(0,0,0,0.5)] animate-in zoom-in-95 duration-300'
         onclick={e => e.stopPropagation()}
         role='presentation'
       >
         <div class='relative flex flex-col gap-8 rounded-[3.4rem] bg-base-100/90 p-8 sm:p-14'>
           <!-- Background Decor -->
-          <div class='absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-warning/10 to-transparent pointer-events-none'></div>
+          <div class='absolute inset-x-0 top-0 h-40 bg-linear-to-b from-warning/10 to-transparent pointer-events-none'></div>
 
           <div class='relative flex flex-col items-center text-center gap-2'>
             <div class='flex h-16 w-16 items-center justify-center rounded-2xl bg-warning/10 text-warning mb-2 shadow-inner'>
@@ -584,6 +585,7 @@
                   type='text'
                   name='title'
                   bind:value={matchTitle}
+                  placeholder='Halısaha'
                   class='w-full rounded-2xl border border-white/5 bg-white/5 px-5 py-4 text-sm font-bold outline-none transition-all focus:bg-white/10 focus:ring-1 focus:ring-warning/30'
                 />
               </div>
@@ -619,7 +621,7 @@
             >
               <div class='flex items-center justify-center gap-3 rounded-[15px] bg-warning px-8 py-5 font-black uppercase tracking-[0.2em] text-warning-content transition-all group-hover/final:bg-warning-focus'>
                 {#if isSaving}
-                  <span class='loading loading-spinner loading-md'></span>
+                  <LoadingSpinner size='md' color='text-warning-content' />
                   Yayınlanıyor...
                 {:else}
                   Maçı Şimdi Yayınla
