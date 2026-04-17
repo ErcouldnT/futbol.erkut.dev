@@ -30,8 +30,8 @@
   let playersHome: LineupExpand[] = $state($playersHomeStore)
   let playersAway: LineupExpand[] = $state($playersAwayStore)
 
-  let homeTeamName = $state($homeTeamNameStore)
-  let awayTeamName = $state($awayTeamNameStore)
+  let homeTeamName = $state($homeTeamNameStore || 'Takım 1')
+  let awayTeamName = $state($awayTeamNameStore || 'Takım 2')
 
   // Modal and Match Details state
   let showSaveModal = $state(false)
@@ -93,37 +93,28 @@
   // Drag and drop functionality
   let draggingPlayer: LineupExpand | null = $state(null)
 
-  function startDrag(event: MouseEvent | TouchEvent, player: LineupExpand) {
+  function startDrag(event: PointerEvent | TouchEvent, player: LineupExpand) {
     event.preventDefault()
     draggingPlayer = player
     window.addEventListener('pointermove', drag, { passive: false })
     window.addEventListener('pointerup', endDrag, { passive: false })
-    window.addEventListener('touchmove', drag, { passive: false })
-    window.addEventListener('touchend', endDrag, { passive: false })
   }
 
-  function drag(event: MouseEvent | TouchEvent) {
+  function drag(event: PointerEvent) {
     event.preventDefault()
     if (draggingPlayer) {
       const svg = document.getElementById('field-svg') as unknown as SVGSVGElement
-      if (!svg) {
-        console.error('SVG element not found')
+      if (!svg)
         return
-      }
+
       const point = svg.createSVGPoint()
-      if (event instanceof MouseEvent) {
-        point.x = event.clientX
-        point.y = event.clientY
-      }
-      else if (event instanceof TouchEvent) {
-        point.x = event.touches[0].clientX
-        point.y = event.touches[0].clientY
-      }
+      point.x = event.clientX
+      point.y = event.clientY
+
       const screenCTM = svg.getScreenCTM()
-      if (!screenCTM) {
-        console.error('Cannot get screenCTM. Wrong SVG element?')
+      if (!screenCTM)
         return
-      }
+
       const transformedPoint = point.matrixTransform(screenCTM.inverse())
 
       // Saha sınırlarını kontrol et
@@ -141,16 +132,11 @@
     }
   }
 
-  function endDrag(event: MouseEvent | TouchEvent) {
+  function endDrag(event: PointerEvent) {
     event.preventDefault()
     draggingPlayer = null
     window.removeEventListener('pointermove', drag)
     window.removeEventListener('pointerup', endDrag)
-    window.removeEventListener('touchmove', drag)
-    window.removeEventListener('touchend', endDrag)
-
-  // console.log(playersHome);
-    // console.log(playersAway);
   }
 
   // Randomly generate x and y coordinates for players
@@ -315,9 +301,9 @@
       const dataUrl = await htmlToImage.toPng(element, {
         // backgroundColor: '#0a0a0a',
         pixelRatio: 3, // Higher quality
-        style: {
-          borderRadius: '2rem',
-        },
+      // style: {
+        //   borderRadius: '2rem',
+        // },
       })
 
       const blob = await (await fetch(dataUrl)).blob()
@@ -586,7 +572,7 @@
   </main>
 
   {#if showSaveModal}
-    <div class='fixed inset-0 z-100 flex items-center justify-center p-4 backdrop-blur-xl transition-all animate-in fade-in duration-300'>
+    <div class='fixed inset-0 z-100 flex items-end sm:items-center justify-center backdrop-blur-xl transition-all animate-in fade-in duration-300'>
       <div
         class='absolute inset-0 bg-black/60'
         onclick={() => showSaveModalStore.set(false)}
@@ -597,11 +583,11 @@
       ></div>
 
       <div
-        class='relative w-full max-w-2xl overflow-hidden rounded-[2.5rem] border border-white/10 bg-base-100 shadow-[0_0_50px_rgba(0,0,0,0.5)] animate-in zoom-in-95 duration-300 p-0'
+        class='relative w-full max-w-2xl overflow-y-auto rounded-t-4xl sm:rounded-[2.5rem] border border-white/10 bg-base-100 shadow-[0_0_50px_rgba(0,0,0,0.5)] animate-in slide-in-from-bottom sm:zoom-in-95 duration-300 p-0 max-h-[95dvh] sm:max-h-[90dvh] sm:m-4'
         onclick={e => e.stopPropagation()}
         role='presentation'
       >
-        <div class='relative flex flex-col gap-8 bg-base-100/40 p-8 sm:p-14'>
+        <div class='relative flex flex-col gap-6 sm:gap-8 bg-base-100/40 p-6 sm:p-14'>
           <!-- Background Decor -->
           <div class='absolute inset-x-0 top-0 h-40 bg-linear-to-b from-warning/10 to-transparent pointer-events-none'></div>
 
@@ -609,7 +595,7 @@
             <div class='flex h-16 w-16 items-center justify-center rounded-2xl bg-warning/10 text-warning mb-2 shadow-inner'>
               <Settings2 size={32} />
             </div>
-            <h3 class='text-3xl font-black uppercase tracking-tighter text-white'>Maç Yayınla</h3>
+            <h3 class='text-2xl sm:text-3xl font-black uppercase tracking-tighter text-white'>Maç Yayınla</h3>
             <p class='text-xs font-bold text-white/20 uppercase tracking-[0.3em]'>Bilgileri Son Bir Kez Gözden Geçirin</p>
           </div>
 
@@ -674,7 +660,7 @@
             </div>
           </div>
 
-          <div class='mt-4 flex flex-col gap-4'>
+          <div class='mt-2 sm:mt-4 flex flex-col gap-4'>
             <button
               type='submit'
               class='group/final relative overflow-hidden rounded-2xl bg-warning p-px transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50'

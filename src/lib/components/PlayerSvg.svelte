@@ -28,10 +28,11 @@
   aria-label={`Drag ${playerData.player?.name} player`}
   role='button'
   onpointerdown={event => startDrag(event, playerData)}
-  ontouchstart={event => startDrag(event, playerData)}
-  style='filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));'
+  style='filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5)); touch-action: none;'
 >
-  <foreignObject x={playerData.posX - 22} y={playerData.posY - 22} width='44' height='44'>
+  <!-- Invisible hit area for reliable pointer/touch events -->
+  <circle cx={playerData.posX} cy={playerData.posY} r='28' fill='transparent' />
+  <foreignObject x={playerData.posX - 22} y={playerData.posY - 22} width='44' height='44' style='pointer-events: none;'>
     <div class='flex h-full w-full items-center justify-center'>
       <div
         class='relative h-10 w-10 rounded-full border-2 bg-base-300 shadow-xl transition-transform hover:scale-110 active:scale-95'
@@ -40,7 +41,8 @@
         <img
           src='https://api.dicebear.com/7.x/avataaars/svg?seed={playerData.player?.name}'
           alt={playerData.player?.name}
-          class='rounded-full'
+          class='rounded-full pointer-events-none'
+          draggable='false'
         />
 
         <!-- Goal Badge -->

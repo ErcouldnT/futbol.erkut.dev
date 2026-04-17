@@ -26,6 +26,7 @@
   xmlns='http://www.w3.org/2000/svg'
   viewBox='0 0 300 500'
   class="h-auto w-full max-w-xl {saha === 'HORIZONTAL' ? 'lg:-rotate-90' : ''}"
+  style='touch-action: none;'
 >
   <!-- Patterns & Gradients -->
   <defs>
