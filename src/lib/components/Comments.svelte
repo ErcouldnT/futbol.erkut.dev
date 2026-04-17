@@ -5,6 +5,7 @@
   import { formatDistanceToNow } from 'date-fns'
   import { tr } from 'date-fns/locale'
   import { onMount } from 'svelte'
+  import LoadingSpinner from './LoadingSpinner.svelte'
 
   const { matchId }: { matchId: string } = $props()
 
@@ -74,10 +75,8 @@
 
   <div class='flex flex-col gap-4 overflow-y-auto max-h-[500px] pr-2 custom-scrollbar'>
     {#if loading}
-      <div class='flex flex-col gap-3'>
-        {#each Array.from({ length: 3 }) as _}
-          <div class='h-24 w-full animate-pulse rounded-3xl bg-white/5'></div>
-        {/each}
+      <div class='flex items-center justify-center py-20'>
+        <LoadingSpinner text='Yorumlar Yükleniyor...' size='lg' />
       </div>
     {:else if comments.length === 0}
       <div class='flex flex-col items-center justify-center py-12 text-center text-white/20'>
@@ -95,7 +94,7 @@
             <span class='h-1 w-1 rounded-full bg-white/10'></span>
             <span class='text-[10px] opacity-30'>{comment.createdAt ? getTimeAgo(comment.createdAt) : 'şimdi'}</span>
           </div>
-          <div class='rounded-3xl bg-gradient-to-br from-white/10 to-transparent border border-white/5 p-5 shadow-sm backdrop-blur-md'>
+          <div class='rounded-3xl bg-linear-to-br from-white/10 to-transparent border border-white/5 p-5 shadow-sm backdrop-blur-md'>
             <p class='text-sm leading-relaxed text-white/90'>{comment.content}</p>
           </div>
         </div>
@@ -112,10 +111,10 @@
     }}
     class='flex flex-col gap-4 rounded-[32px] bg-base-300/40 p-6 border border-white/5 shadow-2xl relative overflow-hidden'
   >
-    <div class='absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none'></div>
+    <div class='absolute inset-0 bg-linear-to-br from-primary/5 to-transparent pointer-events-none'></div>
 
     <div class='relative flex flex-col gap-4 sm:flex-row'>
-      <div class='relative flex-[1]'>
+      <div class='relative flex-1'>
         <div class='absolute left-4 top-1/2 -translate-y-1/2 text-white/30'>
           <User size={16} />
         </div>

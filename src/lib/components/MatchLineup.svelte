@@ -2,6 +2,7 @@
   import type { LineupExpand, Match } from '$lib/types'
   import { onMount } from 'svelte'
 
+  import LoadingSpinner from './LoadingSpinner.svelte'
   import SahaSvg from './SahaSvg.svelte'
 
   const { match }: { match: Match } = $props()
@@ -12,6 +13,7 @@
 
   let homeTeamLineups: LineupExpand[] = $state([])
   let awayTeamLineups: LineupExpand[] = $state([])
+  let loading = $state(true)
 
   onMount(async () => {
     try {
@@ -21,16 +23,23 @@
       const resAway = await fetch(`/api/lineups?matchId=${matchId}&teamId=${awayTeamId}`)
       awayTeamLineups = await resAway.json()
     }
-    catch {
-    // console.error("Lineups çekilemedi");
+    catch (err) {
+      console.error('Kadro yüklenirken hata oluştu:', err)
+    }
+    finally {
+      loading = false
     }
   })
 </script>
 
 <main class='flex max-h-full items-center justify-center p-5 lg:max-h-120'>
-  <SahaSvg
-    playersHome={homeTeamLineups}
-    playersAway={awayTeamLineups}
-    saha='HORIZONTAL'
-  />
+  {#if loading}
+    <LoadingSpinner text='Kadro Yükleniyor...' size='lg' />
+  {:else}
+    <SahaSvg
+      playersHome={homeTeamLineups}
+      playersAway={awayTeamLineups}
+      saha='HORIZONTAL'
+    />
+  {/if}
 </main>

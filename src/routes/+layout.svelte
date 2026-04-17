@@ -1,7 +1,9 @@
 <script lang='ts'>
-  import Footer from '$lib/components/Footer.svelte'
+  import { navigating } from '$app/stores'
 
+  import Footer from '$lib/components/Footer.svelte'
   import Header from '$lib/components/Header.svelte'
+  import LoadingSpinner from '$lib/components/LoadingSpinner.svelte'
   import '../app.css'
 
   const { children } = $props()
@@ -35,6 +37,9 @@
 
 <div class='mx-auto min-h-screen max-w-5xl px-4'>
   <Header />
+  {#if $navigating}
+    <LoadingSpinner fullScreen text='Yükleniyor...' size='xl' />
+  {/if}
   {@render children()}
   <Footer />
 </div>
