@@ -10,6 +10,7 @@
     playersAwayStore,
     playersHomeStore,
   } from '$lib/stores/players'
+  import { showSaveModalStore } from '$lib/stores/ui'
   import { titleCase } from '$lib/utils'
   import { Plus, Settings2 } from '@lucide/svelte'
   import LoadingSpinner from './LoadingSpinner.svelte'
@@ -28,17 +29,26 @@
 
   // Modal and Match Details state
   let showSaveModal = $state(false)
-  let matchTitle = $state('')
+  $effect(() => {
+    showSaveModal = $showSaveModalStore
+  })
+  $effect(() => {
+    showSaveModalStore.set(showSaveModal)
+  })
+
+  let matchTitle = $state('Halısaha')
   const now = new Date()
   const tzOffset = now.getTimezoneOffset() * 60000
   const localISOTime = new Date(now.getTime() - tzOffset).toISOString().slice(0, 16)
   let matchTime = $state(localISOTime)
-  let matchDuration = $state(60)
+  let matchDate = $state(localISOTime.slice(0, 10))
+  let matchTimeOnly = $state(localISOTime.slice(11, 16))
 
-  function openSaveModal() {
-    matchTitle = 'Halısaha'
-    showSaveModal = true
-  }
+  $effect(() => {
+    matchTime = `${matchDate}T${matchTimeOnly}`
+  })
+
+  let matchDuration = $state(60)
 
   $effect(() => {
     const formatted = titleCase(homeTeamName)
@@ -297,6 +307,9 @@
     return async ({ result }) => {
       isSaving = false
       if (result.type === 'redirect' || result.type === 'success') {
+        // Modal'ı kapat
+        showSaveModalStore.set(false)
+
         // Reset stores
         homeTeamNameStore.set('')
         awayTeamNameStore.set('')
@@ -328,10 +341,10 @@
   <input type='hidden' name='matchTime' value={matchTime} />
   <input type='hidden' name='duration' value={matchDuration} />
 
-  <main class='mt-8 flex flex-col items-start justify-center gap-8 lg:flex-row lg:gap-12'>
+  <main class='mt-8 flex flex-wrap items-start justify-center gap-x-4 gap-y-8 lg:flex-nowrap lg:gap-12'>
     <!-- Home Team Column -->
-    <div class='flex w-full flex-col gap-4 lg:w-72'>
-      <div class='group relative overflow-hidden rounded-3xl border border-white/5 bg-white/5 p-5 shadow-xl backdrop-blur-xl'>
+    <div class='flex w-[calc(50%-0.5rem)] flex-col gap-4 lg:w-72 order-1'>
+      <div class='group relative overflow-hidden rounded-3xl border border-white/5 bg-white/5 p-3 sm:p-5 shadow-xl backdrop-blur-xl'>
         <div class='absolute inset-0 bg-linear-to-br from-primary/10 to-transparent pointer-events-none'></div>
 
         <div class='relative flex flex-col gap-4'>
@@ -339,7 +352,7 @@
             type='text'
             bind:value={homeTeamName}
             placeholder='Ev Sahibi'
-            class='w-full bg-transparent text-center text-xl font-black uppercase tracking-[0.2em] text-primary outline-none placeholder:opacity-20'
+            class='w-full bg-transparent text-center text-sm sm:text-lg lg:text-xl font-black uppercase tracking-widest sm:tracking-[0.2em] text-primary outline-none placeholder:opacity-20'
             onkeydown={e => e.key === 'Enter' && e.preventDefault()}
           />
 
@@ -388,7 +401,7 @@
                 }
               }
             }}
-            class="group/player relative overflow-hidden rounded-2xl border bg-white/5 p-3 text-left transition-all hover:bg-white/10 active:scale-98 {playersHome.some(lineup => lineup.player.id === player.id) ? 'bg-primary/20 border-primary/30' : 'border-white/5 opacity-40'}"
+            class="group/player relative overflow-hidden rounded-2xl border p-3 text-left transition-all backdrop-blur-xl hover:bg-white/10 active:scale-98 {playersHome.some(lineup => lineup.player.id === player.id) ? 'bg-primary/20 border-primary/30 shadow-lg' : 'bg-white/5 border-white/5 opacity-40'}"
           >
             <div class='flex items-center gap-3'>
               <div class='avatar'>
@@ -420,32 +433,13 @@
     </div>
 
     <!-- Pitch Area -->
-    <div class='relative flex flex-col items-center gap-6'>
-      <div class='relative rounded-4xl border border-white/10 bg-black/40 p-2 shadow-2xl backdrop-blur-2xl'>
-        <div class='absolute inset-0 bg-linear-to-b from-white/5 to-transparent pointer-events-none rounded-4xl'></div>
-        <SahaSvg {playersHome} {playersAway} {showPlayerNames} {showPlayerNumbers} {startDrag} />
-      </div>
-
-      <button
-        type='button'
-        class='group/save relative overflow-hidden rounded-2xl bg-linear-to-r from-warning/20 to-warning/10 p-px transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50'
-        disabled={playersHome.length === 0 || playersAway.length === 0 || isSaving}
-        onclick={openSaveModal}
-      >
-        <div class='relative flex items-center justify-center gap-3 rounded-[15px] bg-base-300 px-10 py-4 font-black uppercase tracking-widest text-warning backdrop-blur-md'>
-          {#if isSaving}
-            <LoadingSpinner size='sm' color='text-warning' />
-          {:else}
-            <Settings2 size={18} />
-          {/if}
-          Maçı Kaydet
-        </div>
-      </button>
+    <div class='relative flex w-full flex-col items-center gap-6 lg:w-auto order-3 lg:order-2'>
+      <SahaSvg {playersHome} {playersAway} {showPlayerNames} {showPlayerNumbers} {startDrag} />
     </div>
 
     <!-- Away Team Column -->
-    <div class='flex w-full flex-col gap-4 lg:w-72'>
-      <div class='group relative overflow-hidden rounded-3xl border border-white/5 bg-white/5 p-5 shadow-xl backdrop-blur-xl'>
+    <div class='flex w-[calc(50%-0.5rem)] flex-col gap-4 lg:w-72 order-2 lg:order-3'>
+      <div class='group relative overflow-hidden rounded-3xl border border-white/5 bg-white/5 p-3 sm:p-5 shadow-xl backdrop-blur-xl'>
         <div class='absolute inset-0 bg-linear-to-br from-secondary/10 to-transparent pointer-events-none'></div>
 
         <div class='relative flex flex-col gap-4'>
@@ -453,7 +447,7 @@
             type='text'
             bind:value={awayTeamName}
             placeholder='Rakip Takım'
-            class='w-full bg-transparent text-center text-xl font-black uppercase tracking-[0.2em] text-secondary outline-none placeholder:opacity-20'
+            class='w-full bg-transparent text-center text-sm sm:text-lg lg:text-xl font-black uppercase tracking-widest sm:tracking-[0.2em] text-secondary outline-none placeholder:opacity-20'
             onkeydown={e => e.key === 'Enter' && e.preventDefault()}
           />
 
@@ -502,7 +496,7 @@
                 }
               }
             }}
-            class="group/player relative overflow-hidden rounded-2xl border bg-white/5 p-3 text-left transition-all hover:bg-white/10 active:scale-98 {playersAway.some(lineup => lineup.player.id === player.id) ? 'bg-secondary/20 border-secondary/30' : 'border-white/5 opacity-40'}"
+            class="group/player relative overflow-hidden rounded-2xl border p-3 text-left transition-all backdrop-blur-xl hover:bg-white/10 active:scale-98 {playersAway.some(lineup => lineup.player.id === player.id) ? 'bg-secondary/20 border-secondary/30 shadow-lg' : 'bg-white/5 border-white/5 opacity-40'}"
           >
             <div class='flex items-center gap-3'>
               <div class='avatar'>
@@ -538,19 +532,19 @@
     <div class='fixed inset-0 z-100 flex items-center justify-center p-4 backdrop-blur-xl transition-all animate-in fade-in duration-300'>
       <div
         class='absolute inset-0 bg-black/60'
-        onclick={() => (showSaveModal = false)}
-        onkeydown={e => (e.key === 'Enter' || e.key === ' ') && (showSaveModal = false)}
+        onclick={() => showSaveModalStore.set(false)}
+        onkeydown={e => (e.key === 'Enter' || e.key === ' ') && showSaveModalStore.set(false)}
         role='button'
         tabindex='0'
         aria-label='Close modal'
       ></div>
 
       <div
-        class='relative w-full max-w-2xl overflow-hidden rounded-[3.5rem] border border-white/10 bg-linear-to-br from-base-100 to-base-300 p-px shadow-[0_0_50px_rgba(0,0,0,0.5)] animate-in zoom-in-95 duration-300'
+        class='relative w-full max-w-2xl overflow-hidden rounded-[2.5rem] border border-white/10 bg-base-100 shadow-[0_0_50px_rgba(0,0,0,0.5)] animate-in zoom-in-95 duration-300 p-0'
         onclick={e => e.stopPropagation()}
         role='presentation'
       >
-        <div class='relative flex flex-col gap-8 rounded-[3.4rem] bg-base-100/90 p-8 sm:p-14'>
+        <div class='relative flex flex-col gap-8 bg-base-100/40 p-8 sm:p-14'>
           <!-- Background Decor -->
           <div class='absolute inset-x-0 top-0 h-40 bg-linear-to-b from-warning/10 to-transparent pointer-events-none'></div>
 
@@ -601,15 +595,25 @@
               </div>
             </div>
 
-            <div class='flex flex-col gap-2'>
-              <label for='match-time-input' class='text-[10px] font-black uppercase tracking-[0.2em] text-white/30 px-1'>Başlama Zamanı</label>
-              <input
-                id='match-time-input'
-                type='datetime-local'
-                name='matchTime'
-                bind:value={matchTime}
-                class='w-full rounded-2xl border border-white/5 bg-white/5 px-5 py-5 text-sm font-black outline-none transition-all focus:bg-white/10 focus:ring-1 focus:ring-warning/30'
-              />
+            <div class='grid grid-cols-2 gap-5'>
+              <div class='flex flex-col gap-2'>
+                <label for='match-date-input' class='text-[10px] font-black uppercase tracking-[0.2em] text-white/30 px-1'>Başlama Tarihi</label>
+                <input
+                  id='match-date-input'
+                  type='date'
+                  bind:value={matchDate}
+                  class='w-full rounded-2xl border border-white/5 bg-white/5 px-5 py-5 text-sm font-black outline-none transition-all focus:bg-white/10 focus:ring-1 focus:ring-warning/30'
+                />
+              </div>
+              <div class='flex flex-col gap-2'>
+                <label for='match-hour-input' class='text-[10px] font-black uppercase tracking-[0.2em] text-white/30 px-1'>Başlama Saati</label>
+                <input
+                  id='match-hour-input'
+                  type='time'
+                  bind:value={matchTimeOnly}
+                  class='w-full rounded-2xl border border-white/5 bg-white/5 px-5 py-5 text-sm font-black outline-none transition-all focus:bg-white/10 focus:ring-1 focus:ring-warning/30'
+                />
+              </div>
             </div>
           </div>
 
@@ -631,7 +635,7 @@
             <button
               type='button'
               class='px-8 py-2 text-[10px] font-black uppercase tracking-[0.3em] text-white/20 transition-all hover:text-white'
-              onclick={() => (showSaveModal = false)}
+              onclick={() => showSaveModalStore.set(false)}
             >
               İşlemi İptal Et
             </button>

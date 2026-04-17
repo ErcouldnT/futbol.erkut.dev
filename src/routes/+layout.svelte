@@ -35,11 +35,13 @@
   <meta name='twitter:image' content='/favicon.png' />
 </svelte:head>
 
-<div class='mx-auto min-h-screen max-w-5xl px-4'>
+<div class='mx-auto flex min-h-screen max-w-5xl flex-col px-4'>
   <Header />
   {#if $navigating}
     <LoadingSpinner fullScreen text='Yükleniyor...' size='xl' />
   {/if}
-  {@render children()}
+  <main class='flex-1'>
+    {@render children()}
+  </main>
   <Footer />
 </div>

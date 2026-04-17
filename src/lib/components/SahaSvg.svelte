@@ -25,7 +25,7 @@
   id='field-svg'
   xmlns='http://www.w3.org/2000/svg'
   viewBox='0 0 300 500'
-  class="h-full max-h-screen w-full max-w-md {saha === 'HORIZONTAL' ? 'lg:-rotate-90' : ''}"
+  class="h-auto w-full max-w-xl {saha === 'HORIZONTAL' ? 'lg:-rotate-90' : ''}"
 >
   <!-- Patterns & Gradients -->
   <defs>
