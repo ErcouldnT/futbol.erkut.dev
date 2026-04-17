@@ -2,10 +2,10 @@
   import { Heart } from '@lucide/svelte'
 </script>
 
-<footer class='group relative mt-16 overflow-hidden rounded-3xl border border-white/5 bg-gradient-to-br from-base-200/80 to-base-300/80 p-px shadow-2xl transition-all duration-500'>
+<footer class='group relative mt-16 overflow-hidden rounded-3xl border border-white/5 bg-linear-to-br from-base-200/80 to-base-300/80 p-px shadow-2xl transition-all duration-500'>
   <div class='relative overflow-hidden rounded-[23px] bg-base-200/40 backdrop-blur-xl py-12 px-8'>
     <!-- Header Decor from MatchCard flavor -->
-    <div class='absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none'></div>
+    <div class='absolute inset-x-0 top-0 h-32 bg-linear-to-b from-primary/5 to-transparent pointer-events-none'></div>
 
     <div class='relative z-10 flex flex-col items-center gap-8'>
       <!-- Branding Area -->

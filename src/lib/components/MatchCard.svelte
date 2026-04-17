@@ -62,13 +62,13 @@
 </script>
 
 <div
-  class="group relative w-full overflow-hidden rounded-3xl border border-white/5 bg-gradient-to-br from-base-200/80 to-base-300/80 p-px shadow-2xl transition-all duration-500 hover:shadow-primary/10
+  class="group relative w-full overflow-hidden rounded-3xl border border-white/5 bg-linear-to-br from-base-200/80 to-base-300/80 p-px shadow-2xl transition-all duration-500 hover:shadow-primary/10
     {isExpanded ? 'ring-1 ring-primary/30' : ''}"
   style='will-change: transform;'
 >
   <div class='relative overflow-hidden rounded-[23px] bg-base-200/40 backdrop-blur-lg'>
     <!-- Header Decor -->
-    <div class='absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none'></div>
+    <div class='absolute inset-x-0 top-0 h-32 bg-linear-to-b from-primary/5 to-transparent pointer-events-none'></div>
 
     <main class='relative z-10 p-4 sm:p-8'>
       <div class='group/header'>
@@ -79,7 +79,7 @@
               <div class='rounded-full bg-primary/10 p-2 text-primary'>
                 <Trophy size={20} />
               </div>
-              <h2 class='text-lg font-bold tracking-tight sm:text-2xl bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent'>
+              <h2 class='text-lg font-bold tracking-tight sm:text-2xl bg-linear-to-r from-white to-white/60 bg-clip-text text-transparent'>
                 {match.title || 'Haftalık Maç'}
               </h2>
             </div>
@@ -142,7 +142,7 @@
             <!-- Home Team -->
             <div class='flex flex-1 flex-col items-end gap-2'>
               <div class='group/logo relative h-12 overflow-hidden rounded-xl border border-white/10 bg-white/5 p-px shadow-2xl sm:h-16 transition-transform hover:scale-105'>
-                <div class='absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent'></div>
+                <div class='absolute inset-0 bg-linear-to-br from-primary/20 to-transparent'></div>
                 <div class='relative flex h-full items-center justify-center rounded-[11px] bg-base-300/40 px-4 sm:px-6 backdrop-blur-md'>
                   <span class='text-sm font-black text-primary sm:text-xl drop-shadow-[0_0_12px_rgba(var(--primary),0.5)] whitespace-nowrap tracking-wider'>
                     {match.homeTeam?.name}
@@ -167,7 +167,7 @@
 
             <!-- Score -->
             <div class='relative flex flex-col items-center gap-2'>
-              <div class='flex items-center gap-4 rounded-[2rem] border border-white/10 bg-gradient-to-b from-white/10 to-transparent px-8 py-3 shadow-[0_20px_50px_rgba(0,0,0,0.3)] backdrop-blur-md'>
+              <div class='flex items-center gap-4 rounded-4xl border border-white/10 bg-linear-to-b from-white/10 to-transparent px-8 py-3 shadow-[0_20px_50px_rgba(0,0,0,0.3)] backdrop-blur-md'>
                 <span class='text-4xl font-black tabular-nums text-white sm:text-6xl'>{match.homeScore}</span>
                 <div class='h-8 w-px bg-white/10 sm:h-12'></div>
                 <span class='text-4xl font-black tabular-nums text-white sm:text-6xl'>{match.awayScore}</span>
@@ -192,7 +192,7 @@
             <!-- Away Team -->
             <div class='flex flex-1 flex-col items-start gap-2'>
               <div class='group/logo relative h-12 overflow-hidden rounded-xl border border-white/10 bg-white/5 p-px shadow-2xl sm:h-16 transition-transform hover:scale-105'>
-                <div class='absolute inset-0 bg-gradient-to-br from-secondary/20 to-transparent'></div>
+                <div class='absolute inset-0 bg-linear-to-br from-secondary/20 to-transparent'></div>
                 <div class='relative flex h-full items-center justify-center rounded-[11px] bg-base-300/40 px-4 sm:px-6 backdrop-blur-md'>
                   <span class='text-sm font-black text-secondary sm:text-xl drop-shadow-[0_0_12px_rgba(var(--secondary),0.5)] whitespace-nowrap tracking-wider'>
                     {match.awayTeam?.name}
