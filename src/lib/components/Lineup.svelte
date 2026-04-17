@@ -13,7 +13,7 @@
   import { isSharingLineup, shareLineupTrigger, showSaveModalStore } from '$lib/stores/ui'
   import { titleCase } from '$lib/utils'
   import { Plus, Settings2 } from '@lucide/svelte'
-  import * as htmlToImage from 'html-to-image'
+  import { domToPng } from 'modern-screenshot'
   import { onMount } from 'svelte'
   import LoadingSpinner from './LoadingSpinner.svelte'
   import SahaSvg from './SahaSvg.svelte'
@@ -298,12 +298,8 @@
       // Small delay to ensure any UI state is settled
       await new Promise(resolve => setTimeout(resolve, 100))
 
-      const dataUrl = await htmlToImage.toPng(element, {
-        // backgroundColor: '#0a0a0a',
-        pixelRatio: 3, // Higher quality
-      // style: {
-        //   borderRadius: '2rem',
-        // },
+      const dataUrl = await domToPng(element, {
+        scale: 3,
       })
 
       const blob = await (await fetch(dataUrl)).blob()

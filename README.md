@@ -1,54 +1,41 @@
-# Futbol Lineup Builder
+# Akkuyu Futbol
 
-A modern, premium football match and lineup management application. Built for speed, aesthetics, and ease of use.
+Halısaha maçları için kadro oluşturma ve maç yonetim uygulaması.
 
-## 🚀 App Features
+**[futbol.erkut.dev](https://futbol.erkut.dev)**
 
-- **Dynamic Lineup Builder**: Create and customize football team lineups with an intuitive drag-and-drop-like interface.
-- **Match Management**: Save, track, and manage your football matches and teams.
-- **Instant Sharing**: Export your custom lineups as high-quality images (PNG) to share with your friends or teammate.
-- **Premium Design**: A stunning, modern UI built with sleek dark modes, vibrant accents, and smooth animations.
-- **Mobile First**: Fully responsive design optimized for seamless use on smartphones and tablets.
-- **Reliable Persistence**: Uses a combination of server-side SQLite (Drizzle ORM) and client-side browser storage (Svelte Persisted Store).
+## Ozellikler
 
-## 🛠️ Tech Stack
+- **Kadro Olusturucu** - Sürükle-bırak ile oyuncuları saha üzerinde konumlandır
+- **Mac Yonetimi** - Maçları kaydet, takip et, gol ve puan durumunu gor
+- **Kadro Paylasma** - Kadroyu PNG olarak WhatsApp ve diger uygulamalarda paylaş
+- **Oyuncu Havuzu** - Oyuncuları ekle, numaralarını düzenle, takımlara ata
+- **Mobil Uyumlu** - Telefon ve tablette tam uyumlu tasarım
 
-- **Framework**: [Svelte 5](https://svelte.dev/) & [SvelteKit 2](https://kit.svelte.dev/)
-- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/) & [DaisyUI 5](https://daisyui.com/)
-- **Database / ORM**: [Drizzle ORM](https://orm.drizzle.team/) with [Better-SQLite3](https://github.com/WiseLibs/better-sqlite3)
-- **State Management**: [Svelte Runes](https://svelte.dev/blog/runes) & [Svelte Persisted Store](https://github.com/joshua-berry/svelte-persisted-store)
-- **Icons**: [Lucide Svelte](https://lucide.dev/)
-- **Image Generation**: [html-to-image](https://github.com/tsayen/html-to-image)
-- **Deployment**: Docker & Docker Compose
+## Tech Stack
 
-## 💻 Development
+| Katman     | Teknoloji                            |
+| ---------- | ------------------------------------ |
+| Framework  | Svelte 5, SvelteKit 2                |
+| Styling    | Tailwind CSS 4, DaisyUI 5            |
+| Database   | SQLite (Better-SQLite3), Drizzle ORM |
+| Screenshot | modern-screenshot                    |
+| Deploy     | Docker                               |
 
-1. **Install Dependencies**:
+## Gelistirme
 
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+npm run db:push
+npm run dev
+```
 
-2. **Database Setup**:
-   Initialize your local SQLite database with Drizzle:
-
-   ```bash
-   npm run db:push
-   ```
-
-3. **Start Development Server**:
-   ```bash
-   npm run dev
-   ```
-
-## 🐳 Deployment
-
-The application is containerized and ready for deployment using Docker.
+## Deploy
 
 ```bash
 docker compose up -d --build
 ```
 
-## 📄 License
+## Lisans
 
-This project is licensed under the [MIT License](LICENSE).
+[MIT](LICENSE)
