@@ -42,7 +42,7 @@
   <foreignObject x={px - 20} y={py - 20} width='40' height='40' style='pointer-events: none;'>
     <div style='width: 40px; height: 40px; border-radius: 50%; border: 2.5px solid {color}; box-shadow: 0 0 16px {color}60, 0 2px 8px rgba(0,0,0,0.5); overflow: hidden; background: #1d232a;'>
       <img
-        src='https://api.dicebear.com/7.x/avataaars/svg?seed={playerData.player?.name}'
+        src={playerData.player?.profilePic || `https://api.dicebear.com/7.x/avataaars/svg?seed=${playerData.player?.name}`}
         alt={playerData.player?.name}
         style='width: 100%; height: 100%; border-radius: 50%; display: block;'
         draggable='false'

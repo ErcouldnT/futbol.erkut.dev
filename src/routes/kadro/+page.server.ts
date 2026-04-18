@@ -1,8 +1,8 @@
-import { eq } from 'drizzle-orm'
 import type { Actions } from './$types'
 import { db } from '$lib/db'
 import { lineups, matches, players, teams } from '$lib/db/schema'
 import { fail, isRedirect, redirect } from '@sveltejs/kit'
+import { eq } from 'drizzle-orm'
 import { v4 as uuidv4 } from 'uuid'
 
 export const actions: Actions = {
@@ -24,7 +24,7 @@ export const actions: Actions = {
     const awayPlayers = JSON.parse(formData.get('awayPlayers') as string)
     const title = formData.get('title') as string
     const matchTime = formData.get('matchTime') as string
-    const duration = parseInt(formData.get('duration') as string || '60')
+    const duration = Number.parseInt(formData.get('duration') as string || '60')
 
     if (!homeTeamName || !awayTeamName) {
       return fail(400, { message: 'Missing team names' })
@@ -49,10 +49,16 @@ export const actions: Actions = {
 
           if (existing) {
             playerMap.set(p.player.id, existing.id)
-            // Eğer numara değişmişse güncelle
-            if (existing.number !== p.player.number) {
+            // Numara veya fotoğraf değişmişse güncelle
+            const updates: Record<string, any> = {}
+            if (existing.number !== p.player.number)
+              updates.number = p.player.number
+            if (p.player.profilePic && existing.profilePic !== p.player.profilePic)
+              updates.profilePic = p.player.profilePic
+            if (Object.keys(updates).length > 0) {
+              updates.updatedAt = new Date()
               tx.update(players)
-                .set({ number: p.player.number, updatedAt: new Date() })
+                .set(updates)
                 .where(eq(players.id, existing.id))
                 .run()
             }
@@ -63,6 +69,7 @@ export const actions: Actions = {
               id: newId,
               name: p.player.name,
               number: p.player.number,
+              ...(p.player.profilePic ? { profilePic: p.player.profilePic } : {}),
             }).run()
             playerMap.set(p.player.id, newId)
           }
@@ -112,7 +119,7 @@ export const actions: Actions = {
       if (isRedirect(error))
         throw error
       console.error('SAVE MATCH ERROR:', error)
-      return fail(500, { message: 'Failed to save match: ' + (error as Error).message })
+      return fail(500, { message: `Failed to save match: ${(error as Error).message}` })
     }
   },
 }

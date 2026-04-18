@@ -7,20 +7,24 @@
   import MatchLineup from './MatchLineup.svelte'
   import TeamInfo from './TeamInfo.svelte'
 
-  const { match, defaultTab = 'LINEUP' } = $props<{
+  const { match, defaultTab = 'STATS' } = $props<{
     match: MatchExpand
-    defaultTab?: 'LINEUP' | 'COMMENTS'
+    defaultTab?: 'STATS' | 'LINEUP' | 'COMMENTS'
   }>()
 
-  let activeTab: 'LINEUP' | 'COMMENTS' = $state('LINEUP')
+  type Tab = 'STATS' | 'LINEUP' | 'COMMENTS'
+
+  const tabs: { id: Tab, label: string }[] = [
+    { id: 'STATS', label: 'İstatistikler' },
+    { id: 'LINEUP', label: 'Kadrolar' },
+    { id: 'COMMENTS', label: 'Yorumlar' },
+  ]
+
+  let activeTab: Tab = $state('STATS')
 
   $effect.pre(() => {
     activeTab = defaultTab
   })
-
-  const setActiveTab = (tab: 'LINEUP' | 'COMMENTS') => {
-    activeTab = tab
-  }
 
   // All lineups for player selection
   let allLineups: LineupExpand[] = $state([])
@@ -88,37 +92,31 @@
     lineupKey++
     loadAllLineups()
   }
+
+  // Tab indicator positioning
+  const tabIndex = $derived(tabs.findIndex(t => t.id === activeTab))
 </script>
 
 <main class='mt-8 flex flex-col gap-6'>
   <div class='relative mx-auto flex w-fit items-center rounded-2xl bg-white/5 p-1 backdrop-blur-md border border-white/10'>
     <div
       class='absolute h-[calc(100%-8px)] rounded-xl bg-primary transition-all duration-300 ease-out shadow-[0_0_20px_rgba(var(--primary),0.3)]'
-      style="width: {activeTab === 'LINEUP' ? '160px' : '120px'}; left: {activeTab === 'LINEUP' ? '4px' : '164px'}"
+      style='width: calc(100% / 3 - 4px); left: calc({tabIndex} * 100% / 3 + 4px)'
     ></div>
 
-    <button
-      onclick={() => setActiveTab('LINEUP')}
-      class="relative z-10 flex h-10 w-[160px] items-center justify-center text-sm font-bold transition-colors duration-300 {activeTab === 'LINEUP' ? 'text-primary-content' : 'text-white/40 hover:text-white/60'}"
-    >
-      Kadrolar
-    </button>
-    <button
-      onclick={() => setActiveTab('COMMENTS')}
-      class="relative z-10 flex h-10 w-[120px] items-center justify-center text-sm font-bold transition-colors duration-300 {activeTab === 'COMMENTS' ? 'text-primary-content' : 'text-white/40 hover:text-white/60'}"
-    >
-      Yorumlar
-    </button>
+    {#each tabs as tab}
+      <button
+        onclick={() => (activeTab = tab.id)}
+        class="relative z-10 flex h-10 w-[100px] items-center justify-center text-xs font-bold transition-colors duration-300 sm:w-[120px] sm:text-sm
+          {activeTab === tab.id ? 'text-primary-content' : 'text-white/40 hover:text-white/60'}"
+      >
+        {tab.label}
+      </button>
+    {/each}
   </div>
 
-  {#if activeTab === 'LINEUP'}
+  {#if activeTab === 'STATS'}
     <div class='flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500'>
-      {#key lineupKey}
-        <MatchLineup {match} />
-      {/key}
-
-      <div class='divider opacity-10'>İstatistikler</div>
-
       <TeamInfo {match} onUpdate={handleTeamInfoUpdate} />
 
       <!-- Forma Golü & Maçın Adamı Seçim -->
@@ -183,6 +181,14 @@
           </div>
         {/if}
       </div>
+    </div>
+  {/if}
+
+  {#if activeTab === 'LINEUP'}
+    <div class='animate-in fade-in slide-in-from-bottom-4 duration-500'>
+      {#key lineupKey}
+        <MatchLineup {match} />
+      {/key}
     </div>
   {/if}
 

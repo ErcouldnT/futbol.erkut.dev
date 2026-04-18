@@ -12,7 +12,7 @@
   } from '$lib/stores/players'
   import { isSharingLineup, shareLineupTrigger, showSaveModalStore } from '$lib/stores/ui'
   import { titleCase } from '$lib/utils'
-  import { Plus, Settings2 } from '@lucide/svelte'
+  import { Camera, Plus, Settings2, X } from '@lucide/svelte'
   import { domToPng } from 'modern-screenshot'
   import { onMount } from 'svelte'
   import LoadingSpinner from './LoadingSpinner.svelte'
@@ -224,6 +224,69 @@
     playersAway = playersAway.map(lineup =>
       lineup.player.id === player.id ? { ...lineup, player: { ...lineup.player, number: newNumber } } : lineup,
     )
+  }
+
+  function getPlayerAvatar(player: Player): string {
+    return player.profilePic || `https://api.dicebear.com/7.x/avataaars/svg?seed=${player.name}`
+  }
+
+  async function uploadPlayerPhoto(player: Player) {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = 'image/*'
+    input.onchange = async () => {
+      const file = input.files?.[0]
+      if (!file)
+        return
+
+      // Convert to WebP via canvas
+      const img = new Image()
+      const url = URL.createObjectURL(file)
+      img.src = url
+
+      await new Promise(resolve => (img.onload = resolve))
+
+      const canvas = document.createElement('canvas')
+      const size = 128
+      canvas.width = size
+      canvas.height = size
+      const ctx = canvas.getContext('2d')!
+      // Crop to square center
+      const min = Math.min(img.width, img.height)
+      const sx = (img.width - min) / 2
+      const sy = (img.height - min) / 2
+      ctx.drawImage(img, sx, sy, min, min, 0, 0, size, size)
+      URL.revokeObjectURL(url)
+
+      const webpDataUrl = canvas.toDataURL('image/webp', 0.8)
+
+      // Update local stores first
+      const updated = { ...player, profilePic: webpDataUrl }
+      allPlayersStore.update(players =>
+        players.map(p => p.id === player.id ? updated : p),
+      )
+      playersHome = playersHome.map(l =>
+        l.player.id === player.id ? { ...l, player: updated } : l,
+      )
+      playersAway = playersAway.map(l =>
+        l.player.id === player.id ? { ...l, player: updated } : l,
+      )
+
+      // Save to DB only for existing players (not temp)
+      if (!player.id.startsWith('temp-')) {
+        try {
+          await fetch('/api/players', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: player.id, profilePic: webpDataUrl }),
+          })
+        }
+        catch (err) {
+          console.error('Photo upload failed:', err)
+        }
+      }
+    }
+    input.click()
   }
 
   let isSaving = $state(false)
@@ -438,42 +501,23 @@
         </div>
 
         <div class='custom-scrollbar flex max-h-[300px] flex-col gap-2 overflow-y-auto pr-1 lg:max-h-[35vh]'>
-          {#each playersList as player (player.id)}
-            <div
-              role='button'
-              tabindex='0'
-              onclick={() => {
-                if (playersHome.some(lineup => lineup.player.id === player.id)) {
-                  removePlayer(player, 'HOME')
-                }
-                else if (!playersAway.some(lineup => lineup.player.id === player.id)) {
-                  addPlayer(player, 'HOME')
-                }
-              }}
-              onkeydown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  if (playersHome.some(lineup => lineup.player.id === player.id)) {
-                    removePlayer(player, 'HOME')
-                  }
-                  else if (!playersAway.some(lineup => lineup.player.id === player.id)) {
-                    addPlayer(player, 'HOME')
-                  }
-                }
-              }}
-              class="group/player relative overflow-hidden rounded-2xl border p-3 text-left transition-all backdrop-blur-xl hover:bg-white/10 active:scale-98 {playersHome.some(lineup => lineup.player.id === player.id) ? 'bg-primary/20 border-primary/30 shadow-lg' : 'bg-white/5 border-white/5 opacity-40'}"
-            >
+          {#each playersHome as lineup (lineup.player.id)}
+            <div class='group/player relative overflow-hidden rounded-2xl border border-primary/30 bg-primary/20 p-3 shadow-lg backdrop-blur-xl'>
               <div class='flex items-center gap-3'>
-                <div class='avatar'>
+                <button
+                  type='button'
+                  class='avatar relative cursor-pointer group/avatar'
+                  onclick={() => uploadPlayerPhoto(lineup.player)}
+                >
                   <div class='h-8 w-8 rounded-full border border-white/10'>
-                    <img
-                      src='https://api.dicebear.com/7.x/avataaars/svg?seed={player.name}'
-                      alt={player.name}
-                    />
+                    <img src={getPlayerAvatar(lineup.player)} alt={lineup.player.name} />
                   </div>
-                </div>
+                  <div class='absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 group-hover/avatar:opacity-100 transition-opacity'>
+                    <Camera size={12} class='text-white' />
+                  </div>
+                </button>
                 <div class='flex flex-1 flex-col'>
-                  <span class='text-xs font-bold text-white/90'>{player.name}</span>
+                  <span class='text-xs font-bold text-white/90'>{lineup.player.name}</span>
                   <span class='text-[10px] font-medium text-white/30 uppercase'>Oyuncu</span>
                 </div>
                 <button
@@ -481,10 +525,17 @@
                   class='flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-[10px] font-black text-warning transition-colors group-hover/player:bg-warning group-hover/player:text-warning-content'
                   onclick={(e) => {
                     e.stopPropagation()
-                    updatePlayerNumber(e, player)
+                    updatePlayerNumber(e, lineup.player)
                   }}
                 >
-                  {player.number}
+                  {lineup.player.number}
+                </button>
+                <button
+                  type='button'
+                  class='flex h-7 w-7 items-center justify-center rounded-lg bg-error/10 text-error/50 transition-all hover:bg-error hover:text-white active:scale-95'
+                  onclick={() => removePlayer(lineup.player, 'HOME')}
+                >
+                  <X size={14} />
                 </button>
               </div>
             </div>
@@ -528,42 +579,23 @@
         </div>
 
         <div class='custom-scrollbar flex max-h-[300px] flex-col gap-2 overflow-y-auto pr-1 lg:max-h-[35vh]'>
-          {#each playersList as player (player.id)}
-            <div
-              role='button'
-              tabindex='0'
-              onclick={() => {
-                if (playersAway.some(lineup => lineup.player.id === player.id)) {
-                  removePlayer(player, 'AWAY')
-                }
-                else if (!playersHome.some(lineup => lineup.player.id === player.id)) {
-                  addPlayer(player, 'AWAY')
-                }
-              }}
-              onkeydown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  if (playersAway.some(lineup => lineup.player.id === player.id)) {
-                    removePlayer(player, 'AWAY')
-                  }
-                  else if (!playersHome.some(lineup => lineup.player.id === player.id)) {
-                    addPlayer(player, 'AWAY')
-                  }
-                }
-              }}
-              class="group/player relative overflow-hidden rounded-2xl border p-3 text-left transition-all backdrop-blur-xl hover:bg-white/10 active:scale-98 {playersAway.some(lineup => lineup.player.id === player.id) ? 'bg-secondary/20 border-secondary/30 shadow-lg' : 'bg-white/5 border-white/5 opacity-40'}"
-            >
+          {#each playersAway as lineup (lineup.player.id)}
+            <div class='group/player relative overflow-hidden rounded-2xl border border-secondary/30 bg-secondary/20 p-3 shadow-lg backdrop-blur-xl'>
               <div class='flex items-center gap-3'>
-                <div class='avatar'>
+                <button
+                  type='button'
+                  class='avatar relative cursor-pointer group/avatar'
+                  onclick={() => uploadPlayerPhoto(lineup.player)}
+                >
                   <div class='h-8 w-8 rounded-full border border-white/10'>
-                    <img
-                      src='https://api.dicebear.com/7.x/avataaars/svg?seed={player.name}'
-                      alt={player.name}
-                    />
+                    <img src={getPlayerAvatar(lineup.player)} alt={lineup.player.name} />
                   </div>
-                </div>
+                  <div class='absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 group-hover/avatar:opacity-100 transition-opacity'>
+                    <Camera size={12} class='text-white' />
+                  </div>
+                </button>
                 <div class='flex flex-1 flex-col'>
-                  <span class='text-xs font-bold text-white/90'>{player.name}</span>
+                  <span class='text-xs font-bold text-white/90'>{lineup.player.name}</span>
                   <span class='text-[10px] font-medium text-white/30 uppercase'>Oyuncu</span>
                 </div>
                 <button
@@ -571,10 +603,17 @@
                   class='flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-[10px] font-black text-warning transition-colors group-hover/player:bg-warning group-hover/player:text-warning-content'
                   onclick={(e) => {
                     e.stopPropagation()
-                    updatePlayerNumber(e, player)
+                    updatePlayerNumber(e, lineup.player)
                   }}
                 >
-                  {player.number}
+                  {lineup.player.number}
+                </button>
+                <button
+                  type='button'
+                  class='flex h-7 w-7 items-center justify-center rounded-lg bg-error/10 text-error/50 transition-all hover:bg-error hover:text-white active:scale-95'
+                  onclick={() => removePlayer(lineup.player, 'AWAY')}
+                >
+                  <X size={14} />
                 </button>
               </div>
             </div>
