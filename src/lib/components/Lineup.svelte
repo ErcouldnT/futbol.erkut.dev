@@ -288,6 +288,25 @@
       newAwayPlayerName = ''
   }
 
+  async function inlineExternalImages(container: Element) {
+    const images = container.querySelectorAll('img[src^="http"]') as NodeListOf<HTMLImageElement>
+    await Promise.all(Array.from(images).map(async (img) => {
+      try {
+        const res = await fetch(img.src)
+        const blob = await res.blob()
+        const dataUri = await new Promise<string>((resolve) => {
+          const reader = new FileReader()
+          reader.onloadend = () => resolve(reader.result as string)
+          reader.readAsDataURL(blob)
+        })
+        img.src = dataUri
+      }
+      catch {
+      // skip if fetch fails
+      }
+    }))
+  }
+
   async function handleShareLineup() {
     const element = document.getElementById('field-svg')
     if (!element)
@@ -295,8 +314,8 @@
 
     isSharingLineup.set(true)
     try {
-      // Small delay to ensure any UI state is settled
-      await new Promise(resolve => setTimeout(resolve, 100))
+      await inlineExternalImages(element)
+      await new Promise(resolve => setTimeout(resolve, 50))
 
       const dataUrl = await domToPng(element, {
         scale: 3,
