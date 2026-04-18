@@ -8,6 +8,13 @@
       "when": 1776033371239,
       "tag": "0000_colorful_invaders",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1776475362991,
+      "tag": "0001_previous_vargas",
+      "breakpoints": true
     }
   ]
 }

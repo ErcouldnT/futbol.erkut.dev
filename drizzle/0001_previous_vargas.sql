@@ -1,0 +1,1 @@
+ALTER TABLE `lineups` ADD `goal_minutes` text DEFAULT '[]' NOT NULL;
