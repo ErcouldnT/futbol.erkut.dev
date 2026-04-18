@@ -10,6 +10,8 @@
     showPlayerNames = true,
     showPlayerNumbers = true,
     saha = 'VERTICAL',
+    mvpId = '',
+    jerseyGoalId = '',
     startDrag = () => null,
   }: {
     playersHome?: LineupExpand[]
@@ -17,6 +19,8 @@
     showPlayerNames?: boolean
     showPlayerNumbers?: boolean
     saha?: 'VERTICAL' | 'HORIZONTAL'
+    mvpId?: string
+    jerseyGoalId?: string
     startDrag?: (event: PointerEvent | TouchEvent, player: LineupExpand) => void
   } = $props()
 </script>
@@ -25,7 +29,7 @@
   id='field-svg'
   xmlns='http://www.w3.org/2000/svg'
   viewBox='0 0 300 500'
-  class="h-auto w-full max-w-xl {saha === 'HORIZONTAL' ? 'lg:-rotate-90' : ''}"
+  class="h-auto w-full {saha === 'HORIZONTAL' ? 'max-w-xl mx-auto lg:-rotate-90 lg:my-[-20%]' : ''}"
   style='touch-action: none;'
 >
   <!-- Patterns & Gradients -->
@@ -114,6 +118,8 @@
       {startDrag}
       {showPlayerNames}
       {showPlayerNumbers}
+      isMvp={playerData.playerId === mvpId}
+      isJerseyGoal={playerData.playerId === jerseyGoalId}
     />
   {/each}
 
@@ -127,6 +133,8 @@
       {startDrag}
       {showPlayerNames}
       {showPlayerNumbers}
+      isMvp={playerData.playerId === mvpId}
+      isJerseyGoal={playerData.playerId === jerseyGoalId}
     />
   {/each}
 </svg>

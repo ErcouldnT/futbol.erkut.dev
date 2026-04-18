@@ -399,190 +399,193 @@
   <input type='hidden' name='matchTime' value={matchTime} />
   <input type='hidden' name='duration' value={matchDuration} />
 
-  <main class='mt-8 flex flex-wrap items-start justify-center gap-x-4 gap-y-8 lg:flex-nowrap lg:gap-12'>
-    <!-- Home Team Column -->
-    <div class='flex w-[calc(50%-0.5rem)] flex-col gap-4 lg:w-72 order-1'>
-      <div class='group relative overflow-hidden rounded-3xl border border-white/5 bg-white/5 p-3 sm:p-5 shadow-xl backdrop-blur-xl'>
-        <div class='absolute inset-0 bg-linear-to-br from-primary/10 to-transparent pointer-events-none'></div>
+  <main class='mt-8 flex flex-col items-start gap-6 lg:flex-row lg:gap-8 lg:px-4'>
+    <!-- Teams Panel (Left side on desktop) -->
+    <div class='flex w-full flex-row gap-4 lg:w-80 lg:flex-col lg:gap-6 lg:shrink-0'>
+      <!-- Home Team -->
+      <div class='flex w-1/2 flex-col gap-3 lg:w-full'>
+        <div class='group relative overflow-hidden rounded-3xl border border-white/5 bg-white/5 p-3 sm:p-5 shadow-xl backdrop-blur-xl'>
+          <div class='absolute inset-0 bg-linear-to-br from-primary/10 to-transparent pointer-events-none'></div>
 
-        <div class='relative flex flex-col gap-4'>
-          <input
-            type='text'
-            bind:value={homeTeamName}
-            placeholder='Ev Sahibi'
-            class='w-full bg-transparent text-center text-sm sm:text-lg lg:text-xl font-black uppercase tracking-widest sm:tracking-[0.2em] text-primary outline-none placeholder:opacity-20'
-            onkeydown={e => e.key === 'Enter' && e.preventDefault()}
-          />
+          <div class='relative flex flex-col gap-4'>
+            <input
+              type='text'
+              bind:value={homeTeamName}
+              placeholder='Ev Sahibi'
+              class='w-full bg-transparent text-center text-sm sm:text-lg font-black uppercase tracking-widest sm:tracking-[0.2em] text-primary outline-none placeholder:opacity-20'
+              onkeydown={e => e.key === 'Enter' && e.preventDefault()}
+            />
 
-          <div class='flex items-center gap-2'>
-            <div class='relative flex-1'>
-              <input
-                type='text'
-                placeholder='Oyuncu ekle...'
-                class='w-full rounded-xl border border-white/5 bg-white/5 px-4 py-2 text-xs font-medium outline-none transition-all focus:bg-white/10'
-                bind:value={newHomePlayerName}
-                onkeydown={e => e.key === 'Enter' && (e.preventDefault(), addNewPlayer('HOME'))}
-              />
+            <div class='flex items-center gap-2'>
+              <div class='relative flex-1'>
+                <input
+                  type='text'
+                  placeholder='Oyuncu ekle...'
+                  class='w-full rounded-xl border border-white/5 bg-white/5 px-4 py-2 text-xs font-medium outline-none transition-all focus:bg-white/10'
+                  bind:value={newHomePlayerName}
+                  onkeydown={e => e.key === 'Enter' && (e.preventDefault(), addNewPlayer('HOME'))}
+                />
+              </div>
+              <button
+                type='button'
+                class='flex h-9 w-9 items-center justify-center rounded-xl bg-primary/20 text-primary transition-all hover:bg-primary hover:text-white active:scale-95'
+                onclick={() => addNewPlayer('HOME')}
+              >
+                <Plus size={18} />
+              </button>
             </div>
-            <button
-              type='button'
-              class='flex h-9 w-9 items-center justify-center rounded-xl bg-primary/20 text-primary transition-all hover:bg-primary hover:text-white active:scale-95'
-              onclick={() => addNewPlayer('HOME')}
-            >
-              <Plus size={18} />
-            </button>
           </div>
         </div>
-      </div>
 
-      <div class='custom-scrollbar flex max-h-[400px] flex-col gap-2 overflow-y-auto pr-1'>
-        {#each playersList as player (player.id)}
-          <div
-            role='button'
-            tabindex='0'
-            onclick={() => {
-              if (playersHome.some(lineup => lineup.player.id === player.id)) {
-                removePlayer(player, 'HOME')
-              }
-              else if (!playersAway.some(lineup => lineup.player.id === player.id)) {
-                addPlayer(player, 'HOME')
-              }
-            }}
-            onkeydown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
+        <div class='custom-scrollbar flex max-h-[300px] flex-col gap-2 overflow-y-auto pr-1 lg:max-h-[35vh]'>
+          {#each playersList as player (player.id)}
+            <div
+              role='button'
+              tabindex='0'
+              onclick={() => {
                 if (playersHome.some(lineup => lineup.player.id === player.id)) {
                   removePlayer(player, 'HOME')
                 }
                 else if (!playersAway.some(lineup => lineup.player.id === player.id)) {
                   addPlayer(player, 'HOME')
                 }
-              }
-            }}
-            class="group/player relative overflow-hidden rounded-2xl border p-3 text-left transition-all backdrop-blur-xl hover:bg-white/10 active:scale-98 {playersHome.some(lineup => lineup.player.id === player.id) ? 'bg-primary/20 border-primary/30 shadow-lg' : 'bg-white/5 border-white/5 opacity-40'}"
-          >
-            <div class='flex items-center gap-3'>
-              <div class='avatar'>
-                <div class='h-8 w-8 rounded-full border border-white/10'>
-                  <img
-                    src='https://api.dicebear.com/7.x/avataaars/svg?seed={player.name}'
-                    alt={player.name}
-                  />
-                </div>
-              </div>
-              <div class='flex flex-1 flex-col'>
-                <span class='text-xs font-bold text-white/90'>{player.name}</span>
-                <span class='text-[10px] font-medium text-white/30 uppercase'>Oyuncu</span>
-              </div>
-              <button
-                type='button'
-                class='flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-[10px] font-black text-warning transition-colors group-hover/player:bg-warning group-hover/player:text-warning-content'
-                onclick={(e) => {
-                  e.stopPropagation()
-                  updatePlayerNumber(e, player)
-                }}
-              >
-                {player.number}
-              </button>
-            </div>
-          </div>
-        {/each}
-      </div>
-    </div>
-
-    <!-- Pitch Area -->
-    <div class='relative flex w-full flex-col items-center gap-6 lg:w-auto order-3 lg:order-2'>
-      <SahaSvg {playersHome} {playersAway} {showPlayerNames} {showPlayerNumbers} {startDrag} />
-    </div>
-
-    <!-- Away Team Column -->
-    <div class='flex w-[calc(50%-0.5rem)] flex-col gap-4 lg:w-72 order-2 lg:order-3'>
-      <div class='group relative overflow-hidden rounded-3xl border border-white/5 bg-white/5 p-3 sm:p-5 shadow-xl backdrop-blur-xl'>
-        <div class='absolute inset-0 bg-linear-to-br from-secondary/10 to-transparent pointer-events-none'></div>
-
-        <div class='relative flex flex-col gap-4'>
-          <input
-            type='text'
-            bind:value={awayTeamName}
-            placeholder='Rakip Takım'
-            class='w-full bg-transparent text-center text-sm sm:text-lg lg:text-xl font-black uppercase tracking-widest sm:tracking-[0.2em] text-secondary outline-none placeholder:opacity-20'
-            onkeydown={e => e.key === 'Enter' && e.preventDefault()}
-          />
-
-          <div class='flex items-center gap-2'>
-            <div class='relative flex-1'>
-              <input
-                type='text'
-                placeholder='Oyuncu ekle...'
-                class='w-full rounded-xl border border-white/5 bg-white/5 px-4 py-2 text-xs font-medium outline-none transition-all focus:bg-white/10'
-                bind:value={newAwayPlayerName}
-                onkeydown={e => e.key === 'Enter' && (e.preventDefault(), addNewPlayer('AWAY'))}
-              />
-            </div>
-            <button
-              type='button'
-              class='flex h-9 w-9 items-center justify-center rounded-xl bg-secondary/20 text-secondary transition-all hover:bg-secondary hover:text-white active:scale-95'
-              onclick={() => addNewPlayer('AWAY')}
+              }}
+              onkeydown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  if (playersHome.some(lineup => lineup.player.id === player.id)) {
+                    removePlayer(player, 'HOME')
+                  }
+                  else if (!playersAway.some(lineup => lineup.player.id === player.id)) {
+                    addPlayer(player, 'HOME')
+                  }
+                }
+              }}
+              class="group/player relative overflow-hidden rounded-2xl border p-3 text-left transition-all backdrop-blur-xl hover:bg-white/10 active:scale-98 {playersHome.some(lineup => lineup.player.id === player.id) ? 'bg-primary/20 border-primary/30 shadow-lg' : 'bg-white/5 border-white/5 opacity-40'}"
             >
-              <Plus size={18} />
-            </button>
-          </div>
+              <div class='flex items-center gap-3'>
+                <div class='avatar'>
+                  <div class='h-8 w-8 rounded-full border border-white/10'>
+                    <img
+                      src='https://api.dicebear.com/7.x/avataaars/svg?seed={player.name}'
+                      alt={player.name}
+                    />
+                  </div>
+                </div>
+                <div class='flex flex-1 flex-col'>
+                  <span class='text-xs font-bold text-white/90'>{player.name}</span>
+                  <span class='text-[10px] font-medium text-white/30 uppercase'>Oyuncu</span>
+                </div>
+                <button
+                  type='button'
+                  class='flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-[10px] font-black text-warning transition-colors group-hover/player:bg-warning group-hover/player:text-warning-content'
+                  onclick={(e) => {
+                    e.stopPropagation()
+                    updatePlayerNumber(e, player)
+                  }}
+                >
+                  {player.number}
+                </button>
+              </div>
+            </div>
+          {/each}
         </div>
       </div>
 
-      <div class='custom-scrollbar flex max-h-[400px] flex-col gap-2 overflow-y-auto pr-1'>
-        {#each playersList as player (player.id)}
-          <div
-            role='button'
-            tabindex='0'
-            onclick={() => {
-              if (playersAway.some(lineup => lineup.player.id === player.id)) {
-                removePlayer(player, 'AWAY')
-              }
-              else if (!playersHome.some(lineup => lineup.player.id === player.id)) {
-                addPlayer(player, 'AWAY')
-              }
-            }}
-            onkeydown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
+      <!-- Away Team -->
+      <div class='flex w-1/2 flex-col gap-3 lg:w-full'>
+        <div class='group relative overflow-hidden rounded-3xl border border-white/5 bg-white/5 p-3 sm:p-5 shadow-xl backdrop-blur-xl'>
+          <div class='absolute inset-0 bg-linear-to-br from-secondary/10 to-transparent pointer-events-none'></div>
+
+          <div class='relative flex flex-col gap-4'>
+            <input
+              type='text'
+              bind:value={awayTeamName}
+              placeholder='Rakip Takım'
+              class='w-full bg-transparent text-center text-sm sm:text-lg font-black uppercase tracking-widest sm:tracking-[0.2em] text-secondary outline-none placeholder:opacity-20'
+              onkeydown={e => e.key === 'Enter' && e.preventDefault()}
+            />
+
+            <div class='flex items-center gap-2'>
+              <div class='relative flex-1'>
+                <input
+                  type='text'
+                  placeholder='Oyuncu ekle...'
+                  class='w-full rounded-xl border border-white/5 bg-white/5 px-4 py-2 text-xs font-medium outline-none transition-all focus:bg-white/10'
+                  bind:value={newAwayPlayerName}
+                  onkeydown={e => e.key === 'Enter' && (e.preventDefault(), addNewPlayer('AWAY'))}
+                />
+              </div>
+              <button
+                type='button'
+                class='flex h-9 w-9 items-center justify-center rounded-xl bg-secondary/20 text-secondary transition-all hover:bg-secondary hover:text-white active:scale-95'
+                onclick={() => addNewPlayer('AWAY')}
+              >
+                <Plus size={18} />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class='custom-scrollbar flex max-h-[300px] flex-col gap-2 overflow-y-auto pr-1 lg:max-h-[35vh]'>
+          {#each playersList as player (player.id)}
+            <div
+              role='button'
+              tabindex='0'
+              onclick={() => {
                 if (playersAway.some(lineup => lineup.player.id === player.id)) {
                   removePlayer(player, 'AWAY')
                 }
                 else if (!playersHome.some(lineup => lineup.player.id === player.id)) {
                   addPlayer(player, 'AWAY')
                 }
-              }
-            }}
-            class="group/player relative overflow-hidden rounded-2xl border p-3 text-left transition-all backdrop-blur-xl hover:bg-white/10 active:scale-98 {playersAway.some(lineup => lineup.player.id === player.id) ? 'bg-secondary/20 border-secondary/30 shadow-lg' : 'bg-white/5 border-white/5 opacity-40'}"
-          >
-            <div class='flex items-center gap-3'>
-              <div class='avatar'>
-                <div class='h-8 w-8 rounded-full border border-white/10'>
-                  <img
-                    src='https://api.dicebear.com/7.x/avataaars/svg?seed={player.name}'
-                    alt={player.name}
-                  />
+              }}
+              onkeydown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  if (playersAway.some(lineup => lineup.player.id === player.id)) {
+                    removePlayer(player, 'AWAY')
+                  }
+                  else if (!playersHome.some(lineup => lineup.player.id === player.id)) {
+                    addPlayer(player, 'AWAY')
+                  }
+                }
+              }}
+              class="group/player relative overflow-hidden rounded-2xl border p-3 text-left transition-all backdrop-blur-xl hover:bg-white/10 active:scale-98 {playersAway.some(lineup => lineup.player.id === player.id) ? 'bg-secondary/20 border-secondary/30 shadow-lg' : 'bg-white/5 border-white/5 opacity-40'}"
+            >
+              <div class='flex items-center gap-3'>
+                <div class='avatar'>
+                  <div class='h-8 w-8 rounded-full border border-white/10'>
+                    <img
+                      src='https://api.dicebear.com/7.x/avataaars/svg?seed={player.name}'
+                      alt={player.name}
+                    />
+                  </div>
                 </div>
+                <div class='flex flex-1 flex-col'>
+                  <span class='text-xs font-bold text-white/90'>{player.name}</span>
+                  <span class='text-[10px] font-medium text-white/30 uppercase'>Oyuncu</span>
+                </div>
+                <button
+                  type='button'
+                  class='flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-[10px] font-black text-warning transition-colors group-hover/player:bg-warning group-hover/player:text-warning-content'
+                  onclick={(e) => {
+                    e.stopPropagation()
+                    updatePlayerNumber(e, player)
+                  }}
+                >
+                  {player.number}
+                </button>
               </div>
-              <div class='flex flex-1 flex-col'>
-                <span class='text-xs font-bold text-white/90'>{player.name}</span>
-                <span class='text-[10px] font-medium text-white/30 uppercase'>Oyuncu</span>
-              </div>
-              <button
-                type='button'
-                class='flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-[10px] font-black text-warning transition-colors group-hover/player:bg-warning group-hover/player:text-warning-content'
-                onclick={(e) => {
-                  e.stopPropagation()
-                  updatePlayerNumber(e, player)
-                }}
-              >
-                {player.number}
-              </button>
             </div>
-          </div>
-        {/each}
+          {/each}
+        </div>
       </div>
+    </div>
+
+    <!-- Pitch Area (Right side on desktop, full width and large) -->
+    <div class='relative flex w-full max-w-xl mx-auto flex-1 flex-col items-center lg:max-w-none'>
+      <SahaSvg {playersHome} {playersAway} {showPlayerNames} {showPlayerNumbers} {startDrag} />
     </div>
   </main>
 

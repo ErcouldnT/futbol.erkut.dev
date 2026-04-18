@@ -4,7 +4,7 @@
   import { onMount } from 'svelte'
   import LoadingSpinner from './LoadingSpinner.svelte'
 
-  const { match }: { match: MatchExpand } = $props()
+  const { match, onUpdate = () => {} }: { match: MatchExpand, onUpdate?: () => void } = $props()
 
   let lineupHomeTeam: LineupExpand[] = $state([])
   let lineupAwayTeam: LineupExpand[] = $state([])
@@ -33,7 +33,6 @@
     loadLineups()
   })
 
-  // sort players alphabetically
   function sortPlayersAlphabetically(players: LineupExpand[]) {
     return players.sort((a, b) => a.player.name.localeCompare(b.player.name, 'tr-TR'))
   }
@@ -53,6 +52,32 @@
     if (res.ok) {
       await loadLineups()
       await invalidateAll()
+      onUpdate()
+    }
+  }
+
+  // Long press for mobile decrement
+  let longPressTimer: ReturnType<typeof setTimeout> | null = null
+
+  function startLongPress(lineupId: string, teamId: string) {
+    longPressTimer = setTimeout(() => {
+      longPressTimer = null
+      updateGoals(lineupId, teamId, 'decrement')
+    }, 500)
+  }
+
+  function endLongPress(lineupId: string, teamId: string) {
+    if (longPressTimer) {
+      clearTimeout(longPressTimer)
+      longPressTimer = null
+      updateGoals(lineupId, teamId, 'increment')
+    }
+  }
+
+  function cancelLongPress() {
+    if (longPressTimer) {
+      clearTimeout(longPressTimer)
+      longPressTimer = null
     }
   }
 </script>
@@ -93,14 +118,17 @@
 
               <div class='flex items-center gap-1'>
                 <button
-                  onclick={() => updateGoals(playerData.id, homeTeamId, 'increment')}
+                  onpointerdown={() => startLongPress(playerData.id, homeTeamId)}
+                  onpointerup={() => endLongPress(playerData.id, homeTeamId)}
+                  onpointerleave={cancelLongPress}
                   oncontextmenu={(e) => {
                     e.preventDefault()
+                    cancelLongPress()
                     updateGoals(playerData.id, homeTeamId, 'decrement')
                   }}
-                  class="flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/5 px-2.5 py-1 text-xs font-bold transition-all hover:border-primary/50 hover:bg-primary/20 hover:scale-105 active:scale-95
+                  class="flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/5 px-2.5 py-1 text-xs font-bold transition-all hover:border-primary/50 hover:bg-primary/20 hover:scale-105 active:scale-95 select-none
                     {playerData.goals > 0 ? 'text-white border-primary/30 bg-primary/10' : 'text-white/20'}"
-                  title='Tıkla: +1 Artır, Sağ Tık: -1 Azalt'
+                  title='Tıkla: +1 Artır | Uzun Bas/Sağ Tık: -1 Azalt'
                 >
                   <span class={playerData.goals > 0 ? 'drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'grayscale opacity-50'}>⚽</span>
                   {#if playerData.goals > 0}
@@ -139,14 +167,17 @@
 
               <div class='flex items-center gap-1'>
                 <button
-                  onclick={() => updateGoals(playerData.id, awayTeamId, 'increment')}
+                  onpointerdown={() => startLongPress(playerData.id, awayTeamId)}
+                  onpointerup={() => endLongPress(playerData.id, awayTeamId)}
+                  onpointerleave={cancelLongPress}
                   oncontextmenu={(e) => {
                     e.preventDefault()
+                    cancelLongPress()
                     updateGoals(playerData.id, awayTeamId, 'decrement')
                   }}
-                  class="flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/5 px-2.5 py-1 text-xs font-bold transition-all hover:border-secondary/50 hover:bg-secondary/20 hover:scale-105 active:scale-95
+                  class="flex items-center gap-1.5 rounded-lg border border-white/5 bg-white/5 px-2.5 py-1 text-xs font-bold transition-all hover:border-secondary/50 hover:bg-secondary/20 hover:scale-105 active:scale-95 select-none
                     {playerData.goals > 0 ? 'text-white border-secondary/30 bg-secondary/10' : 'text-white/20'}"
-                  title='Tıkla: +1 Artır, Sağ Tık: -1 Azalt'
+                  title='Tıkla: +1 Artır | Uzun Bas/Sağ Tık: -1 Azalt'
                 >
                   <span class={playerData.goals > 0 ? 'drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'grayscale opacity-50'}>⚽</span>
                   {#if playerData.goals > 0}

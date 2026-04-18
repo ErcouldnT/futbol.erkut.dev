@@ -59,6 +59,15 @@
       ?.filter(l => l.teamId === match.awayTeamId && l.goals > 0)
       .sort((a, b) => b.goals - a.goals) || [],
   )
+
+  function getGoalMinutes(goalMinutes: string | undefined): number[] {
+    try {
+      return JSON.parse(goalMinutes || '[]')
+    }
+    catch {
+      return []
+    }
+  }
 </script>
 
 <div
@@ -132,7 +141,7 @@
           </div>
 
           <!-- Scoreboard -->
-          <div class='relative flex items-center justify-between gap-4 py-4 sm:gap-8'>
+          <div class='relative flex items-start justify-between gap-4 py-4 sm:gap-8'>
             <!-- Background Glows -->
             <div class='absolute inset-0 flex items-center justify-center opacity-20 blur-[80px] pointer-events-none'>
               <div class='h-32 w-32 rounded-full bg-primary'></div>
@@ -155,25 +164,30 @@
                 {#each homeScorers as scorer}
                   <div class='flex items-center gap-1 text-[10px] font-medium sm:text-xs'>
                     <span>{scorer.player.name}</span>
-                    <div class='flex gap-0.5 leading-none'>
-                      {#each Array.from({ length: scorer.goals }) as _}
-                        <span>⚽</span>
+                    <span class='opacity-60'>
+                      {#each Array.from({ length: scorer.goals }) as _, i}
+                        {#if i > 0}, {/if}
+                        {#if getGoalMinutes(scorer.goalMinutes)[i] !== undefined}
+                          {getGoalMinutes(scorer.goalMinutes)[i]}'
+                        {:else}
+                          ⚽
+                        {/if}
                       {/each}
-                    </div>
+                    </span>
                   </div>
                 {/each}
               </div>
             </div>
 
             <!-- Score -->
-            <div class='relative flex flex-col items-center gap-2'>
+            <div class='relative flex shrink-0 flex-col items-center gap-2'>
               <div class='flex items-center gap-4 rounded-4xl border border-white/10 bg-linear-to-b from-white/10 to-transparent px-8 py-3 shadow-[0_20px_50px_rgba(0,0,0,0.3)] backdrop-blur-md'>
                 <span class='text-4xl font-black tabular-nums text-white sm:text-6xl'>{match.homeScore}</span>
                 <div class='h-8 w-px bg-white/10 sm:h-12'></div>
                 <span class='text-4xl font-black tabular-nums text-white sm:text-6xl'>{match.awayScore}</span>
               </div>
 
-              <div class='absolute -bottom-3 flex translate-y-1/2 items-center gap-2 rounded-full border border-white/10 bg-base-300/80 px-4 py-1.5 shadow-xl backdrop-blur-xl'>
+              <div class='absolute -bottom-1 flex translate-y-full items-center gap-2 rounded-full border border-white/10 bg-base-300/80 px-4 py-1.5 shadow-xl backdrop-blur-xl'>
                 {#if notStarted}
                   <span class='flex h-2 w-2 rounded-full bg-warning shadow-[0_0_8px_rgba(var(--warning),0.5)]'></span>
                   <span class='text-[10px] uppercase tracking-widest text-warning font-black'>Bekleniyor</span>
@@ -204,11 +218,16 @@
               <div class='flex flex-col items-start opacity-40'>
                 {#each awayScorers as scorer}
                   <div class='flex items-center gap-1 text-[10px] font-medium sm:text-xs'>
-                    <div class='flex gap-0.5 leading-none'>
-                      {#each Array.from({ length: scorer.goals }) as _}
-                        <span>⚽</span>
+                    <span class='opacity-60'>
+                      {#each Array.from({ length: scorer.goals }) as _, i}
+                        {#if i > 0}, {/if}
+                        {#if getGoalMinutes(scorer.goalMinutes)[i] !== undefined}
+                          {getGoalMinutes(scorer.goalMinutes)[i]}'
+                        {:else}
+                          ⚽
+                        {/if}
                       {/each}
-                    </div>
+                    </span>
                     <span>{scorer.player.name}</span>
                   </div>
                 {/each}

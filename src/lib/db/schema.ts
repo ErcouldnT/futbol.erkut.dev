@@ -45,6 +45,7 @@ export const lineups = sqliteTable('lineups', {
   teamId: text('team_id').notNull().references(() => teams.id),
   playerId: text('player_id').notNull().references(() => players.id),
   goals: integer('goals').notNull().default(0),
+  goalMinutes: text('goal_minutes').notNull().default('[]'),
   rating: real('rating').notNull().default(0),
   posX: real('pos_x').notNull().default(0),
   posY: real('pos_y').notNull().default(0),

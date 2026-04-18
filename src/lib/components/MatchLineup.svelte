@@ -1,11 +1,11 @@
 <script lang='ts'>
-  import type { LineupExpand, Match } from '$lib/types'
+  import type { LineupExpand, MatchExpand } from '$lib/types'
   import { onMount } from 'svelte'
 
   import LoadingSpinner from './LoadingSpinner.svelte'
   import SahaSvg from './SahaSvg.svelte'
 
-  const { match }: { match: Match } = $props()
+  const { match }: { match: MatchExpand } = $props()
 
   const matchId = $derived(match.id)
   const homeTeamId = $derived(match.homeTeamId)
@@ -32,7 +32,7 @@
   })
 </script>
 
-<main class='flex max-h-full items-center justify-center p-5 lg:max-h-120'>
+<main class='flex items-center justify-center p-5'>
   {#if loading}
     <LoadingSpinner text='Kadro Yükleniyor...' size='lg' />
   {:else}
@@ -40,6 +40,8 @@
       playersHome={homeTeamLineups}
       playersAway={awayTeamLineups}
       saha='HORIZONTAL'
+      mvpId={match.mvpId || ''}
+      jerseyGoalId={match.jerseyGoalId || ''}
     />
   {/if}
 </main>

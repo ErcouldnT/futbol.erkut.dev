@@ -34,19 +34,48 @@ export const PATCH: RequestHandler = async ({ request }) => {
     return json({ error: 'Missing lineup id' }, { status: 400 })
   }
 
-  // Update logic: if 'type' is provided, we increment/decrement
-  let newGoals = goals
+  const current = await db.query.lineups.findFirst({ where: eq(lineups.id, id) })
+  if (!current) {
+    return json({ error: 'Lineup not found' }, { status: 404 })
+  }
+
+  let newGoals = goals ?? current.goals
+  let goalMinutes: number[] = []
+  try {
+    goalMinutes = JSON.parse(current.goalMinutes || '[]')
+  }
+  catch {
+    goalMinutes = []
+  }
+
   if (type === 'increment') {
-    const current = await db.query.lineups.findFirst({ where: eq(lineups.id, id) })
-    newGoals = (current?.goals || 0) + 1
+    newGoals = current.goals + 1
+
+    // Calculate goal minute only if match is currently live
+    if (matchId) {
+      const matchData = await db.query.matches.findFirst({ where: eq(matches.id, matchId) })
+      if (matchData) {
+        const matchStart = new Date(matchData.matchTime).getTime()
+        const matchEnd = matchStart + (matchData.duration || 90) * 60000
+        const now = Date.now()
+        // Only record minute if match is in progress
+        if (now >= matchStart && now <= matchEnd) {
+          const minuteElapsed = Math.max(1, Math.round((now - matchStart) / 60000))
+          goalMinutes.push(minuteElapsed)
+        }
+      }
+    }
   }
   else if (type === 'decrement') {
-    const current = await db.query.lineups.findFirst({ where: eq(lineups.id, id) })
-    newGoals = Math.max(0, (current?.goals || 0) - 1)
+    newGoals = Math.max(0, current.goals - 1)
+    // Remove last recorded minute
+    if (goalMinutes.length > 0) {
+      goalMinutes.pop()
+    }
   }
 
   const updatedLineup = await db.update(lineups)
-    .set({ goals: newGoals, updatedAt: new Date() })
+    .set({ goals: newGoals, goalMinutes: JSON.stringify(goalMinutes), updatedAt: new Date() })
     .where(eq(lineups.id, id))
     .returning()
     .get()

@@ -43,7 +43,8 @@
               class='group/save flex items-center gap-2 rounded-xl bg-warning/20 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-warning border border-warning/30 transition-all hover:bg-warning hover:text-warning-content active:scale-95 disabled:opacity-30 disabled:grayscale'
             >
               <Settings2 size={14} class='transition-transform duration-500 group-hover/save:rotate-90' />
-              <span>Kaydet</span>
+              <span class='sm:hidden'>Kaydet</span>
+              <span class='hidden sm:inline'>Maçı Kaydet</span>
             </button>
           {:else}
             <a
