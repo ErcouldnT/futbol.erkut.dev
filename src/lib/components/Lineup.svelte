@@ -96,6 +96,10 @@
   function startDrag(event: PointerEvent | TouchEvent, player: LineupExpand) {
     event.preventDefault()
     draggingPlayer = player
+    // Disable scrolling while dragging
+    const svg = document.getElementById('field-svg')
+    if (svg)
+      svg.style.touchAction = 'none'
     window.addEventListener('pointermove', drag, { passive: false })
     window.addEventListener('pointerup', endDrag, { passive: false })
   }
@@ -135,6 +139,10 @@
   function endDrag(event: PointerEvent) {
     event.preventDefault()
     draggingPlayer = null
+    // Re-enable scrolling
+    const svg = document.getElementById('field-svg')
+    if (svg)
+      svg.style.touchAction = 'pan-x pan-y'
     window.removeEventListener('pointermove', drag)
     window.removeEventListener('pointerup', endDrag)
   }
