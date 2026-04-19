@@ -475,7 +475,7 @@
   <input type='hidden' name='homePlayers' value={JSON.stringify(playersHome)} />
   <input type='hidden' name='awayPlayers' value={JSON.stringify(playersAway)} />
   <input type='hidden' name='title' value={matchTitle.trim() || 'Halısaha'} />
-  <input type='hidden' name='matchTime' value={matchTime} />
+  <input type='hidden' name='matchTime' value={new Date(matchTime).toISOString()} />
   <input type='hidden' name='duration' value={matchDuration} />
 
   <main class='mt-8 flex flex-col items-start gap-6 lg:flex-row lg:gap-8 lg:px-4'>

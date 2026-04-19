@@ -49,8 +49,9 @@ export async function sendNewMatchNotification(match: MatchInfo): Promise<void> 
     day: 'numeric',
     month: 'long',
     year: 'numeric',
+    timeZone: 'Europe/Istanbul',
   })
-  const timeStr = date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+  const timeStr = date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Istanbul' })
 
   const homeList = match.homePlayerNames.map(n => `  • ${n}`).join('\n')
   const awayList = match.awayPlayerNames.map(n => `  • ${n}`).join('\n')
@@ -94,7 +95,7 @@ interface GoalInfo {
 
 export async function sendGoalNotification(goal: GoalInfo): Promise<void> {
   if (goal.isPostMatch) {
-    const dateStr = new Date(goal.matchTime).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' })
+    const dateStr = new Date(goal.matchTime).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', timeZone: 'Europe/Istanbul' })
 
     const text = `📝 <b>SKOR GÜNCELLEMESİ</b> (${dateStr})
 
@@ -119,7 +120,7 @@ ${formatScore(goal)}`
 
 export async function sendGoalCancelledNotification(goal: GoalInfo): Promise<void> {
   if (goal.isPostMatch) {
-    const dateStr = new Date(goal.matchTime).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' })
+    const dateStr = new Date(goal.matchTime).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', timeZone: 'Europe/Istanbul' })
 
     const text = `📝 <b>SKOR GÜNCELLEMESİ</b> (${dateStr})
 
@@ -207,7 +208,7 @@ interface ScheduledMatchInfo {
 }
 
 export async function sendMatchReminderNotification(match: ScheduledMatchInfo): Promise<void> {
-  const timeStr = new Date(match.matchTime).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+  const timeStr = new Date(match.matchTime).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Istanbul' })
 
   const homeList = match.homePlayerNames.map(n => `  • ${n}`).join('\n')
   const awayList = match.awayPlayerNames.map(n => `  • ${n}`).join('\n')

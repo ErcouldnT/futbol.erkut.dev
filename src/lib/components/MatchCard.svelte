@@ -22,7 +22,14 @@
 
   const matchStartingTime = $derived(new Date(match.matchTime || ''))
   const matchEndingTime = $derived(new Date(matchStartingTime.getTime() + match.duration * 60 * 1000))
-  const now = new Date()
+  let now = $state(new Date())
+
+  $effect(() => {
+    const timer = setInterval(() => {
+      now = new Date()
+    }, 60_000)
+    return () => clearInterval(timer)
+  })
 
   // match status
   const notStarted = $derived(now < matchStartingTime)
