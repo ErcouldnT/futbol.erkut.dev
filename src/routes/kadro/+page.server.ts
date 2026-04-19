@@ -4,6 +4,7 @@ import { lineups, matches, players, teams } from '$lib/db/schema'
 import { fail, isRedirect, redirect } from '@sveltejs/kit'
 import { eq } from 'drizzle-orm'
 import { v4 as uuidv4 } from 'uuid'
+import { sendNewMatchNotification } from '../../services/telegram'
 
 export const actions: Actions = {
   checkPlayer: async ({ request }) => {
@@ -112,6 +113,16 @@ export const actions: Actions = {
           tx.insert(lineups).values(lineupValues).run()
         }
       })
+
+      sendNewMatchNotification({
+        title: title || `${homeTeamName} vs ${awayTeamName}`,
+        homeTeamName,
+        awayTeamName,
+        matchTime: matchTime || new Date().toISOString(),
+        duration,
+        homePlayerNames: homePlayers.map((p: any) => p.player.name),
+        awayPlayerNames: awayPlayers.map((p: any) => p.player.name),
+      }).catch(err => console.error('[Telegram] Bildirim hatası:', err))
 
       throw redirect(303, '/')
     }

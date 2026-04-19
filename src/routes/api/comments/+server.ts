@@ -1,9 +1,11 @@
 import type { RequestHandler } from './$types'
 import { db } from '$lib/db'
-import { comments } from '$lib/db/schema'
+import { comments, matches } from '$lib/db/schema'
+import { censorText } from '$lib/profanity'
 import { json } from '@sveltejs/kit'
 import { asc, eq } from 'drizzle-orm'
 import { v4 as uuidv4 } from 'uuid'
+import { sendCommentNotification } from '../../../services/telegram'
 
 export const GET: RequestHandler = async ({ url }) => {
   const matchId = url.searchParams.get('matchId')
@@ -17,7 +19,9 @@ export const GET: RequestHandler = async ({ url }) => {
     orderBy: [asc(comments.createdAt)],
   })
 
-  return json(data)
+  const censored = data.map(c => ({ ...c, content: censorText(c.content) }))
+
+  return json(censored)
 }
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -27,12 +31,24 @@ export const POST: RequestHandler = async ({ request }) => {
     return json({ error: 'Missing fields' }, { status: 400 })
   }
 
+  const censoredContent = censorText(content)
+
   const [newComment] = await db.insert(comments).values({
     id: uuidv4(),
     matchId,
     username,
-    content,
+    content: censoredContent,
   }).returning()
+
+  // Send Telegram notification
+  const matchData = await db.query.matches.findFirst({ where: eq(matches.id, matchId) })
+  if (matchData) {
+    sendCommentNotification({
+      username,
+      content: censoredContent,
+      matchTitle: matchData.title,
+    }).catch(err => console.error('[Telegram]', err))
+  }
 
   return json(newComment)
 }

@@ -3,6 +3,7 @@ import { db } from '$lib/db'
 import { lineups, matches } from '$lib/db/schema'
 import { json } from '@sveltejs/kit'
 import { and, eq } from 'drizzle-orm'
+import { sendGoalCancelledNotification, sendGoalNotification } from '../../../services/telegram'
 
 export const GET: RequestHandler = async ({ url }) => {
   const matchId = url.searchParams.get('matchId')
@@ -96,6 +97,53 @@ export const PATCH: RequestHandler = async ({ request }) => {
           updatedAt: new Date(),
         })
         .where(eq(matches.id, matchId))
+    }
+  }
+
+  // Send Telegram notification for goal events
+  if (matchId && teamId && (type === 'increment' || type === 'decrement')) {
+    const matchInfo = await db.query.matches.findFirst({
+      where: eq(matches.id, matchId),
+      with: { homeTeam: true, awayTeam: true },
+    })
+    const lineup = await db.query.lineups.findFirst({
+      where: eq(lineups.id, id),
+      with: { player: true },
+    })
+
+    if (matchInfo && lineup) {
+      // Recalculate total scores
+      const allHomeLineups = await db.query.lineups.findMany({
+        where: and(eq(lineups.matchId, matchId), eq(lineups.teamId, matchInfo.homeTeamId)),
+      })
+      const allAwayLineups = await db.query.lineups.findMany({
+        where: and(eq(lineups.matchId, matchId), eq(lineups.teamId, matchInfo.awayTeamId)),
+      })
+      const homeScore = allHomeLineups.reduce((sum, l) => sum + l.goals, 0)
+      const awayScore = allAwayLineups.reduce((sum, l) => sum + l.goals, 0)
+
+      const matchStart = new Date(matchInfo.matchTime).getTime()
+      const matchEnd = matchStart + (matchInfo.duration || 90) * 60000
+      const isPostMatch = Date.now() > matchEnd
+
+      const goalInfo = {
+        scorerName: lineup.player.name,
+        minute: type === 'increment' && goalMinutes.length > 0 ? goalMinutes[goalMinutes.length - 1] : null,
+        homeTeamName: matchInfo.homeTeam.name,
+        awayTeamName: matchInfo.awayTeam.name,
+        homeScore,
+        awayScore,
+        teamName: matchInfo.homeTeamId === teamId ? matchInfo.homeTeam.name : matchInfo.awayTeam.name,
+        isPostMatch,
+        matchTime: matchInfo.matchTime,
+      }
+
+      if (type === 'increment') {
+        sendGoalNotification(goalInfo).catch(err => console.error('[Telegram]', err))
+      }
+      else if (type === 'decrement') {
+        sendGoalCancelledNotification(goalInfo).catch(err => console.error('[Telegram]', err))
+      }
     }
   }
 
