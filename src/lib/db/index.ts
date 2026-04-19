@@ -8,8 +8,3 @@ const sqlite = new Database(env.DATABASE_URL || 'local.db')
 export const db = drizzle(sqlite, { schema })
 
 migrate(db, { migrationsFolder: 'drizzle' })
-
-// Initialize match scheduler after DB is ready
-import('../../services/scheduler').then(({ initScheduler }) => {
-  initScheduler().catch(err => console.error('[Scheduler] Başlatma hatası:', err))
-}).catch(() => {})

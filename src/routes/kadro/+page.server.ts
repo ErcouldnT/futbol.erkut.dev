@@ -4,7 +4,6 @@ import { lineups, matches, players, teams } from '$lib/db/schema'
 import { fail, isRedirect, redirect } from '@sveltejs/kit'
 import { eq } from 'drizzle-orm'
 import { v4 as uuidv4 } from 'uuid'
-import { scheduleMatchNotifications } from '../../services/scheduler'
 import { sendNewMatchNotification } from '../../services/telegram'
 
 export const actions: Actions = {
@@ -124,15 +123,6 @@ export const actions: Actions = {
         homePlayerNames: homePlayers.map((p: any) => p.player.name),
         awayPlayerNames: awayPlayers.map((p: any) => p.player.name),
       }).catch(err => console.error('[Telegram] Bildirim hatası:', err))
-
-      // Schedule match notifications (reminder, start, end)
-      const createdMatch = db.query.matches.findFirst({
-        where: eq(matches.id, matchId),
-        with: { homeTeam: true, awayTeam: true },
-      })
-      if (createdMatch) {
-        scheduleMatchNotifications(createdMatch as any)
-      }
 
       throw redirect(303, '/')
     }

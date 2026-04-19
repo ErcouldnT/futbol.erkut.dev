@@ -1,13 +1,12 @@
 import { db } from '$lib/db'
 import { lineups, matches } from '$lib/db/schema'
 import { and, eq, or } from 'drizzle-orm'
-import schedule from 'node-schedule'
 import { sendMatchEndedNotification, sendMatchReminderNotification, sendMatchStartedNotification } from './telegram'
 
-// Track scheduled jobs by matchId
-const scheduledJobs = new Map<string, schedule.Job[]>()
+const POLL_INTERVAL = 5 * 60 * 1000 // 5 minutes
+let pollTimer: ReturnType<typeof setInterval> | null = null
 
-interface MatchWithTeams {
+interface MatchRow {
   id: string
   title: string
   matchTime: string
@@ -23,7 +22,7 @@ interface MatchWithTeams {
   awayTeam: { name: string }
 }
 
-async function getMatchNotificationData(match: MatchWithTeams) {
+async function getMatchNotificationData(match: MatchRow) {
   const homeLineups = await db.query.lineups.findMany({
     where: and(eq(lineups.matchId, match.id), eq(lineups.teamId, match.homeTeamId)),
     with: { player: true },
@@ -33,7 +32,6 @@ async function getMatchNotificationData(match: MatchWithTeams) {
     with: { player: true },
   })
 
-  // Re-read match for latest scores
   const freshMatch = await db.query.matches.findFirst({ where: eq(matches.id, match.id) })
 
   return {
@@ -49,101 +47,80 @@ async function getMatchNotificationData(match: MatchWithTeams) {
   }
 }
 
-export function scheduleMatchNotifications(match: MatchWithTeams): void {
-  // Cancel existing jobs for this match
-  cancelMatchNotifications(match.id)
-
-  const jobs: schedule.Job[] = []
-  const matchStart = new Date(match.matchTime)
-  const matchEnd = new Date(matchStart.getTime() + (match.duration || 90) * 60000)
-  const now = new Date()
-
-  // 30 minutes before match
-  const reminderTime = new Date(matchStart.getTime() - 30 * 60000)
-  if (reminderTime > now && !match.notifiedReminder) {
-    const job = schedule.scheduleJob(`reminder-${match.id}`, reminderTime, async () => {
-      try {
-        const data = await getMatchNotificationData(match)
-        await sendMatchReminderNotification(data)
-        await db.update(matches).set({ notifiedReminder: true }).where(eq(matches.id, match.id))
-        console.warn(`[Scheduler] Hatırlatma gönderildi: ${match.title}`)
-      }
-      catch (err) {
-        console.error(`[Scheduler] Hatırlatma hatası:`, err)
-      }
+async function checkAndSendNotifications(): Promise<void> {
+  try {
+    const pendingMatches = await db.query.matches.findMany({
+      where: or(
+        eq(matches.notifiedReminder, false),
+        eq(matches.notifiedStart, false),
+        eq(matches.notifiedEnd, false),
+      ),
+      with: { homeTeam: true, awayTeam: true },
     })
-    if (job)
-      jobs.push(job)
-  }
 
-  // Match start
-  if (matchStart > now && !match.notifiedStart) {
-    const job = schedule.scheduleJob(`start-${match.id}`, matchStart, async () => {
-      try {
-        const data = await getMatchNotificationData(match)
-        await sendMatchStartedNotification(data)
-        await db.update(matches).set({ notifiedStart: true }).where(eq(matches.id, match.id))
-        console.warn(`[Scheduler] Maç başladı gönderildi: ${match.title}`)
-      }
-      catch (err) {
-        console.error(`[Scheduler] Maç başladı hatası:`, err)
-      }
-    })
-    if (job)
-      jobs.push(job)
-  }
+    const now = Date.now()
 
-  // 5 minutes after match end
-  const endNotifyTime = new Date(matchEnd.getTime() + 5 * 60000)
-  if (endNotifyTime > now && !match.notifiedEnd) {
-    const job = schedule.scheduleJob(`end-${match.id}`, endNotifyTime, async () => {
-      try {
-        const data = await getMatchNotificationData(match)
-        await sendMatchEndedNotification(data)
-        await db.update(matches).set({ notifiedEnd: true }).where(eq(matches.id, match.id))
-        console.warn(`[Scheduler] Maç bitti gönderildi: ${match.title}`)
-      }
-      catch (err) {
-        console.error(`[Scheduler] Maç bitti hatası:`, err)
-      }
-    })
-    if (job)
-      jobs.push(job)
-  }
+    for (const match of pendingMatches) {
+      const m = match as MatchRow
+      const matchStart = new Date(m.matchTime)
+      const matchEnd = new Date(matchStart.getTime() + (m.duration || 90) * 60000)
+      const reminderTime = new Date(matchStart.getTime() - 30 * 60000)
+      const endNotifyTime = new Date(matchEnd.getTime() + 5 * 60000)
 
-  if (jobs.length > 0) {
-    scheduledJobs.set(match.id, jobs)
-    console.warn(`[Scheduler] ${jobs.length} bildirim planlandı: ${match.title}`)
-  }
-}
+      // Reminder: 30 min before match
+      if (!m.notifiedReminder && reminderTime.getTime() <= now) {
+        try {
+          const data = await getMatchNotificationData(m)
+          await sendMatchReminderNotification(data)
+          await db.update(matches).set({ notifiedReminder: true }).where(eq(matches.id, m.id))
+          console.warn(`[Scheduler] Hatırlatma gönderildi: ${m.title}`)
+        }
+        catch (err) {
+          console.error(`[Scheduler] Hatırlatma hatası:`, err)
+        }
+      }
 
-export function cancelMatchNotifications(matchId: string): void {
-  const jobs = scheduledJobs.get(matchId)
-  if (jobs) {
-    for (const job of jobs) {
-      job.cancel()
+      // Match start
+      if (!m.notifiedStart && matchStart.getTime() <= now) {
+        try {
+          const data = await getMatchNotificationData(m)
+          await sendMatchStartedNotification(data)
+          await db.update(matches).set({ notifiedStart: true }).where(eq(matches.id, m.id))
+          console.warn(`[Scheduler] Maç başladı gönderildi: ${m.title}`)
+        }
+        catch (err) {
+          console.error(`[Scheduler] Maç başladı hatası:`, err)
+        }
+      }
+
+      // Match end: 5 min after
+      if (!m.notifiedEnd && endNotifyTime.getTime() <= now) {
+        try {
+          const data = await getMatchNotificationData(m)
+          await sendMatchEndedNotification(data)
+          await db.update(matches).set({ notifiedEnd: true }).where(eq(matches.id, m.id))
+          console.warn(`[Scheduler] Maç bitti gönderildi: ${m.title}`)
+        }
+        catch (err) {
+          console.error(`[Scheduler] Maç bitti hatası:`, err)
+        }
+      }
     }
-    scheduledJobs.delete(matchId)
-    console.warn(`[Scheduler] Bildirimler iptal edildi: ${matchId}`)
+  }
+  catch (err) {
+    console.error('[Scheduler] Polling hatası:', err)
   }
 }
 
-export async function initScheduler(): Promise<void> {
-  // Only fetch matches that still have pending notifications
-  const pendingMatches = await db.query.matches.findMany({
-    where: or(
-      eq(matches.notifiedReminder, false),
-      eq(matches.notifiedStart, false),
-      eq(matches.notifiedEnd, false),
-    ),
-    with: { homeTeam: true, awayTeam: true },
-  })
-
-  let scheduled = 0
-  for (const match of pendingMatches) {
-    scheduleMatchNotifications(match as MatchWithTeams)
-    scheduled++
+export function initScheduler(): void {
+  if (pollTimer) {
+    clearInterval(pollTimer)
   }
 
-  console.warn(`[Scheduler] ${scheduled} maç için bildirimler planlandı`)
+  // Run immediately on startup
+  checkAndSendNotifications()
+
+  // Then poll every 5 minutes
+  pollTimer = setInterval(checkAndSendNotifications, POLL_INTERVAL)
+  console.warn(`[Scheduler] Polling başlatıldı (${POLL_INTERVAL / 1000}s aralıkla)`)
 }
