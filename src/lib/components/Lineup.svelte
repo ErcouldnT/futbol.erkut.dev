@@ -96,6 +96,14 @@
   function startDrag(event: PointerEvent | TouchEvent, player: LineupExpand) {
     event.preventDefault()
     draggingPlayer = player
+    // Sürüklenen oyuncuyu dizinin sonuna taşı (SVG'de en üstte görünsün)
+    const homeIdx = playersHome.findIndex(p => p.playerId === player.playerId)
+    if (homeIdx !== -1) {
+      playersHome = [...playersHome.filter(p => p.playerId !== player.playerId), player]
+    }
+    else {
+      playersAway = [...playersAway.filter(p => p.playerId !== player.playerId), player]
+    }
     // Disable scrolling while dragging
     const svg = document.getElementById('field-svg')
     if (svg)

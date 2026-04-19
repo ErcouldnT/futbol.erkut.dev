@@ -23,6 +23,7 @@
     jerseyGoalId?: string
     startDrag?: (event: PointerEvent | TouchEvent, player: LineupExpand) => void
   } = $props()
+
 </script>
 
 <svg
@@ -30,7 +31,7 @@
   xmlns='http://www.w3.org/2000/svg'
   viewBox='0 0 300 500'
   class="h-auto w-full {saha === 'HORIZONTAL' ? 'max-w-xl mx-auto lg:-rotate-90 lg:my-[-20%]' : ''}"
-  style='touch-action: pan-x pan-y;'
+  style='touch-action: pan-x pan-y; overflow: visible;'
 >
   <!-- Patterns & Gradients -->
   <defs>
