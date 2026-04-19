@@ -4,6 +4,7 @@ import { db } from '$lib/db'
 import { comments, lineups, matches } from '$lib/db/schema'
 import { fail } from '@sveltejs/kit'
 import { eq } from 'drizzle-orm'
+import { cancelMatchNotifications } from '../services/scheduler'
 
 export const load: PageServerLoad = async () => {
   const matchesData = await db.query.matches.findMany({
@@ -36,6 +37,9 @@ export const actions: Actions = {
     }
 
     try {
+      // Cancel scheduled notifications
+      cancelMatchNotifications(id)
+
       // Manual cascade delete since schema doesn't have it
       await db.delete(lineups).where(eq(lineups.matchId, id))
       await db.delete(comments).where(eq(comments.matchId, id))

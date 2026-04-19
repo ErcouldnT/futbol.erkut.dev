@@ -7,7 +7,9 @@ import * as schema from './schema'
 const sqlite = new Database(env.DATABASE_URL || 'local.db')
 export const db = drizzle(sqlite, { schema })
 
-// Run migrations on startup
-if (env.NODE_ENV === 'production' || env.DB_MIGRATE === 'true') {
-  migrate(db, { migrationsFolder: 'drizzle' })
-}
+migrate(db, { migrationsFolder: 'drizzle' })
+
+// Initialize match scheduler after DB is ready
+import('../../services/scheduler').then(({ initScheduler }) => {
+  initScheduler().catch(err => console.error('[Scheduler] Başlatma hatası:', err))
+}).catch(() => {})

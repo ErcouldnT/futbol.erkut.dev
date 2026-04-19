@@ -35,6 +35,9 @@ export const matches = sqliteTable('matches', {
   matchTime: text('match_time').notNull(),
   duration: integer('duration').notNull().default(90),
   isVotable: integer('is_votable', { mode: 'boolean' }).notNull().default(true),
+  notifiedReminder: integer('notified_reminder', { mode: 'boolean' }).notNull().default(false),
+  notifiedStart: integer('notified_start', { mode: 'boolean' }).notNull().default(false),
+  notifiedEnd: integer('notified_end', { mode: 'boolean' }).notNull().default(false),
   createdAt: integer('created_at', { mode: 'timestamp' }).$defaultFn(() => new Date()),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).$defaultFn(() => new Date()),
 })

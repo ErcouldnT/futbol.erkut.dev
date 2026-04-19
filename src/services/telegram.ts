@@ -186,10 +186,70 @@ interface CommentInfo {
 }
 
 export async function sendCommentNotification(info: CommentInfo): Promise<void> {
-  const text = `\u{1F4AC} <b>Yeni Yorum</b> \u2014 ${info.matchTitle}
+  const text = `💬 <b>Yeni Yorum</b> — ${info.matchTitle}
 
-<b>${info.username}</b> yazd\u0131:
+<b>${info.username}</b> yazdı:
 <i>"${info.content}"</i>`
+
+  await sendMessage(text)
+}
+
+interface ScheduledMatchInfo {
+  title: string
+  homeTeamName: string
+  awayTeamName: string
+  homeScore: number
+  awayScore: number
+  matchTime: string
+  duration: number
+  homePlayerNames: string[]
+  awayPlayerNames: string[]
+}
+
+export async function sendMatchReminderNotification(match: ScheduledMatchInfo): Promise<void> {
+  const timeStr = new Date(match.matchTime).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+
+  const homeList = match.homePlayerNames.map(n => `  • ${n}`).join('\n')
+  const awayList = match.awayPlayerNames.map(n => `  • ${n}`).join('\n')
+
+  const text = `⏰ <b>MAÇ HATIRLATMASI!</b>
+
+Beyler maça 30 dakika kaldı, hazırlanın!
+
+🏟️ <b>${match.title}</b>
+🕐 Saat ${timeStr}
+
+🔴 <b>${match.homeTeamName}</b>
+${homeList}
+
+🔵 <b>${match.awayTeamName}</b>
+${awayList}
+
+Kramponları bağlayın, sahaya iniyoruz! 👟`
+
+  await sendMessage(text)
+}
+
+export async function sendMatchStartedNotification(match: ScheduledMatchInfo): Promise<void> {
+  const text = `🟢 <b>MAÇ BAŞLADI!</b>
+
+🏟️ <b>${match.title}</b>
+
+<b>${match.homeTeamName}</b>  vs  <b>${match.awayTeamName}</b>
+
+Düdük çaldı, top ortada! ⚽`
+
+  await sendMessage(text)
+}
+
+export async function sendMatchEndedNotification(match: ScheduledMatchInfo): Promise<void> {
+  const text = `🔴 <b>MAÇ BİTTİ!</b>
+
+🏟️ <b>${match.title}</b>
+
+${formatScore(match)}
+
+Eline sağlık beyler, bir sonraki maçta görüşürüz! 💪`
 
   await sendMessage(text)
 }

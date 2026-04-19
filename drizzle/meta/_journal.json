@@ -15,6 +15,13 @@
       "when": 1776475362991,
       "tag": "0001_previous_vargas",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1776562377367,
+      "tag": "0002_dark_chamber",
+      "breakpoints": true
     }
   ]
 }
